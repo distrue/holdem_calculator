@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "esnext",
+      "target": "esnext",
+      "jsx": "preserve",
+      "sourceMap": false,
+      "moduleResolution": "node"
+    },
+    "include": [
+      "**/*.tsx",
+      "**/*.ts"
+    ],
+    "exclude": [
+      "out",
+      ".next"
+    ]
+}
+  
