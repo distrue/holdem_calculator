@@ -67,26 +67,36 @@ void init_game_every_cycle(){
 }
 
 void make_pair_in_hand(int x, int y, int player, bool * input){
-    if(x >= y){
+    if(x == y){ // 숫자가 같음 (6 hand combo)
         // for dead card counting.. (or shared card)
-        if(input[x   ] == true && input[y   ] == true) player_pair[player].push_back(make_pair(x, y));
-        if(input[x+13] == true && input[y+13] == true) player_pair[player].push_back(make_pair(x+13, y+13));
-        if(input[x+26] == true && input[y+26] == true) player_pair[player].push_back(make_pair(x+26, y+26));
-        if(input[x+39] == true && input[y+39] == true) player_pair[player].push_back(make_pair(x+39, y+39));
+        if(input[x   ] == true && input[y+13] == true) player_pair[player].push_back(make_pair(x, y+13));
+        if(input[x   ] == true && input[y+26] == true) player_pair[player].push_back(make_pair(x, y+26));
+        if(input[x   ] == true && input[y+39] == true) player_pair[player].push_back(make_pair(x, y+39));
+        if(input[x+13] == true && input[y+26] == true) player_pair[player].push_back(make_pair(x+13, y+26));
+        if(input[x+13] == true && input[y+39] == true) player_pair[player].push_back(make_pair(x+13, y+39));
+        if(input[x+26] == true && input[y+39] == true) player_pair[player].push_back(make_pair(x+26, y+39));
     }
     else{
-        if(input[x   ] == true && input[y+13] == true) player_pair[player].push_back(make_pair(y, x+13));
-        if(input[x   ] == true && input[y+26] == true) player_pair[player].push_back(make_pair(y, x+26));
-        if(input[x   ] == true && input[y+39] == true) player_pair[player].push_back(make_pair(y, x+39));
-        if(input[x+13] == true && input[y   ] == true) player_pair[player].push_back(make_pair(y+13, x));
-        if(input[x+13] == true && input[y+26] == true) player_pair[player].push_back(make_pair(y+13, x+26));
-        if(input[x+13] == true && input[y+39] == true) player_pair[player].push_back(make_pair(y+13, x+39));
-        if(input[x+26] == true && input[y   ] == true) player_pair[player].push_back(make_pair(y+26, x));
-        if(input[x+26] == true && input[y+13] == true) player_pair[player].push_back(make_pair(y+26, x+13));
-        if(input[x+26] == true && input[y+39] == true) player_pair[player].push_back(make_pair(y+26, x+39));
-        if(input[x+39] == true && input[y   ] == true) player_pair[player].push_back(make_pair(y+39, x));
-        if(input[x+39] == true && input[y+13] == true) player_pair[player].push_back(make_pair(y+39, x+13));
-        if(input[x+39] == true && input[y+26] == true) player_pair[player].push_back(make_pair(y+39, x+26));
+        if(x > y){ // 문양이 같음 (4 hand combo)
+            if(input[x   ] == true && input[y   ] == true) player_pair[player].push_back(make_pair(x, y));
+            if(input[x+13] == true && input[y+13] == true) player_pair[player].push_back(make_pair(x+13, y+13));
+            if(input[x+26] == true && input[y+26] == true) player_pair[player].push_back(make_pair(x+26, y+26));
+            if(input[x+39] == true && input[y+39] == true) player_pair[player].push_back(make_pair(x+39, y+39));
+        }
+        else{ // 문양이 다름 (12 hand combo) (x, y) 로 입력이 들어오지만 실제로는 (y, x) 로 따져야 함
+            if(input[y   ] == true && input[x+13] == true) player_pair[player].push_back(make_pair(y, x+13));
+            if(input[y   ] == true && input[x+26] == true) player_pair[player].push_back(make_pair(y, x+26));
+            if(input[y   ] == true && input[x+39] == true) player_pair[player].push_back(make_pair(y, x+39));
+            if(input[y+13] == true && input[x   ] == true) player_pair[player].push_back(make_pair(y+13, x));
+            if(input[y+13] == true && input[x+26] == true) player_pair[player].push_back(make_pair(y+13, x+26));
+            if(input[y+13] == true && input[x+39] == true) player_pair[player].push_back(make_pair(y+13, x+39));
+            if(input[y+26] == true && input[x   ] == true) player_pair[player].push_back(make_pair(y+26, x));
+            if(input[y+26] == true && input[x+13] == true) player_pair[player].push_back(make_pair(y+26, x+13));
+            if(input[y+26] == true && input[x+39] == true) player_pair[player].push_back(make_pair(y+26, x+39));
+            if(input[y+39] == true && input[x   ] == true) player_pair[player].push_back(make_pair(y+39, x));
+            if(input[y+39] == true && input[x+13] == true) player_pair[player].push_back(make_pair(y+39, x+13));
+            if(input[y+39] == true && input[x+26] == true) player_pair[player].push_back(make_pair(y+39, x+26));
+        }
     }
 }
 
@@ -123,6 +133,24 @@ void input_cards(){
     }
 }
 
+// 각 player 에게 card 2장씩 분배 && hand combo check
+void Monte_Carlo_person(){
+    for(int i = 0; i < player_num; i++){
+        int num = player_pair[i].size(); player_hand_combo[i] = num;
+        int now_rand = rand() % num;
+        int now1 = player_pair[i][now_rand].first;
+        int now2 = player_pair[i][now_rand].second;
+        if(now1 < now2) swap(now1, now2);
+
+        if(input_card[now1] == false || check_card[now1] == true || input_card[now2] == false || check_card[now2] == true){
+            i--; continue;
+        }
+
+        check_card[now1] = true; check_card[now2] = true;
+        player_hand[i][5] = now1, player_hand[i][6] = now2;
+    }
+}
+
 // 공유 카드 5 - M 장 저장 (random 한 정수), hand combo 에 영향 x!!!
 void Monte_Carlo_shared(){
     for(int i = M; i < 5; i++){
@@ -140,23 +168,6 @@ void Monte_Carlo_shared(){
         for(int j = 0; j < 5; j++){
             player_hand[i][j] = shared_card[j];
         }
-    }
-}
-
-// 각 player 에게 card 2장씩 분배 && hand combo check
-void Monte_Carlo_person(){
-    for(int i = 0; i < player_num; i++){
-        int num = player_pair[i].size(); player_hand_combo[i] = num;
-        int now1 = player_pair[i][rand() % num].first;
-        int now2 = player_pair[i][rand() % num].second;
-        // now1 >= now2 는 반드시 성립
-
-        if(input_card[now1] == false || check_card[now1] == true || input_card[now2] == false || check_card[now2] == true){
-            i--; continue;
-        }
-
-        check_card[now1] = true; check_card[now2] = true;
-        player_hand[i][5] = now1, player_hand[i][6] = now2;
     }
 }
 
@@ -337,8 +348,8 @@ int main()
         all_game_num++;
         init_game_every_cycle();
 
-        Monte_Carlo_shared();
         Monte_Carlo_person();
+        Monte_Carlo_shared();
 
         int player_result[12];
         int now_player_hand[7];
