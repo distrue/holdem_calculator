@@ -4,6 +4,7 @@
 #include <ctime>
 #include <algorithm>
 #include <queue>
+#include <vector>
 using namespace std;
 
 #define ALL_CARD_NUM 52
@@ -12,16 +13,40 @@ using namespace std;
 // 13으로 나눈 몫    -> 각각 0 / 1 / 2 / 3 (0~12 / 13~25 / 26~38 / 39~51)
 // 13으로 나눈 나머지 -> 2~10(0~8), J(9), Q(10), K(11), A(12)
 
-int player_num, N, M, count;
-bool input_card[52];
-queue<int> output;
-int shared_card[5];
-bool check_card[52];
-int player_game_num[12];
-int player_win[12];
-bool player_range[12][13][13];
+int player_num, N, M;
+int all_game_num = 0;
 
-int all = 0;
+bool input_card[52];
+bool player_range[12][13][13];
+vector<pair<int, int> > player_pair[12]; // range -> 가능한 pair (hand combo)
+
+int player_win[12];
+int player_hand_combo[12];
+// 스트레이트 플러시 > 포카드 > 풀하우스 > 플러시 > 스트레이트 > 트리플 > 투 페어 > 원 페어 > 탑
+int result_straight_flash_num[12];
+int result_four_card_num[12];
+int result_full_house_num[12];
+int result_flush_num[12];
+int result_straight_num[12];
+int result_triple_num[12];
+int result_two_pair_num[12];
+int result_one_pair_num[12];
+int result_top_num[12];
+
+int shared_card[5]; // (in one situation, 정해진 M장 제외하고는 바뀌어야 함..!)
+int player_hand[12][7]; // (in one situation)
+bool check_card[52]; // (in one situation)
+
+double result_win_percentage[12];
+double result_straight_flash_percentage[12];
+double result_four_card_percentage[12];
+double result_full_house_percentage[12];
+double result_flush_percentage[12];
+double result_straight_percentage[12];
+double result_triple_percentage[12];
+double result_two_pair_percentage[12];
+double result_one_pair_percentage[12];
+double result_top_percentage[12];
 
 void clear_queue(queue<int> &q){
     queue<int> empty;
@@ -30,13 +55,42 @@ void clear_queue(queue<int> &q){
 
 void init_game(){
     srand((unsigned int)time(0));
-    clear_queue(output);
+    for(int i = 0; i < 5; i++) shared_card[M] = -1;
     memset(input_card, true, sizeof(input_card));
-    memset(shared_card, 0, sizeof(shared_card));
-    memset(player_win, 0, sizeof(player_win));
+    memset(player_range, false, sizeof(player_range));
 }
 
-void input_dead_cards(){
+void init_game_every_cycle(){
+    memset(player_hand, 0, sizeof(player_hand));
+    memset(check_card, false, sizeof(check_card));
+    for(int i = M; i < 5; i++) shared_card[i] = -1;
+}
+
+void make_pair_in_hand(int x, int y, int player, bool * input){
+    if(x >= y){
+        // for dead card counting.. (or shared card)
+        if(input[x   ] == true && input[y   ] == true) player_pair[player].push_back(make_pair(x, y));
+        if(input[x+13] == true && input[y+13] == true) player_pair[player].push_back(make_pair(x+13, y+13));
+        if(input[x+26] == true && input[y+26] == true) player_pair[player].push_back(make_pair(x+26, y+26));
+        if(input[x+39] == true && input[y+39] == true) player_pair[player].push_back(make_pair(x+39, y+39));
+    }
+    else{
+        if(input[x   ] == true && input[y+13] == true) player_pair[player].push_back(make_pair(y, x+13));
+        if(input[x   ] == true && input[y+26] == true) player_pair[player].push_back(make_pair(y, x+26));
+        if(input[x   ] == true && input[y+39] == true) player_pair[player].push_back(make_pair(y, x+39));
+        if(input[x+13] == true && input[y   ] == true) player_pair[player].push_back(make_pair(y+13, x));
+        if(input[x+13] == true && input[y+26] == true) player_pair[player].push_back(make_pair(y+13, x+26));
+        if(input[x+13] == true && input[y+39] == true) player_pair[player].push_back(make_pair(y+13, x+39));
+        if(input[x+26] == true && input[y   ] == true) player_pair[player].push_back(make_pair(y+26, x));
+        if(input[x+26] == true && input[y+13] == true) player_pair[player].push_back(make_pair(y+26, x+13));
+        if(input[x+26] == true && input[y+39] == true) player_pair[player].push_back(make_pair(y+26, x+39));
+        if(input[x+39] == true && input[y   ] == true) player_pair[player].push_back(make_pair(y+39, x));
+        if(input[x+39] == true && input[y+13] == true) player_pair[player].push_back(make_pair(y+39, x+13));
+        if(input[x+39] == true && input[y+26] == true) player_pair[player].push_back(make_pair(y+39, x+26));
+    }
+}
+
+void input_cards(){
     printf("Input Player number / M(shared card number)\n");
     scanf("%d%d", &player_num, &M);
     printf("Input M shared cards..\n");
@@ -49,71 +103,80 @@ void input_dead_cards(){
         int player_range_number;
         printf("Input player %d range number..\n", i);
         scanf("%d", &player_range_number);
+
         if(player_range_number == 0){ // 0 == 전부 선택 (for test 편의)
-            for(int j = 0; j < 13; j++){
-                for(int k = 0; k < 13; k++){
-                    player_range[i-1][j][k] = true;
+            for(int x = 0; x < 13; x++){
+                for(int y = 0; y < 13; y++){
+                    player_range[i-1][x][y] = true;
+                    make_pair_in_hand(x, y, i-1, input_card);
                 }
             }
         }
         else{
-            int cnt = 0;
             printf("Input player %d's range..\n", i);
             for(int j = 0; j < player_range_number; j++){
                 int x, y; scanf("%d%d", &x, &y);
                 player_range[i-1][x][y] = true;
-                // x == y : pair(4) / x > y : 문양이 같음(4) / x < y : 문양이 다름(12)
+                make_pair_in_hand(x, y, i-1, input_card);
             }
         }
     }
 }
 
-// 공유 카드 5 - M 장 저장(random 한 정수)
-void Monte_Carlo(){
-    int num = 5 - M + 2 * player_num;
-    for(int i = 0; i < num; i++){
+// 공유 카드 5 - M 장 저장 (random 한 정수), hand combo 에 영향 x!!!
+void Monte_Carlo_shared(){
+    for(int i = M; i < 5; i++){
         int now = rand() % 52;
 
         if(input_card[now] == false || check_card[now] == true){
             i--; continue;
         }
+
         check_card[now] = true;
-        output.push(now);
+        shared_card[i] = now;
     }
-}
-
-bool check_card_in_player_range(int player, int card_1, int card_2){ // (card_1, card_2) 가 player 의 range 에 포함되는지 확인하는 함수
-    int pattern1 = card_1 / 13, num1 = card_1 % 13;
-    int pattern2 = card_2 / 13, num2 = card_2 % 13;
     
-    if(num1 == num2) return player_range[player][num1][num2];
-    else{
-        if(num1 < num2){
-            swap(pattern1, pattern2);
-            swap(num1, num2);
+    for(int i = 0; i < 12; i++){
+        for(int j = 0; j < 5; j++){
+            player_hand[i][j] = shared_card[j];
         }
-        if(pattern1 == pattern2) return player_range[player][num1][num2];
-        else return player_range[player][num2][num1];
     }
 }
 
-bool check_straight(int * num){
+// 각 player 에게 card 2장씩 분배 && hand combo check
+void Monte_Carlo_person(){
+    for(int i = 0; i < player_num; i++){
+        int num = player_pair[i].size(); player_hand_combo[i] = num;
+        int now1 = player_pair[i][rand() % num].first;
+        int now2 = player_pair[i][rand() % num].second;
+        // now1 >= now2 는 반드시 성립
+
+        if(input_card[now1] == false || check_card[now1] == true || input_card[now2] == false || check_card[now2] == true){
+            i--; continue;
+        }
+
+        check_card[now1] = true; check_card[now2] = true;
+        player_hand[i][5] = now1, player_hand[i][6] = now2;
+    }
+}
+
+int check_straight(int * num){
     int diff1 = num[1] - num[0];
     int diff2 = num[2] - num[1];
     int diff3 = num[3] - num[2];
     int diff4 = num[4] - num[3];
 
-    if(diff1 == diff2 == diff3 == diff4 == 1) return true; // 일반적인 경우
+    if(diff1 == diff2 == diff3 == diff4 == 1) return 1; // 일반적인 경우
     // 2(0) 3(1) 4(2) 5(3) A(12)
-    if(num[0] == 0 && num[1] == 1 && num[2] == 2 && num[3] == 3 && num[4] == 12) return true;
+    if(num[0] == 0 && num[1] == 1 && num[2] == 2 && num[3] == 3 && num[4] == 12) return 2; // back straight -> must be lowest
     // 2(0) 3(1) 4(2) K(11) A(12)
-    if(num[0] == 0 && num[1] == 1 && num[2] == 2 && num[3] == 11 && num[4] == 12) return true;
+    if(num[0] == 0 && num[1] == 1 && num[2] == 2 && num[3] == 11 && num[4] == 12) return 1;
     // 2(0) 3(1) Q(10) K(11) A(12)
-    if(num[0] == 0 && num[1] == 1 && num[2] == 10 && num[3] == 11 && num[4] == 12) return true;
+    if(num[0] == 0 && num[1] == 1 && num[2] == 10 && num[3] == 11 && num[4] == 12) return 1;
     // 2(0) J(9) Q(10) K(11) A(12)
-    if(num[0] == 0 && num[1] == 9 && num[2] == 10 && num[3] == 11 && num[4] == 12) return true;
+    if(num[0] == 0 && num[1] == 9 && num[2] == 10 && num[3] == 11 && num[4] == 12) return 1;
 
-    return false;
+    return 0;
 }
 
 int thirteen_multi(int n){ // 13^n 반환
@@ -127,7 +190,7 @@ int thirteen_multi(int n){ // 13^n 반환
 // 5장으로 만들 수 있는 조합 만드는 함수
 // 패 강함에 따라 숫자 부여, 대소관계로 패 비교
 // 스트레이트 플러시 > 포카드 > 풀하우스 > 플러시 > 스트레이트 > 트리플 > 투 페어 > 원 페어 > 탑
-int made(int * hand){
+int made(int * hand, int option, int player){
     int result = 0;
     int num[5], pattern[5];
     for(int i = 0; i < 5; i++) pattern[i] = hand[i] / 13;
@@ -136,22 +199,27 @@ int made(int * hand){
         num[i]++; // zero -> one for caculating normally
     }
     sort(num, num+5); sort(pattern, pattern+5);
+
     int mul1 = thirteen_multi(1); // 13^1
     int mul2 = thirteen_multi(2); // 13^2
     int mul3 = thirteen_multi(3); // 13^3
     int mul4 = thirteen_multi(4); // 13^4
-    int mul5 = thirteen_multi(5); // 13^5
+    // int mul5 = thirteen_multi(5); // 13^5
 
     if(pattern[0] == pattern[1] == pattern[2] == pattern[3] == pattern[4]){
         // 스트레이트 플러시
-        if(check_straight(num)){
+        if(check_straight(num) != 0){
             result  = 100000000;
-            result += num[4];
+            if(check_straight(num) == 1) result += num[4];
+
+            if(option == 1) result_straight_flash_num[player]++;
         }
         // 플러시
         else{
             result  = 100000;
             result += num[4]*mul4 + num[3]*mul3 + num[2]*mul2 + num[1]*mul1 + num[0];
+
+            if(option == 1) result_flush_num[player]++;
         }
     }
     else{ // 플러시 제외
@@ -163,18 +231,24 @@ int made(int * hand){
             else if(num[0] == num[1] == num[3] == num[4]) result += num[4] * 10000 + num[2];
             else if(num[0] == num[2] == num[3] == num[4]) result += num[4] * 10000 + num[1];
             else result += num[4] * 10000 + num[0];
+
+            if(option == 1) result_four_card_num[player]++;
             
         }
         // 풀하우스
-        else if(num[0] == num[2] && num[3] == num[4] || num[2] == num[4] && num[0] == num[1]){
+        else if((num[0] == num[2] && num[3] == num[4]) || (num[2] == num[4] && num[0] == num[1])){
             result  = 1000000;
             if(num[0] == num[2]) result += num[0] * 100 + num[4];
             else result += num[0] + num[4] * 100;
+
+            if(option == 1) result_full_house_num[player]++;
         }
         // 스트레이트
-        else if(check_straight(num)){
+        else if(check_straight(num) != 0){
             result  = 10000;
-            result += num[4];
+            if(check_straight(num) == 1) result += num[4];
+
+            if(option == 1) result_straight_num[player]++;
         }
         // 트리플
         else if(num[0] == num[2] || num[1] == num[3] || num[2] == num[4]){
@@ -183,13 +257,17 @@ int made(int * hand){
             if(num[0] == num[2]) result += num[4] * mul1 + num[3];
             else if(num[1] == num[3]) result += num[4] * mul1 + num[0];
             else result += num[1] * mul1 + num[0];
+
+            if(option == 1) result_triple_num[player]++;
         }
         // 투 페어 -> 음수에서 따짐
-        else if(num[0] == num[1] && num[2] == num[3] || num[0] == num[1] && num[3] == num[4] || num[1] == num[2] && num[3] == num[4]){
+        else if((num[0] == num[1] && num[2] == num[3]) || (num[0] == num[1] && num[3] == num[4]) || (num[1] == num[2] && num[3] == num[4])){
             result  = -10000;
             if(num[0] == num[1] && num[2] == num[3]) result += num[3] * mul2 + num[1] * mul2 + num[4];
             else if(num[0] == num[1] && num[3] == num[4]) result += num[4] * mul2 + num[1] * mul2 + num[2];   
             else result += num[4] * mul2 + num[2] * mul2 + num[0];
+
+            if(option == 1) result_two_pair_num[player]++;
         }
         // 원 페어 -> 음수에서 따짐
         else if(num[0] == num[1] || num[1] == num[2] || num[2] == num[3] || num[3] == num[4]){
@@ -198,20 +276,26 @@ int made(int * hand){
             else if(num[1] == num[2]) result += num[2] * mul3 + num[4] * mul2 + num[3] * mul1 + num[0];
             else if(num[2] == num[3]) result += num[3] * mul3 + num[4] * mul2 + num[1] * mul1 + num[0];
             else result += num[4] * mul3 + num[2] * mul2 + num[1] * mul1 + num[0];
+
+            if(option == 1) result_one_pair_num[player]++;
         }
         // 탑 -> 음수에서 따짐
         else{
             result  = -1000000;
             result += num[4] * mul4 + num[3] * mul3 + num[2] * mul2 + num[1] * mul1 + num[0];
+
+            if(option == 1) result_top_num[player]++;
         }
     }
     return result;
 }
 
 // 7장으로 만들 수 있는 가장 높은 패 확인
-int check_hand(int player_hand[]){
+int check_hand(int player_hand[], int player){
     int result = 0; // result <- 패가 강할수록 숫자가 크도록 구현해야 함
     int now_hand[5];
+    int highest_hand[5];
+
     for(int not1 = 0; not1 < 7; not1++){
         for(int not2 = not1 + 1; not2 < 7; not2++){
             int cnt = 0;
@@ -219,110 +303,84 @@ int check_hand(int player_hand[]){
                 if(i == not1 || i == not2) continue;
                 now_hand[cnt++] = player_hand[i];
             }
-            int now_result = made(now_hand);
-            if(now_result > result) result = now_result;
+            int now_result = made(now_hand, 0, player);
+            if(now_result > result){
+                result = now_result;
+                cnt = 0;
+                for(int i = 0; i < 5; i++){
+                    highest_hand[i] = now_hand[i];
+                }
+            }
         }
     }
+    made(highest_hand, 1, player);
     return result;
 }
 
 void percentage_calculate(){
-
     for(int i = 0; i < player_num; i++){
-        printf("%.2f%%  ", ((double)player_win[i] / (double)player_game_num[i]) * 100);
+        double result = ((double)player_win[i] / (double)all_game_num) * 100;
+        result_win_percentage[i] = result;
+        printf("%.2f%%  ", result);
     }
-    // puts("");
-
-    for(int i = 0; i < player_num; i++) printf("%d: %d/%d  %d", i, player_win[i], player_game_num[i], all);
     puts("");
-    // printf("\n%d\n", all);
 }
 
 int main()
 {
     printf("Poker Game\n\n");
     init_game();
-    input_dead_cards();
-    // input_player_range(); -> needed
+    input_cards(); // dead card, 정해진 shared card, hand range 입력
 
     printf("counting...\n\n");
-    int all_game_num = 0;
     while(1){
-        all++;
-        memset(check_card, false, sizeof(check_card));
-        clear_queue(output);
+        all_game_num++;
+        init_game_every_cycle();
 
-        Monte_Carlo();
+        Monte_Carlo_shared();
+        Monte_Carlo_person();
 
-/*
-// for test => Monte_Carlo function works well
-        while(!output.empty()){
-            cout << output.front() << " ";
-            output.pop();
-        }
-        cout << endl;
+        int player_result[12];
+        int now_player_hand[7];
+        for(int j = 0; j < player_num; j++){
+            for(int k = 0; k < 7; k++) now_player_hand[k] = player_hand[j][k];
+            
+/* hand check
+            for(int k = 0; k < 7; k++) printf("%d ", now_player_hand[k]);
+            puts("");
 */
 
-        // 5 shared cards (if M == 3, 2 cards selected randomly)
-        for(int j = M; j < 5; j++){
-            shared_card[j] = output.front();
-            output.pop();
+            sort(now_player_hand, now_player_hand+7);
+            player_result[j] = check_hand(now_player_hand, j); // j 번째 player 의 hand check
         }
-        
-        int player_result[12];
+
+        int highest = 0;
+        queue<int> highest_user; // 가장 높은 패 들고 있는 사람
+    
         for(int j = 0; j < player_num; j++){
-            int player_card_1 = output.front(); output.pop();
-            int player_card_2 = output.front(); output.pop();
-            
-            if(check_card_in_player_range(j, player_card_1, player_card_2)){ // j 번 player 의 range 안에 있는 경우만 게임 진행
-                int player_hand[7];
-                for(int k = 0; k < 5; k++) player_hand[k] = shared_card[k];
-                player_hand[5] = player_card_1;
-                player_hand[6] = player_card_2;
-                sort(player_hand, player_hand+7);
-                player_result[j] = check_hand(player_hand);
-            }
-            else player_result[j] = 0; // range 안에 없는 경우 fold
-        }
-
-        int n = 0;
-        for(int j = 0; j < player_num; j++){
-            if(player_result[j] != 0) n++;
-        }
-        if(n >= 1){ // 1명 이상이 플레이한 경우
-            all_game_num++;
-            int highest = 0;
-            queue<int> highest_user; // 가장 높은 패 들고 있는 사람
-        
-            for(int j = 0; j < player_num; j++){
-                if(player_result[j] == 0) continue; // fold 한 사람의 경우 pass
-                if(player_result[j] != 0) player_game_num[j]++; // 진행되는 경우에만 게임 횟수 추가
-                
-                if(highest_user.empty()){
-                    highest_user.push(j); highest = j; continue;
-                }
-
-                // highest_user queue 가 비지 않았을 경우
-                if(player_result[j] > player_result[highest]){ // 최고 패 변경 발생
-                    highest = j;
-                    clear_queue(highest_user);
-                    highest_user.push(j);
-                }
-                else if(player_result[j] == player_result[highest]){ // 패 순위 동일
-                    highest_user.push(j); // 그냥 추가
-                }
-                else continue;
+            if(highest_user.empty()){
+                highest_user.push(j); 
+                highest = j; continue;
             }
 
-            // 최고 패가 2명 이상인 경우 전부 이겼다고 처리함
-            while(!highest_user.empty()){
-                player_win[highest_user.front()]++;
-                highest_user.pop();
+            // highest_user queue 가 비지 않았을 경우
+            if(player_result[j] > player_result[highest]){ // 최고 패 변경 발생
+                highest = j;
+                clear_queue(highest_user);
+                highest_user.push(j);
             }
-            percentage_calculate();
+            else if(player_result[j] == player_result[highest]){ // 패 순위 동일
+                highest_user.push(j); // 그냥 추가
+            }
+            else continue;
         }
-        // 전부 fold 하는 경우 마지막 플레이어가 이기지만 확률에서는 고려하지 않음
-        // 한 명만 남는 경우 반드시 그 플레이어가 이기기에 고려하지 않음 (적어도 두 명 이상의 플레이 필요)
+
+        // 최고 패가 2명 이상인 경우 전부 이겼다고 처리함
+        while(!highest_user.empty()){
+            player_win[highest_user.front()]++;
+            highest_user.pop();
+        }
+        percentage_calculate();
     }
     return 0;
 }
