@@ -1,13 +1,11 @@
 // 수정 필요한 부분(2)
 // 1. 무한루프 잡아야 함..!
 //  ex) (12 12 / 11 11 / 10 10) (12 12) (11 11) 과 같은 경우 무한루프 발생. range 가 좁은 애들부터 미리 처리하면 되지 않을까..?
-// 2. 승률 계산 방법
-//  에퀼랩의 경우 무승부를 따로 계산함. 2인의 경우 포함과 배제 원리 이용해서 계산해 보면 확률은 동일..
-//  3인 이상부터는 무승부 처리하기 까다롭지 않나 ㅠㅠ
 
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 #include <ctime>
 #include <algorithm>
 #include <queue>
@@ -20,12 +18,15 @@ using namespace std;
 // 13으로 나눈 몫    -> 각각 0 / 1 / 2 / 3 (0~12 / 13~25 / 26~38 / 39~51)
 // 13으로 나눈 나머지 -> 2~10(0~8), J(9), Q(10), K(11), A(12)
 
+time_t play_time, sum_time;
 int player_num, N, M;
 int all_game_num = 0;
 
 bool input_card[52];
 vector<pair<int, int> > player_pair[12]; // range -> 가능한 pair (hand combo)
 
+int player_solo_win[12];
+double player_draw_win[12];
 int player_win[12];
 int player_hand_combo[12];
 // (0)AA (1)KK (2)QQ (3)JJ (4)TT (5)66-99 (6)22-55 (7)ace_high (8)no_made_hand (9)overcards(ace_high + no_made_hand)
@@ -57,6 +58,12 @@ double result_two_pair_percentage[12];
 double result_one_pair_percentage[12];
 double result_top_percentage[12];
 
+void input_time(){
+    printf("Input Play Time(sec)..\n");
+    printf("Recommend Time is 1 sec for Person.\n");
+    printf("More Time = More Accurate\n");
+    scanf("%d", &play_time);
+}
 void clear_queue(queue<int> &q){
     queue<int> empty;
     swap(q, empty);
@@ -195,7 +202,6 @@ void calculate_hand_combo(){ // 각 player의 hand combo 계산
     for(int i = 0; i < player_num; i++){
         player_hand_combo[i] = player_pair[i].size();
     }
-    puts("");
 }
 
 // 각 player 에게 card 2장씩 분배 && hand combo check
@@ -542,29 +548,17 @@ int check_hand(int * player_hand, int player){
     return result; // 가장 높은 패 숫자 반환
 }
 
-void percentage_calculate(int option){
-    // 승률 계산 방식 2가지
-    // 1. (각 플레이어 당)승리 횟수 / 전체 시행 횟수
-    // 2. (각 플레이어 당)승리 횟수 / 전체 승리 횟수
+void percentage_calculate(){
 
-    if(option == 1){
-        for(int i = 0; i < player_num; i++){
-            double result = ((double)player_win[i] / (double)all_game_num) * 100;
-            result_win_percentage[i] = result;
-            printf("%.2f%%  ", result);
-        }
-    }
-    else if(option == 2){
-        int all_win = 0;
-        for(int i = 0; i < player_num; i++) all_win += player_win[i];
-        for(int i = 0; i < player_num; i++){
-            double result = ((double)player_win[i] / (double)all_win) * 100;
-            result_win_percentage[i] = result;
-            printf("%.2f%%  ", result);
-        }
-    }
-    else{
-        printf("can be extended..\n");
+    for(int i = 0; i < player_num; i++){
+        // solo_win_ratio 는 굉장히 정확..!
+        double solo_win_ratio = ((double)player_solo_win[i] / (double)all_game_num) * 100;
+
+        // 여기서부터 다시..
+        double draw_win_ratio = (player_draw_win[i] / (double) all_game_num) * 100;
+        result_win_percentage[i] = solo_win_ratio + draw_win_ratio;
+        
+        printf("%.2f%%  %.2f%%  %.2f%%    ", result_win_percentage[i], solo_win_ratio, draw_win_ratio);
     }
     puts("");
 }
@@ -606,11 +600,15 @@ int main()
 {
     printf("Poker Game\n\n");
     init_game();
+    input_time();
     input_cards(); // dead card, 정해진 shared card, hand range 입력
     calculate_hand_combo(); // dead card 가 전부 주어졌으므로 hand combo 수 계산 가능
 
     printf("counting...\n\n");
+    sum_time = 0;
     while(1){
+        if(sum_time >= play_time) break;
+        time_t start_time = time(NULL);
         all_game_num++;
         init_game_every_cycle();
 
@@ -628,11 +626,12 @@ int main()
                         // printf("%d\n", player_result[j]);
         }
 
-        int highest = 0;
+        int highest = 0, in_queue_num = 0;
         queue<int> highest_user; // 가장 높은 패 들고 있는 사람
     
         for(int j = 0; j < player_num; j++){
             if(highest_user.empty()){
+                in_queue_num = 1;
                 highest_user.push(j); 
                 highest = j; continue;
             }
@@ -640,24 +639,34 @@ int main()
             // highest_user queue 가 비지 않았을 경우
             if(player_result[j] > player_result[highest]){ // 최고 패 변경 발생
                 highest = j;
+                in_queue_num = 1;
                 clear_queue(highest_user);
                 highest_user.push(j);
             }
             else if(player_result[j] == player_result[highest]){ // 패 순위 동일
+                in_queue_num++;
                 highest_user.push(j); // 그냥 추가
             }
             else continue;
         }
 
-        // 최고 패가 2명 이상인 경우 전부 이겼다고 처리함
-        while(!highest_user.empty()){
+        if(in_queue_num == 1){
+            player_solo_win[highest_user.front()]++;
             player_win[highest_user.front()]++;
             highest_user.pop();
         }
-
-        // 퍼포먼스상 이 두 함수는 무한루프 이후에 계산하는 게 훨씬 나음
-        percentage_calculate(1); // option 1 or 2 -> 함수 참고
-        made_hand_percentage();
+        else{
+            while(!highest_user.empty()){
+                player_draw_win[highest_user.front()] += 1 / (double)in_queue_num;
+                player_win[highest_user.front()]++;
+                highest_user.pop();
+            }
+        }
+        
+        time_t end_time = time(NULL);
+        sum_time += end_time - start_time;
     }
+    percentage_calculate();
+    made_hand_percentage();
     return 0;
 }
