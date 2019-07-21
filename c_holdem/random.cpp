@@ -1,12 +1,6 @@
-// 수정 필요한 부분(2)
-// 1. 무한루프 잡아야 함..!
-//  ex) (12 12 / 11 11 / 10 10) (12 12) (11 11) 과 같은 경우 무한루프 발생. range 가 좁은 애들부터 미리 처리하면 되지 않을까..?
-//  생각한 해결방안) range_number 순으로 오름차순 정렬하여 그 순서대로 카드 배분 / 무한루프 발생 시 오류 메시지 출력..
-
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
 #include <ctime>
 #include <algorithm>
 #include <queue>
@@ -19,7 +13,7 @@ using namespace std;
 // 13으로 나눈 몫    -> 각각 0 / 1 / 2 / 3 (0~12 / 13~25 / 26~38 / 39~51)
 // 13으로 나눈 나머지 -> 2~10(0~8), J(9), Q(10), K(11), A(12)
 
-time_t play_time, sum_time;
+double play_time, sum_time;
 int player_num, N, M;
 int all_game_num = 0;
 
@@ -30,6 +24,8 @@ int player_solo_win[12];
 double player_draw_win[12];
 int player_win[12];
 
+int player_range_num[12];
+int player_order[12];
 int player_hand_combo[12];
 // (0)AA (1)KK (2)QQ (3)JJ (4)TT (5)66-99 (6)22-55 (7)ace_high (8)no_made_hand (9)overcards(ace_high + no_made_hand)
 int player_hand_combo_classify[12][10];
@@ -64,8 +60,14 @@ void input_time(){
     printf("Input Play Time(sec)..\n");
     printf("Recommend Time is 1 sec for Person.\n");
     printf("More Time = More Accurate\n");
-    scanf("%d", &play_time);
+    scanf("%lf", &play_time);
 }
+
+void error_handling(char * str){
+    printf("%s\n", str);
+    exit(1);
+}
+
 void clear_queue(queue<int> &q){
     queue<int> empty;
     swap(q, empty);
@@ -182,6 +184,7 @@ void input_cards(){
         int player_range_number;
         printf("Input player %d range number..\n", i);
         scanf("%d", &player_range_number);
+        player_range_num[i-1] = player_range_number;
 
         if(player_range_number == 0){ // 0 == 전부 선택 (for test 편의)
             for(int x = 0; x < 13; x++){
@@ -200,6 +203,25 @@ void input_cards(){
     }
 }
 
+
+void player_ordering(){
+    int tmp[12];
+    int count = 0;
+
+    for(int i = 0; i < player_num; i++) tmp[i] = player_range_num[i];
+    sort(tmp, tmp + player_num);
+
+    for(int i = 0; i < player_num; i++){
+        for(int j = 0; j < player_num; j++){
+            if(tmp[i] == player_range_num[j]){
+                player_order[i] = j;
+                player_range_num[j] = -1;
+                break;
+            }
+        }
+    }
+}
+
 void calculate_hand_combo(){ // 각 player의 hand combo 계산
     for(int i = 0; i < player_num; i++){
         player_hand_combo[i] = player_pair[i].size();
@@ -208,19 +230,26 @@ void calculate_hand_combo(){ // 각 player의 hand combo 계산
 
 // 각 player 에게 card 2장씩 분배 && hand combo check
 void Monte_Carlo_person(){
+    clock_t check_time = clock();
+
     for(int i = 0; i < player_num; i++){
-        int num = player_hand_combo[i];
+        int now = player_order[i]; // i -> player_order[i] (now)
+
+        int num = player_hand_combo[now];
         int now_rand = rand() % num;
-        int now1 = player_pair[i][now_rand].first;
-        int now2 = player_pair[i][now_rand].second;
+        int now1 = player_pair[now][now_rand].first;
+        int now2 = player_pair[now][now_rand].second;
         if(now1 < now2) swap(now1, now2);
+
+        double spending = (double)(clock() - check_time);
+        if(spending > 300) error_handling("[Error] Impossible Range Setting\n");
 
         if(input_card[now1] == false || check_card[now1] == true || input_card[now2] == false || check_card[now2] == true){
             i--; continue;
         }
 
         check_card[now1] = true; check_card[now2] = true;
-        player_hand[i][5] = now1, player_hand[i][6] = now2;
+        player_hand[now][5] = now1, player_hand[now][6] = now2;
     }
 }
 
@@ -603,16 +632,17 @@ int main()
     init_game();
     input_time();
     input_cards(); // dead card, 정해진 shared card, hand range 입력
+    player_ordering(); // range num 기준 순서 정하기 (먼저 hand 배분할 순서)
     calculate_hand_combo(); // dead card 가 전부 주어졌으므로 hand combo 수 계산 가능
 
     printf("counting...\n\n");
     sum_time = 0;
     while(1){
         if(sum_time >= play_time) break;
-        time_t start_time = time(NULL);
+        clock_t start_time = clock();
         all_game_num++;
-        init_game_every_cycle();
 
+        init_game_every_cycle();
         Monte_Carlo_person();
         Monte_Carlo_shared();
 
@@ -664,8 +694,8 @@ int main()
             }
         }
         
-        time_t end_time = time(NULL);
-        sum_time += end_time - start_time;
+        clock_t end_time = clock();
+        sum_time += (end_time / CLOCKS_PER_SEC) - (start_time / CLOCKS_PER_SEC);
     }
     percentage_calculate();
     made_hand_percentage();
