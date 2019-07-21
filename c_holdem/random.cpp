@@ -1,6 +1,7 @@
 // 수정 필요한 부분(2)
 // 1. 무한루프 잡아야 함..!
 //  ex) (12 12 / 11 11 / 10 10) (12 12) (11 11) 과 같은 경우 무한루프 발생. range 가 좁은 애들부터 미리 처리하면 되지 않을까..?
+//  생각한 해결방안) range_number 순으로 오름차순 정렬하여 그 순서대로 카드 배분 / 무한루프 발생 시 오류 메시지 출력..
 
 #include <iostream>
 #include <stdlib.h>
@@ -28,6 +29,7 @@ vector<pair<int, int> > player_pair[12]; // range -> 가능한 pair (hand combo)
 int player_solo_win[12];
 double player_draw_win[12];
 int player_win[12];
+
 int player_hand_combo[12];
 // (0)AA (1)KK (2)QQ (3)JJ (4)TT (5)66-99 (6)22-55 (7)ace_high (8)no_made_hand (9)overcards(ace_high + no_made_hand)
 int player_hand_combo_classify[12][10];
@@ -551,14 +553,12 @@ int check_hand(int * player_hand, int player){
 void percentage_calculate(){
 
     for(int i = 0; i < player_num; i++){
-        // solo_win_ratio 는 굉장히 정확..!
         double solo_win_ratio = ((double)player_solo_win[i] / (double)all_game_num) * 100;
-
-        // 여기서부터 다시..
         double draw_win_ratio = (player_draw_win[i] / (double) all_game_num) * 100;
         result_win_percentage[i] = solo_win_ratio + draw_win_ratio;
         
-        printf("%.2f%%  %.2f%%  %.2f%%    ", result_win_percentage[i], solo_win_ratio, draw_win_ratio);
+        printf("\n  [ player %d Equity ]\n", i+1);
+        printf("\t %.2f%% ( 1 win: %.2f%% / 2 or more win: %.2f%% )\n", result_win_percentage[i], solo_win_ratio, draw_win_ratio);
     }
     puts("");
 }
@@ -578,22 +578,23 @@ void made_hand_percentage(){
         result_top_percentage[i] = (double) result_top_num[i] / all_game_num * 100;
     }
     
-/*
     // for testing...
     for(int i = 0; i < player_num; i++){
         printf("\n  [ player %d result Ratio ]\n", i+1);
-        printf("\t Straight Flush: %.2f%%\n", result_straight_flush_percentage[i]);
-        printf("\t Four Card:      %.2f%%\n", result_four_card_percentage[i]);
-        printf("\t Full House:     %.2f%%\n", result_full_house_percentage[i]);
-        printf("\t Flush:          %.2f%%\n", result_flush_percentage[i]);
-        printf("\t Straight:       %.2f%%\n", result_straight_percentage[i]);
-        printf("\t Triple:         %.2f%%\n", result_triple_percentage[i]);
-        printf("\t Two Pair:       %.2f%%\n", result_two_pair_percentage[i]);
-        printf("\t One Pair:       %.2f%%\n", result_one_pair_percentage[i]);
-        printf("\t Top:            %.2f%%\n", result_top_percentage[i]);
+        printf("\t Straight Flush: %.2f%% (Frequency: %d) \n", result_straight_flush_percentage[i], result_straight_flush_num[i]);
+        printf("\t Four Card:      %.2f%% (Frequency: %d) \n", result_four_card_percentage[i], result_four_card_num[i]);
+        printf("\t Full House:     %.2f%% (Frequency: %d) \n", result_full_house_percentage[i], result_full_house_num[i]);
+        printf("\t Flush:          %.2f%% (Frequency: %d) \n", result_flush_percentage[i], result_flush_num[i]);
+        printf("\t Straight:       %.2f%% (Frequency: %d) \n", result_straight_percentage[i], result_straight_num[i]);
+        printf("\t Triple:         %.2f%% (Frequency: %d) \n", result_triple_percentage[i], result_triple_num[i]);
+        printf("\t Two Pair:       %.2f%% (Frequency: %d) \n", result_two_pair_percentage[i], result_two_pair_num[i]);
+        printf("\t One Pair:       %.2f%% (Frequency: %d) \n", result_one_pair_percentage[i], result_one_pair_num[i]);
+        printf("\t Top:            %.2f%% (Frequency: %d) \n", result_top_percentage[i], result_top_num[i]);
         printf("\n\n");
     }
-*/
+    printf("\n  [ Total result Ratio ]\n");
+    printf("\t Probability:    %.2f%% (Frequency: %d) \n", 100.0, all_game_num);
+    printf("\n\n");
 }
 
 int main()
