@@ -1,0 +1,19 @@
+swagger: "2.0" 
+info: 
+  description: "Holdem calculator api" 
+  version: "0.1.0" 
+  title: "Bloom API" 
+host: "__"
+tags:
+  - name: "On progress" 
+    description: "on progress"
+
+paths:
+  /:
+    get:
+      tags: 
+        - "On progress" 
+      summary: "return article list" 
+      responses:
+        200:
+          description: "return article list"
