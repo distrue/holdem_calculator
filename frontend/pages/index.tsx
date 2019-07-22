@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {RangeTable, LabelTable, HandTable} from '../components';
-import styled from 'styled-components' ;
 
 export default () => {
     return(<>

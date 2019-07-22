@@ -2,13 +2,13 @@ import * as React from 'react';
 import {RangeBlock} from '../components';
 import styled from 'styled-components' ;
 
-const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+const NumRange = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 const RangeTable = (props) => {
     const style = {display: "block", ...props.style};
     return(<div style={style}>
-        {combiBase.map(first => {
+        {NumRange.map(first => {
             return(<Line>
-                {combiBase.map(second => {
+                {NumRange.map(second => {
                     return(<RangeBlock com={[first, second]}/>); 
                 })}
             </Line>);
