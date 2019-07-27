@@ -9,7 +9,7 @@ const RangeTable = (props) => {
         {NumRange.map(first => {
             return(<Line>
                 {NumRange.map(second => {
-                    return(<RangeBlock com={[first, second]}/>); 
+                    return(<RangeBlock keyV={first.toString() + second.toString()} com={[first, second]}/>);
                 })}
             </Line>);
         })}
@@ -25,5 +25,10 @@ const Line = styled.div`
         border: 1px solid black;
         text-align: center;
         padding-top: 10px;
+    }
+    .menu {
+        background-color: white;
+        padding: 3px 3px 3px 3px;
+        border: 1px solid black;
     }
 `;
