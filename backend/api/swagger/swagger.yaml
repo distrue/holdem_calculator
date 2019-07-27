@@ -2,18 +2,114 @@ swagger: "2.0"
 info: 
   description: "Holdem calculator api" 
   version: "0.1.0" 
-  title: "Bloom API" 
+  title: "Holdem API" 
 host: "__"
 tags:
   - name: "On progress" 
     description: "on progress"
-
+    
 paths:
-  /:
-    get:
-      tags: 
-        - "On progress" 
-      summary: "return article list" 
+  /api/equity:
+    post:
+      summary: "Calculate Equity (by hand range)"
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/gameinfo"
       responses:
         200:
-          description: "return article list"
+          description: "return {success: true, equityList}"
+          schema:
+            $ref: "#/definitions/equityList"
+
+  /api/handcombo:
+    post:
+      summary: "Calculate Handcombo (by hand range)"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "return {success: true, handcomboList}"
+          schema:
+            $ref: "#/definitions/handcomboList"
+          
+definitions:
+  gameinfo:
+    type: object
+    properties:
+      playTime:
+        type: integer
+        description: 실행 시간
+      fixedSharedCardnum:
+        type: integer
+        description: 고정된 공유 카드 숫자
+      # [1, 2, 3, 4, 5]
+      fixedSharedCard:
+        type: array
+        items: 
+          type: integer
+        description: 정해진 공유 카드 (0~5장)
+      playernum:
+        type: integer
+        description: 참가자 숫자
+      # [(player 1 range)[[13, 13], [12, 12], ...], (player 2 range)[...], [...], ...]
+      playerRange:
+        type: array
+        items:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+        description: 참가자별 hand range
+      
+  equity:
+    type: object
+    properties:
+      player:
+        type: integer
+        description: N번째 참가자
+      soloWinRate:
+        type: number
+        description: 혼자 이긴 승리 비율
+      doubleWinRate:
+        type: number
+        description: 두 명 이상 동시 승리 비율
+      StraightFlushRatio:
+        type: number
+      FourCardRatio:
+        type: number
+      FullHouseRatio:
+        type: number
+      StraightRatio:
+        type: number
+      TripleRatio:
+        type: number
+      TwoPairRatio:
+        type: number
+      OnePairRatio:
+        type: number
+      TopRatio:
+        type: number
+  handcombo:
+    type: object
+    properties:
+      player:
+        type: integer
+  equityList:
+    type: array
+    items:
+      $ref: "#/definitions/equity"
+  handcomboList:
+    type: array
+    items:
+      $ref: "#/definitions/handcombo"
+  
+parameters:
+  gameinfo:
+    name: 실행시간 / 정해진 공유카드 / 플레이어별 hand range
+    in: formData
+    schema:
+      $ref: "#/definitions/gameinfo"
+    description: Fixed Game Info
+    

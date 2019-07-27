@@ -4,9 +4,13 @@ import * as Router from 'koa-router';
 const app = new Koa();
 const router = new Router();
 
-router.get('/', (ctx: any, next) => {
-    ctx.status = 200; ctx.body = {"success": true, "result": "Holdem API server"};
+// for check
+router.get('/', (ctx, next) => {
+    ctx.body = 'home';
 });
 
-app.use(router.routes());
+const api = require('./api');
+router.use('/api', api.routes());
+
+app.use(router.routes()).use(router.allowedMethods());
 app.listen(3000, () => console.log("Server started on port 3000"));
