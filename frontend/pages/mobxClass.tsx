@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Component} from 'react';
-import TodoList, {Todo} from '../store';
+import TodoList, {Todo} from '../store/example';
 import { observer } from "mobx-react"
 
 interface TodoListView extends Component {
