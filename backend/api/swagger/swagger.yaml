@@ -9,13 +9,21 @@ tags:
     description: "on progress"
     
 paths:
+            
   /api/equity:
     post:
-      summary: "Calculate Equity (by hand range)"
+      summary: "Send Game Infomation"
       produces:
         - application/json
       parameters:
         - $ref: "#/parameters/gameinfo"
+      responses:
+        200:
+          description: "return {success: true}"
+    get:
+      summary: "Calculate Equity (by Game Info)"
+      produces:
+        - application/json
       responses:
         200:
           description: "return {success: true, equityList}"
@@ -24,7 +32,14 @@ paths:
 
   /api/handcombo:
     post:
-      summary: "Calculate Handcombo (by hand range)"
+      summary: "Send Game Infomation"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "return {success: true}"
+    get:
+      summary: "Calculate Handcombo (by Game Info)"
       produces:
         - application/json
       responses:
