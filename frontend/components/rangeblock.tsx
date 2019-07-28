@@ -1,63 +1,148 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useState, useContext} from 'react';
+import {observer} from 'mobx-react-lite';
+import label from '../store/Label';
+import phase from '../store/Phase';
+import player from '../store/Player';
 import useContextMenu from 'react-use-context-menu';
+import block from '../store/Block';
+import styled from 'styled-components';
 
+const Astyle = styled.div`
+    display: block; width: 40px; height: 40px;
+    border: 1px solid black;
+    text-align: center;
+`;
 interface Props {
     com: number[];
     keyV: string;
 }
+const change = (e) => {
+    console.dir(e.target.value);
+}
+const al = (e, labelStore, blockStore, blockName) => {
+    if(e.charCode === 13){
+        console.log("Submit", e.target.value);
+        let cut = labelStore.labelRange[labelStore.now].findIndex(i => i.blockName === blockName);
+        let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelStore.now);
+        if(!Number(e.target.value)) {
+            return;
+        }
+        let now = Number(e.target.value);
+        let delta = now - labelStore.labelRange[labelStore.now][cut].pct;
+        blockStore.left[blockName] -= delta;
+        labelStore.labelRange[labelStore.now][cut].pct = now;
+        blockStore.label[blockName][Lcut].pct = now;
+    }
+}
 const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
-const Con = ({bindMenu, bindMenuItems, Label}) => {
+const Con = observer(({bindMenu, bindMenuItems, labelStore, blockName, visibleSet, blockStore, Out}) => {
+    const playerStore = useContext(player);
+    const phaseStore = useContext(phase);
     return(<nav {...bindMenu} className="menu">
-        <div {...bindMenuItems}>Label1: 50%</div>
-        <div {...bindMenuItems}>Percentage setup</div>
-        <hr/>
-        <div {...bindMenuItems}>Left: 50%</div>
-        <div onClick={e => Label[1]([])} style={{cursor:"pointer"}}>clear</div>
+        {labelStore.data[playerStore.now] !== undefined && labelStore.data[playerStore.now] [phaseStore.pnow]!== undefined? 
+        labelStore.data[playerStore.now][phaseStore.pnow].map(item => {
+            if(labelStore.labelRange[item] === undefined) { return(<></>)}
+            let ans = labelStore.labelRange[item].findIndex(i => i.blockName === blockName);
+            if(ans < 0) { return(<></>)}
+            return(<>
+                <div {...bindMenuItems}>Label{item}: {labelStore.labelRange[item][ans].pct}%</div>
+                <div {...bindMenuItems}>Percentage setup<input style={{width:"40px"}}onKeyPress={e => al(e, labelStore, blockStore, blockName)} onChange={change}/></div>
+                <hr/>
+            </>);
+        })
+        :""}
+        <div {...bindMenuItems}>Left: {blockStore.left[blockName]}%</div>
+        <div onClick={e => {
+            if(labelStore.labelRange[labelStore.now] === undefined) { return; }
+            let cut = labelStore.labelRange[labelStore.now].findIndex(i => i.blockName === blockName);
+            let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelStore.now);
+            
+            if(cut < 0) { return; }
+            blockStore.left[blockName] += labelStore.labelRange[labelStore.now][cut].pct;
+            labelStore.labelRange[labelStore.now].splice(cut, 1);
+            visibleSet.setVisible(false);
+            blockStore.color[blockName] = "#ffffff";
+            console.log(Out[0]);
+            blockStore.label[blockName].splice(Lcut, 1);
+            Out[1]("F");
+            console.log(Out[0]);
+        }} style={{cursor:"pointer"}}>clear</div>
     </nav>);
+    // items.splice(items.indexOf('c'), 1);
+});
+
+const Color = (e, labelStore, blockName, playerStore, phaseStore, blockStore) => {  
+    if(labelStore.now === undefined) {
+        alert("choose label first!");
+        return;
+    }
+    if(blockStore.left[blockName] <= 0) {
+        return;
+    }
+    if(labelStore.labelRange[labelStore.now].indexOf(blockName) < 0) {
+        labelStore.labelRange[labelStore.now].push({blockName: blockName, pct: 100});
+        if(blockStore.label[blockName] === undefined) {
+            blockStore.label[blockName] = [];
+        }
+        blockStore.label[blockName].push({label:labelStore.now, pct:100});
+        blockStore.color[blockName] = "#f46500";
+        blockStore.left[blockName] -= 100;
+    }
 }
 
-const Color = (e, Label) => {   
-    if(Label[0].length == 0 || false) { /* mobx로 cursor pointer 줘서 선택 시킬 것 */ 
-        Label[1](Label[0].push("A"));
-    }
-    console.log(Label); 
-}
-const RangeBlock = (props: Props) => {
+const RangeBlock = observer((props: Props) => {
+    const ghost = useState("");
+    const playerStore = useContext(player);
+    const phaseStore = useContext(phase); 
+    const labelStore = useContext(label);
+    const blockStore = useContext(block);
     const [
         bindMenu,
         bindMenuItems,
-        useContextTrigger
+        useContextTrigger,
+        visibleSet
       ] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
-    
-    let Label = useState([]);
-    // Click 하고 있으면 rangetable에서 mobx state update
-    // click 하고 있는 상태에서 hover되면 drag 처리
+    let blockName, border;
+
     if(props.com[0] < props.com[1]) {
-        return(<div key={props.keyV}>
-        <div {...bindTrigger} className="Block" onClick={e => Color(e, Label)} style={{backgroundColor: Label[0].length!==0?"#f46500":"#cccccc", cursor: "pointer"}}>
-            {combiBase[props.com[0]]}{combiBase[props.com[1]]}s
-        </div>
-        <Con bindMenu={bindMenu} bindMenuItems={bindMenuItems} Label={Label}/>
-        </div>);
+        border = "1px solid green";
+        blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "s";
     }
     else if(props.com[0] == props.com[1]) {
-        return(<div key={props.keyV}>
-        <div {...bindTrigger} className="Block" style={{backgroundColor: "#bbbbbb"}}>
-            {combiBase[props.com[0]]}{combiBase[props.com[1]]}
-        </div>
-        <Con bindMenu={bindMenu} bindMenuItems={bindMenuItems}  Label={Label}/>
-        </div>);
+        border="1px solid blue";
+        blockName = combiBase[props.com[0]] + combiBase[props.com[1]];
     }
     else {
-        return(<div key={props.keyV}>
-        <div {...bindTrigger} className="Block" style={{backgroundColor: "#aaaaaa"}}>
-            {combiBase[props.com[1]]}{combiBase[props.com[0]]}o
-        </div>
-        <Con bindMenu={bindMenu} bindMenuItems={bindMenuItems}  Label={Label}/>
-        </div>);
+        border="1px solid red";
+        blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "o";
     }
-}
+
+    if(blockStore.left[blockName] === undefined) {
+        blockStore.left[blockName] = 100;
+    }
+    console.log(ghost[0]);
+    if(blockStore.label[blockName] === undefined) {
+        return(<div key={props.keyV} >
+            <Astyle {...bindTrigger} className="Block" onClick={e => Color(e, labelStore, blockName, playerStore, phaseStore, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
+                <div style={{position:"absolute", "left":"20%", "top":"20%", zIndex:"1"}}>{blockName}</div>
+                <div style={{position:"absolute", top:"0%", left:"0%", width:"100%", height:"100%", display:"flex", flexDirection:"row"}}>
+                    <div style={{display: "block", width:`${40}px`, backgroundColor:"#ffffff"}}></div>
+                </div>
+            </Astyle>
+            <Con bindMenu={bindMenu} bindMenuItems={bindMenuItems} labelStore={labelStore} blockName={blockName} visibleSet={visibleSet} blockStore={blockStore} Out={ghost}/>
+            </div>);    
+    }
+    return(<div key={props.keyV} >
+    <Astyle {...bindTrigger} className="Block" onClick={e => Color(e, labelStore, blockName, playerStore, phaseStore, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
+        <div style={{position:"absolute", "left":"20%", "top":"20%", zIndex:"1"}}>{blockName}</div>
+        <div style={{position:"absolute", top:"0%", left:"0%", width:"100%", height:"100%", display:"flex", flexDirection:"row"}}>
+            {blockStore.label[blockName].map(item => <div style={{display: "block", width:`${0.4*item.pct}px`, backgroundColor:"#cccccc"}}>{item.pct}</div>)}<div style={{display: "block", width:`${0.4*blockStore.left[blockName]}px`, backgroundColor:"#ffffff"}}></div>
+        </div>
+    </Astyle>
+    <Con bindMenu={bindMenu} bindMenuItems={bindMenuItems} labelStore={labelStore} blockName={blockName} visibleSet={visibleSet} blockStore={blockStore} Out={ghost}/>
+    </div>);
+});
 
 export default RangeBlock;

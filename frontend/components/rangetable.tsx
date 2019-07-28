@@ -20,15 +20,10 @@ export default RangeTable;
 
 const Line = styled.div`
     display: flex; width: 80vw;
-    .Block {
-        display: block; width: 40px; height: 30px;
-        border: 1px solid black;
-        text-align: center;
-        padding-top: 10px;
-    }
     .menu {
         background-color: white;
         padding: 3px 3px 3px 3px;
         border: 1px solid black;
+        z-index: 2;
     }
 `;
