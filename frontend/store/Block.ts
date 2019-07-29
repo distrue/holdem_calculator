@@ -1,45 +1,46 @@
 import {createContext} from 'react';
 import {action, observable, computed } from 'mobx';
 
+type labelContent = {
+    label: string;
+    pct: number;
+    color: string;
+};
+interface blockLabel {
+    [key: string]: labelContent[];
+}
+interface blockLeft {
+    [key: string]: number;
+}
 export class Block {
     constructor(props) {
-        if(props.labelRange !== undefined) {
-            console.log(props.labelRange);
-            this.label = {};
-            this.color = {};
-            this.left = {};
-            for(let tar in props.target) {
-                for(let idx in props.labelRange[tar]) {
-                    let blockName = props.labelRange[tar][idx].blockName;
-                    let pct = props.labelRange[tar][idx].pct;
-                    this.color[blockName] = "#f46500";
-                    if(this.label[blockName] === undefined) {
-                        this.label[blockName] = [];
+        this.label = {};
+        this.left = {};
+        if(props.labelStore !== undefined) {
+            for(let nLabel in props.labelStore.data[props.newPlayer][props.newPhase]) {
+                let val = props.labelStore.data[props.newPlayer][props.newPhase][nLabel];
+                // console.log(props.labelStore.labelRange[nLabel].toString());
+                for(let item in props.labelStore.labelRange[val]) {
+                    let cal = props.labelStore.labelRange[val][item];
+                    console.log(cal.blockName, cal.pct, props.labelStore.color[val]);
+                    if(this.label[cal.blockName] === undefined) {
+                        this.label[cal.blockName] = [];
                     }
-                    this.label[blockName].push({label:idx, pct:pct});
-                    if(this.left[blockName] === undefined) {
-                        this.left[blockName] = 100;
+                    this.label[cal.blockName].push({label: val, pct: cal.pct, color: props.labelStore.color[val]});
+                    if(this.left[cal.blockName] === undefined) {
+                        this.left[cal.blockName] = 100;
                     }
-                    this.left[blockName] -= pct;
-                }   
+                    this.left[cal.blockName] -= cal.pct;
+                }
             }
+            // update
         }
         else {
-            console.log("clear");
-            this.label = {};
-            this.left = {};
-            this.color = {};
+            console.log("No Player data");
         }
     }
-    @observable label:object;
-    @observable left:object;
-    @observable color:object;
-    get clear() {
-        return 0;
-    }
-    set clear(props) {
-        this.constructor();
-    }
+    @observable label:blockLabel;
+    @observable left:blockLeft;
 };
 
 export default createContext(new Block({}));

@@ -27,7 +27,23 @@ interface Props {
 }
 const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
 
-const PctBar = ({labelStore, playerStore, phaseStore, blockStore, blockName, bindMenuItems}) => {
+const PctBar = observer(({labelStore, playerStore, phaseStore, blockStore, blockName, bindMenuItems}) => {
+    return(<>{blockStore.label[blockName]?
+        blockStore.label[blockName].map(item => {
+            const pct_range = [25, 50, 75, 100];
+            return(<>
+                <div {...bindMenuItems}>Label{item.label}: {item.pct}%</div>
+                <div {...bindMenuItems}>Pct: 
+                    {pct_range.map(pct => 
+                        <button onClick={e => LabelPatcher.updateLabelPct(pct, labelStore, blockStore, blockName)}>
+                            {pct}
+                        </button>
+                    )}
+                </div>
+                <hr/>
+            </>);
+        })    
+    :""}</>);
     return(<>{labelStore.data[playerStore.now] !== undefined && labelStore.data[playerStore.now] [phaseStore.pnow] !== undefined? 
         labelStore.data[playerStore.now][phaseStore.pnow].map(item => {
             if(labelStore.labelRange[item] === undefined) { return(<></>)}
@@ -47,7 +63,7 @@ const PctBar = ({labelStore, playerStore, phaseStore, blockStore, blockName, bin
             </>);
         })
     :""}</>);
-}
+});
 
 const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visibleSet, blockStore, Out}) => {
     const playerStore = useContext(player);
@@ -86,12 +102,14 @@ const RangeBlock = observer((props: Props) => {
     }
     
     return(<div key={props.keyV} >
-        <StyledBlock {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, playerStore, phaseStore, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
+        <StyledBlock {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 
-                    <div style={{display: "block", width:`${0.4*item.pct}px`, backgroundColor:"#cccccc"}}>{item.pct}</div>
-                )}
+                {
+                    let nColor = item.color || "#cccccc";
+                    return(<div style={{display: "block", width:`${0.4*item.pct}px`, backgroundColor:nColor}}>{item.pct}</div>);
+                })}
                 <div style={{display: "block", width:`${0.4*blockStore.left[blockName]}px`, backgroundColor:"#ffffff"}}></div>
             </div>
         </StyledBlock>

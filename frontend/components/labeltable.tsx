@@ -6,7 +6,7 @@ import phase from '../store/Phase';
 import label from '../store/Label';
 import block from '../store/Block';
 import * as LabelPatcher from '../dispatcher/label';
-
+import * as Refresh from '../dispatcher/refresh';
 
 const LabelTable = observer((props) => {
     const playerStore = useContext(player);
@@ -20,8 +20,7 @@ const LabelTable = observer((props) => {
         <div style={{display:"block", width:"10vw", height:"10vh", fontSize:"3vh", paddingTop:"3vh", fontWeight: "bold"}}>Player</div>
         {playerStore.list.map(item => 
             <div onClick={e => {
-                playerStore.now=item;
-                blockStore.constructor({labelRange: labelStore.labelRange, target:labelStore.data[playerStore.now][phaseStore.pnow]});
+                Refresh.refresh(item, phaseStore.pnow, labelStore, playerStore, phaseStore, blockStore);
             }}
             style={{color:playerStore.now===item?"green":"black"}}
             >
