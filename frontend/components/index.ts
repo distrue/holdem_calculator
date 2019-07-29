@@ -3,4 +3,3 @@ export {default as RangeTable} from './rangetable';
 export {default as HandTable} from './handtable';
 export {default as LabelTable} from './labeltable';
 export {default as SelectCard} from './selectcard';
-export {default as CombiBox} from './combibox';
