@@ -1,105 +1,88 @@
 const Router = require('koa-router');
 const equity = new Router();
 
+// GameResult
+// 1. gameNum    : 전체 게임 횟수
+// 2. playerWin  : player 별 solo win num / draw win num
+// 3. playerHand : player 별 스트레이트 플러시 / 포 카드 / 풀 하우스 / 플러시 / 스트레이트 / 트리플 / 투 페어 / 원 페어 / 탑 개수
+const GameResult = new Object();
+
 function error(content, context) {
   // tslint:disable-next-line: no-console
     console.error(context, content);
 }
 
-function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum, playrange){
-  // const exec = require('child_process').execFile;
-  // const random = exec('./random');
+async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum, playrange){
+  
+  // console.log(3);
+  const cp = require('child_process');
+  const random = cp.spawn('./normal/equity/random');
 
-  const { spawn } = require('child_process');
-  const random = spawn('/Users/autochess/Desktop/holdem/back/holdem_calculator/backend/api/equity/random');  
-
-  function stdin_sharedcard(param1, param2){
-    console.log(param2);
-    param1.stdin.write(param2);
-  }
-  function stdin_playrangenum(param1, param2){
-    console.log(param2);
-    param1.stdin.write(param2);
-  }
-  function stdin_playrange(param1, param2){
-    console.log(param2);
-    param1.stdin.write(param2);
+  // console.log(4);
+  function random_stdin(param1, param2){
+    param1.stdin.write(param2 + '\n');
   }
 
-/*
-  // for test..
-  console.log("Random.exe start..");
-  console.log(time);
-  console.log(playnum);
-  console.log(sharedcardnum);
-  console.log(sharedcard);
-  console.log(playrangenum);
-  console.log(playrange);
-*/
-
-  console.log(time);
-  // time
-  random.stdin.write(time);
-
-  console.log(playnum);
-  // playnum
-  random.stdin.write(playnum);
-
-  console.log(sharedcardnum);
-  // sharedcardnum
-  random.stdin.write(sharedcardnum);
-
-  // sharedcard[i]
-  for(var i = 0; i < sharedcardnum; i++) stdin_sharedcard(random, sharedcard[i]);
-
-  // playrangenum[i]
-  for(var i = 0; i < playnum; i++){
-    stdin_playrangenum(random, playrangenum[i]);
+  // console.log(5);
+  random.stdin.write(time + '\n');
+  random.stdin.write(playnum + '\n');
+  random.stdin.write(sharedcardnum + '\n');
+  for(let i = 0; i < sharedcardnum; i++) random_stdin(random, sharedcard[i]);
+  for(let i = 0; i < playnum; i++){
+    random_stdin(random, playrangenum[i]);
     for(var j = 0; j < playrangenum[i]; j++){
-      for(var t = 0; t < 2; t++) stdin_playrange(random, playrange[i][j][t]);
+      for(var t = 0; t < 2; t++) random_stdin(random, playrange[i][j][t]);
     }
   }
-  // for test..
-  console.log("end..");
-  random.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
+  
+  // console.log(6);
+  await random.stdout.on('data', (data) => {
+
+    const random_out = `${data}`;
+    const result = random_out.split('\n');
+
+    const win = Array(playnum).fill(null).map(() => Array());
+    for(let i = 0; i < playnum; i++){
+      const str = result[i+1];
+      const tmp = str.split(' ');
+      for(let j = 0; j < 2; j++) win[i][j] = tmp[j];
+    }
+
+    const hand = Array(playnum).fill(null).map(() => Array());
+    for(let i = 0; i < playnum; i++){
+      const str = result[i + 1 + playnum];
+      const tmp = str.split(' ');
+      for(let j = 0; j < 9; j++) hand[i][j] = tmp[j];
+    }
+
+    GameResult.gameNum = result[0];
+    GameResult.playerWin = win;
+    GameResult.playerHand = hand;
   });
 };
 
-// for test
-equity.get('/', (ctx, next) => {
-    ctx.body = 'equity';
-});
+async function set_response(ctx){
+  ctx.status = 200;
+  ctx.body = {success: true, GameResult};
+  console.log(ctx.response.body);
+}
 
-equity.post('/', (ctx, next) => {
-  // for test..
-  console.log(ctx.request.body);
+equity.post('/', async ctx => {
+  // console.log(ctx.request.body);
 
-  const playTime = ctx.request.body.playTime;
-  const fixedSharedCardnum = ctx.request.body.fixedSharedCardnum;
+  const playTime = Number(ctx.request.body.playTime);
+  const fixedSharedCardnum = Number(ctx.request.body.fixedSharedCardnum);
   const fixedSharedCard = ctx.request.body.fixedSharedCard;
-  const playernum =  ctx.request.body.playernum;
-  const playerRangenum =  ctx.request.body.playerRangenum;
-  const playerRange =  ctx.request.body.playerRange;
-
-/*
-  // for test
-  console.log("Success..");
-  console.log(playTime);
-  console.log(fixedSharedCardnum);
-  console.log(fixedSharedCard);
-  console.log(playernum);
-  console.log(playerRangenum);
-  console.log(playerRange);
-*/
+  const playernum =  Number(ctx.request.body.playernum);
+  const playerRangenum = ctx.request.body.playerRangenum;
+  const playerRange = ctx.request.body.playerRange;
 
   try {
-    ctx.status = 200;
-    ctx.body = {success: true};
-    next().then(()=> {
-      // calequity(playTime, playernum, fixedSharedCardnum, fixedSharedCard, playerRangenum, playerRange);
-      ctx.status = 200; ctx.body = {playTime, playernum, fixedSharedCardnum, fixedSharedCard, playerRangenum, playerRange};
-    });
+    
+    await calequity(playTime, playernum, fixedSharedCardnum, fixedSharedCard, playerRangenum, playerRange);
+    await setTimeout(function() { 
+      set_response(ctx); 
+    }, playTime * 1050);
   } 
   catch (err) {
     ctx.status = 500;
