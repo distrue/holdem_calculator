@@ -44,25 +44,6 @@ const PctBar = observer(({labelStore, playerStore, phaseStore, blockStore, block
             </>);
         })    
     :""}</>);
-    return(<>{labelStore.data[playerStore.now] !== undefined && labelStore.data[playerStore.now] [phaseStore.pnow] !== undefined? 
-        labelStore.data[playerStore.now][phaseStore.pnow].map(item => {
-            if(labelStore.labelRange[item] === undefined) { return(<></>)}
-            let ans = labelStore.labelRange[item].findIndex(i => i.blockName === blockName);
-            if(ans < 0) { return(<></>)}
-            const pct_range = [25, 50, 75, 100];
-            return(<>
-                <div {...bindMenuItems}>Label{item}: {labelStore.labelRange[item][ans].pct}%</div>
-                <div {...bindMenuItems}>Pct: 
-                    {pct_range.map(pct => 
-                        <button onClick={e => LabelPatcher.updateLabelPct(pct, labelStore, blockStore, blockName)}>
-                            {pct}
-                        </button>
-                    )}
-                </div>
-                <hr/>
-            </>);
-        })
-    :""}</>);
 });
 
 const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visibleSet, blockStore, Out}) => {
@@ -102,7 +83,7 @@ const RangeBlock = observer((props: Props) => {
     }
     
     return(<div key={props.keyV} >
-        <StyledBlock {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "move",border: border,  position:"relative"}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 
