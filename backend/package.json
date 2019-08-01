@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0"
   },
   "devDependencies": {
@@ -17,7 +18,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "ts-node app.ts",
+    "start": "ts-node index.js",
     "swagger": "swagger project edit"
   }
 }

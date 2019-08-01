@@ -14,7 +14,7 @@ using namespace std;
 // 13으로 나눈 나머지 -> 2~10(0~8), J(9), Q(10), K(11), A(12)
 
 double play_time, sum_time;
-int player_num, N, M;
+int player_num, sharedcard_num;
 int all_game_num = 0;
 
 bool input_card[52];
@@ -57,14 +57,12 @@ double result_one_pair_percentage[12];
 double result_top_percentage[12];
 
 void input_time(){
-    printf("Input Play Time(sec)..\n");
-    printf("Recommend Time is 1 sec for Person.\n");
-    printf("More Time = More Accurate\n");
+    // printf("\tInput Play Time(sec): ");
     scanf("%lf", &play_time);
 }
 
 void error_handling(char * str){
-    printf("%s\n", str);
+    // printf("%s\n", str);
     exit(1);
 }
 
@@ -75,134 +73,55 @@ void clear_queue(queue<int> &q){
 
 void init_game(){
     srand((unsigned int)time(0));
-    for(int i = 0; i < 5; i++) shared_card[M] = -1;
+    for(int i = 0; i < 5; i++) shared_card[i] = -1;
     memset(input_card, true, sizeof(input_card));
 }
 
 void init_game_every_cycle(){
     memset(player_hand, 0, sizeof(player_hand));
     memset(check_card, false, sizeof(check_card));
-    for(int i = M; i < 5; i++) shared_card[i] = -1;
-}
-
-void calculate_hand_combo_classify(int tmp_x, int tmp_y, int player){
-    int x = tmp_x % 13; int y = tmp_y % 13;
-    if(x == y){
-        if(x == 12){ // AA
-            player_hand_combo_classify[player][0]++;
-        }
-        else if(x == 11){ // KK
-            player_hand_combo_classify[player][1]++;
-        }
-        else if(x == 10){ // QQ
-            player_hand_combo_classify[player][2]++;
-        }
-        else if(x == 9){ // JJ
-            player_hand_combo_classify[player][3]++;
-        }
-        else if(x == 8){ // TT (10 10)
-            player_hand_combo_classify[player][4]++;
-        }
-        else if(x >= 4){ // 66-99
-            player_hand_combo_classify[player][5]++;
-        }
-        else if(x >= 0){ // 22-55
-            player_hand_combo_classify[player][6]++;
-        }
-        else printf("error detected..\n");
-    }    
-    else{
-        player_hand_combo_classify[player][9]++;
-        if(x > y){
-            if(x == 12){ // ace_high
-                player_hand_combo_classify[player][7]++;
-            }
-            else{ // no made hand
-                player_hand_combo_classify[player][8]++;
-            }
-        }
-        else{ // x < y
-            if(y == 12){ // ace_high
-                player_hand_combo_classify[player][7]++;
-            }
-            else{ // no made hand
-                player_hand_combo_classify[player][8]++;
-            }
-        }
-    }
-}
-
-void make_pair_in_hand(int x, int y, int player, bool * input){
-    if(x == y){ // 숫자가 같음 (6 hand combo)
-        // (if ...) for dead card counting.. (or shared card)
-        for(int i = 0; i < 4; i++){
-            for(int j = i+1; j < 4; j++){
-                int tmp_x = x + 13 * i, tmp_y = y + 13 * j;
-                if(input[tmp_x] == true && input[tmp_y] == true){
-                    player_pair[player].push_back(make_pair(tmp_x, tmp_y));
-                    calculate_hand_combo_classify(tmp_x, tmp_y, player);
-                }
-            }
-        }
-    }
-    else{
-        if(x > y){ // 문양이 같음 (4 hand combo)
-            for(int i = 0; i < 4; i++){
-                int tmp_x = x + 13 * i, tmp_y = y + 13 * i;
-                if(input[tmp_x] == true && input[tmp_y] == true){
-                    player_pair[player].push_back(make_pair(tmp_x, tmp_y));
-                    calculate_hand_combo_classify(tmp_x, tmp_y, player);
-                }
-            }
-        }
-        else{ // 문양이 다름 (12 hand combo) (x, y) 로 입력이 들어오지만 실제로는 (y, x) 로 따져야 함
-            for(int i = 0; i < 4; i++){
-                for(int j = 0; j < 4; j++){
-                    if(i == j) continue;
-                    
-                    int tmp_x = x + 13 * i, tmp_y = y + 13 * j;
-                    if(input[tmp_x] == true && input[tmp_y] == true){
-                        player_pair[player].push_back(make_pair(tmp_y, tmp_x));
-                        calculate_hand_combo_classify(tmp_x, tmp_y, player);
-                    }
-                }
-            }
-        }
-    }
+    for(int i = sharedcard_num; i < 5; i++) shared_card[i] = -1;
 }
 
 void input_cards(){
-    printf("Input Player number / M(shared card number)\n");
-    scanf("%d%d", &player_num, &M);
-    printf("Input M shared cards..\n");
-    for(int i = 0; i < M; i++){
-        int x; scanf("%d", &x);
+    // printf("\tInput Player number: ");
+    scanf("%d", &player_num);
+    // printf("\tInput Fixed Shared Card number: ");
+    scanf("%d", &sharedcard_num);
+    // printf("\tInput Fixed Shared cards.\n");
+    for(int i = 0; i < sharedcard_num; i++){
+        int x; printf("\t  "); scanf("%d", &x);
         shared_card[i] = x;
         input_card[x] = false; // shared card not counted in hand combo
     }
-    for(int i = 1; i <= player_num; i++){
+    // puts("");
+
+    for(int i = 0; i < player_num; i++){
         int player_range_number;
-        printf("Input player %d range number..\n", i);
+        // printf("\tInput player %d range number: ", i+1);
         scanf("%d", &player_range_number);
-        player_range_num[i-1] = player_range_number;
 
         if(player_range_number == 0){ // 0 == 전부 선택 (for test 편의)
-            for(int x = 0; x < 13; x++){
-                for(int y = 0; y < 13; y++){
-                    make_pair_in_hand(x, y, i-1, input_card);
+            for(int x = 51; x >= 0; x--){
+                for(int y = x-1; y >= 0; y--){
+                    if(input_card[x] == false || input_card[y] == false) continue;
+                    player_pair[i].push_back(make_pair(x, y));
                 }
             }
         }
         else{
-            printf("Input player %d's range..\n", i);
+            // printf("\tInput player %d's hand range. \n", i+1);
             for(int j = 0; j < player_range_number; j++){
                 int x, y; scanf("%d%d", &x, &y);
-                make_pair_in_hand(x, y, i-1, input_card);
+                // printf("\t  "); 
+                if(input_card[x] == false || input_card[y] == false) continue;
+                if(x < y) swap(x, y); // must be x > y
+                player_pair[i].push_back(make_pair(x, y));
             }
         }
+        player_range_num[i] = player_pair[i].size();
     }
 }
-
 
 void player_ordering(){
     int tmp[12];
@@ -223,9 +142,7 @@ void player_ordering(){
 }
 
 void calculate_hand_combo(){ // 각 player의 hand combo 계산
-    for(int i = 0; i < player_num; i++){
-        player_hand_combo[i] = player_pair[i].size();
-    }
+    for(int i = 0; i < player_num; i++) player_hand_combo[i] = player_pair[i].size();
 }
 
 // 각 player 에게 card 2장씩 분배 && hand combo check
@@ -236,13 +153,15 @@ void Monte_Carlo_person(){
         int now = player_order[i]; // i -> player_order[i] (now)
 
         int num = player_hand_combo[now];
+        if(num == 0) error_handling("\t[Error] Impossible Range Setting\n");
         int now_rand = rand() % num;
+
         int now1 = player_pair[now][now_rand].first;
         int now2 = player_pair[now][now_rand].second;
         if(now1 < now2) swap(now1, now2);
 
         double spending = (double)(clock() - check_time);
-        if(spending > 300) error_handling("[Error] Impossible Range Setting\n");
+        if(spending > 300) error_handling("\t[Error] Impossible Range Setting\n");
 
         if(input_card[now1] == false || check_card[now1] == true || input_card[now2] == false || check_card[now2] == true){
             i--; continue;
@@ -255,7 +174,7 @@ void Monte_Carlo_person(){
 
 // 공유 카드 5 - M 장 저장 (random 한 정수), hand combo 에 영향 x!!!
 void Monte_Carlo_shared(){
-    for(int i = M; i < 5; i++){
+    for(int i = sharedcard_num; i < 5; i++){
         int now = rand() % 52;
 
         if(input_card[now] == false || check_card[now] == true){
@@ -579,8 +498,11 @@ int check_hand(int * player_hand, int player){
     return result; // 가장 높은 패 숫자 반환
 }
 
-void percentage_calculate(){
+void print_player_hand_combo(){
+    for(int i = 0; i < player_num; i++) printf("  [ player %d Hand combo ]: %d\n", i+1, player_hand_combo[i]);
+}
 
+void print_percentage_calculate(){
     for(int i = 0; i < player_num; i++){
         double solo_win_ratio = ((double)player_solo_win[i] / (double)all_game_num) * 100;
         double draw_win_ratio = (player_draw_win[i] / (double) all_game_num) * 100;
@@ -594,7 +516,7 @@ void percentage_calculate(){
 
 // 만들어지는 hand 퍼센티지 체크
 // 스티플 > 포카드 > 풀하우스 > 플러쉬 > 스트레이트 > 트리플 > 투페어 > 원페어 > 탑
-void made_hand_percentage(){
+void print_made_hand_percentage(){
     for(int i = 0; i < player_num; i++){
         result_straight_flush_percentage[i] = (double) result_straight_flush_num[i] / all_game_num * 100;
         result_four_card_percentage[i] = (double) result_four_card_num[i] / all_game_num * 100;
@@ -628,17 +550,17 @@ void made_hand_percentage(){
 
 int main()
 {
-    printf("Poker Game\n\n");
+    // printf("\n  * Holdem Game *\n\n");
     init_game();
     input_time();
     input_cards(); // dead card, 정해진 shared card, hand range 입력
     player_ordering(); // range num 기준 순서 정하기 (먼저 hand 배분할 순서)
     calculate_hand_combo(); // dead card 가 전부 주어졌으므로 hand combo 수 계산 가능
 
-    printf("counting...\n\n");
+    printf("\n  counting...\n\n");
     sum_time = 0;
     while(1){
-        if(sum_time >= play_time) break;
+        if(sum_time >= play_time) break; 
         clock_t start_time = clock();
         all_game_num++;
 
@@ -697,7 +619,8 @@ int main()
         clock_t end_time = clock();
         sum_time += (end_time / CLOCKS_PER_SEC) - (start_time / CLOCKS_PER_SEC);
     }
-    percentage_calculate();
-    made_hand_percentage();
+    print_player_hand_combo();
+    print_percentage_calculate();
+    print_made_hand_percentage();
     return 0;
 }
