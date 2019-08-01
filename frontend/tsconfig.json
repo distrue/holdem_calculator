@@ -4,6 +4,7 @@
       "target": "esnext",
       "jsx": "preserve",
       "sourceMap": false,
+      "experimentalDecorators": true,
       "moduleResolution": "node"
     },
     "include": [
