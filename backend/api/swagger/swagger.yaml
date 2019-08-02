@@ -44,21 +44,43 @@ definitions:
       gameNum:
         type: integer
         description: 전체 게임 횟수
-      playerWin:
-        type: array
-        items:
-          type: array
-          items:
+      playerResult:
+        type: object
+        properties:
+          soloWin:
             type: integer
-            description: "[N][0] -> N+1 번째 플레이어가 홀로 이긴 횟수 [N][0] -> N+1 번째 플레이어가 동시에 이긴 횟수"
-      playerHand:
-        type: array
-        items:
-          type: array
-          items:
+            description: 해당 플레이어의 단독 승리 횟수
+          drawWin:
+            type: number
+            description: 해당 플레이어를 포함한 두 명 이상이 동시에 이긴 횟수
+          straightflush:
             type: integer
-            description: "[N][0] -> N+1 번째 플레이어의 가장 높은 패가 스트레이트 플러시인 횟수 [N][1] -> ( 동일 ) 포카드인 횟수 [N][1] -> ( 동일 ) 풀하우스인 횟수 [N][1] -> ( 동일 ) 플러시인 횟수 [N][1] -> ( 동일 ) 스트레이트인 횟수 [N][1] -> ( 동일 ) 트리플인 횟수 [N][1] -> ( 동일 ) 투 페어인 횟수 [N][1] -> ( 동일 ) 원 페어인 횟수 [N][1] -> ( 동일 ) 탑인 횟수"
-  
+            description: 해당 플레이어의 최상위 패가 스트레이트 플러시인 게임의 수
+          fourcard:
+            type: integer
+            description: 해당 플레어의 최상위 패가 포카드인 게임의 수
+          fullhouse:
+            type: integer
+            description: 해당 플레어의 최상위 패가 풀하우스인 게임의 수
+          flush:
+            type: integer
+            description: 해당 플레어의 최상위 패가 플러시인 게임의 수
+          straight:
+            type: integer
+            description: 해당 플레어의 최상위 패가 스트레이트인 게임의 수
+          triple:
+            type: integer
+            description: 해당 플레어의 최상위 패가 트리플인 게임의 수
+          twopair:
+            type: integer
+            description: 해당 플레어의 최상위 패가 투 페어인 게임의 수
+          onepair:
+            type: integer
+            description: 해당 플레어의 최상위 패가 원 페어인 게임의 수
+          top:
+            type: integer
+            description: 해당 플레어의 최상위 패가 탑인 게임의 수
+            
 parameters:
 
   Type_Urlencoded:
