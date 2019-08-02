@@ -35,6 +35,7 @@ async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum,
     }
   }
   
+  const playerlist = new Array();
   // console.log(6);
   await random.stdout.on('data', (data) => {
 
@@ -55,9 +56,25 @@ async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum,
       for(let j = 0; j < 9; j++) hand[i][j] = tmp[j];
     }
 
+    const playresult = new Array();
+    for(let i = 0; i < playnum; i++){
+      const playerresult = new Object();
+      playerresult.soloWin = win[i][0];
+      playerresult.drawWin = win[i][1];
+      playerresult.straightflush = hand[i][0];
+      playerresult.fourcard = hand[i][1];
+      playerresult.fullhouse = hand[i][2];
+      playerresult.flush = hand[i][3];
+      playerresult.straight = hand[i][4];
+      playerresult.triple = hand[i][5];
+      playerresult.twopair = hand[i][6];
+      playerresult.onepair = hand[i][7];
+      playerresult.top = hand[i][8];
+      playresult.push(playerresult);
+    }
+
     GameResult.gameNum = result[0];
-    GameResult.playerWin = win;
-    GameResult.playerHand = hand;
+    GameResult.playerResult = playresult;
   });
 };
 
