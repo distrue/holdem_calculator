@@ -9,127 +9,110 @@ tags:
     description: "on progress"
     
 paths:
-            
-  /api/equity:
+  /normal/equity:
     post:
       summary: "Send Game Infomation"
       produces:
         - application/json
       parameters:
-        - $ref: "#/parameters/gameinfo"
+        - $ref: "#/parameters/Type_Urlencoded"
+        - $ref: "#/parameters/playTime"
+        - $ref: "#/parameters/fixedSharedCardnum"
+        - $ref: "#/parameters/fixedSharedCard"
+        - $ref: "#/parameters/playernum"
+        - $ref: "#/parameters/playerRangenum"
+        - $ref: "#/parameters/playerRange"
+        
       responses:
         200:
           description: "return {success: true}"
     get:
-      summary: "Calculate Equity (by Game Info)"
+      summary: "Calculate Equity & Hand (by Fixed Game Info)"
       produces:
         - application/json
       responses:
         200:
-          description: "return {success: true, equityList}"
+          description: "return { GameResult }"
           schema:
-            $ref: "#/definitions/equityList"
+            $ref: "#/definitions/GameResult"
 
-  /api/handcombo:
-    post:
-      summary: "Send Game Infomation"
-      produces:
-        - application/json
-      responses:
-        200:
-          description: "return {success: true}"
-    get:
-      summary: "Calculate Handcombo (by Game Info)"
-      produces:
-        - application/json
-      responses:
-        200:
-          description: "return {success: true, handcomboList}"
-          schema:
-            $ref: "#/definitions/handcomboList"
           
 definitions:
-  gameinfo:
+  GameResult:
     type: object
     properties:
-      playTime:
+      gameNum:
         type: integer
-        description: 실행 시간
-      fixedSharedCardnum:
-        type: integer
-        description: 고정된 공유 카드 숫자
-      # [1, 2, 3, 4, 5]
-      fixedSharedCard:
-        type: array
-        items: 
-          type: integer
-        description: 정해진 공유 카드 (0~5장)
-      playernum:
-        type: integer
-        description: 참가자 숫자
-      playerRangenum:
-        type: array
-        items:
-          type: integer
-        description: 참가자별 range 에 포함되는 hand 수
-      # [(player 1 range)[[13, 13], [12, 12], ...], (player 2 range)[...], [...], ...]
-      playerRange:
+        description: 전체 게임 횟수
+      playerWin:
         type: array
         items:
           type: array
           items:
-            type: array
-            items:
-              type: integer
-        description: 참가자별 hand range
-      
-  equity:
-    type: object
-    properties:
-      player:
-        type: integer
-        description: N번째 참가자
-      soloWinRate:
-        type: number
-        description: 혼자 이긴 승리 비율
-      doubleWinRate:
-        type: number
-        description: 두 명 이상 동시 승리 비율
-      StraightFlushRatio:
-        type: number
-      FourCardRatio:
-        type: number
-      FullHouseRatio:
-        type: number
-      StraightRatio:
-        type: number
-      TripleRatio:
-        type: number
-      TwoPairRatio:
-        type: number
-      OnePairRatio:
-        type: number
-      TopRatio:
-        type: number
-  handcombo:
-    type: object
-    properties:
-      player:
-        type: integer
-  equityList:
-    type: array
-    items:
-      $ref: "#/definitions/equity"
-  handcomboList:
-    type: array
-    items:
-      $ref: "#/definitions/handcombo"
+            type: integer
+            description: "[N][0] -> N+1 번째 플레이어가 홀로 이긴 횟수 [N][0] -> N+1 번째 플레이어가 동시에 이긴 횟수"
+      playerHand:
+        type: array
+        items:
+          type: array
+          items:
+            type: integer
+            description: "[N][0] -> N+1 번째 플레이어의 가장 높은 패가 스트레이트 플러시인 횟수 [N][1] -> ( 동일 ) 포카드인 횟수 [N][1] -> ( 동일 ) 풀하우스인 횟수 [N][1] -> ( 동일 ) 플러시인 횟수 [N][1] -> ( 동일 ) 스트레이트인 횟수 [N][1] -> ( 동일 ) 트리플인 횟수 [N][1] -> ( 동일 ) 투 페어인 횟수 [N][1] -> ( 동일 ) 원 페어인 횟수 [N][1] -> ( 동일 ) 탑인 횟수"
   
 parameters:
-  gameinfo:
-    name: 실행시간 / 정해진 공유카드 / 플레이어별 hand range
-    in: formData
-    schema:
-      $ref: "#/definitions/gameinfo"
-    description: Fixed Game Info
+
+  Type_Urlencoded:
+    name: Content-Type
+    in: header
+    type: string
+    required: true
+    description: (must be) application/x-www-form-urlencoded
     
+  playTime:
+    name: playTime
+    in: formData
+    type: integer
+    required: true
+    description: 실행 시간(초)
+  fixedSharedCardnum:
+    name: fixedSharedCardnum
+    in: formData
+    type: integer
+    required: true
+    description: 고정된 공유 카드 수
+  # [1, 2, 3, 4, 5]
+  fixedSharedCard:
+    name: fixedSharedCard
+    in: formData
+    type: array
+    items:
+      type: integer
+    required: true
+    description: 정해진 공유 카드(0~5장)
+  playernum:
+    name: playernum
+    in: formData
+    type: integer
+    required: true
+    description: 참가자 수
+  playerRangenum:
+    name: playerRangenum
+    in: formData
+    type: array
+    items:
+      type: integer
+    required: true
+    description: 참가자별 range 에 포함되는 pair 수
+  # [(player 1 range)[[13, 13], [12, 12], ...], (player 2 range)[...], [...], ...]
+  playerRange:
+    name: playerRange
+    in: formData
+    type: array
+    items:
+      type: array
+      items:
+        type: array
+        items:
+          type: integer
+    required: true
+    description: 참가자별 hand range
