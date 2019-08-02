@@ -61,12 +61,6 @@ async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum,
   });
 };
 
-async function set_response(ctx){
-  ctx.status = 200;
-  ctx.body = {success: true, GameResult};
-  console.log(ctx.response.body);
-}
-
 equity.post('/', async ctx => {
   // console.log(ctx.request.body);
 
@@ -78,11 +72,9 @@ equity.post('/', async ctx => {
   const playerRange = ctx.request.body.playerRange;
 
   try {
-    
     await calequity(playTime, playernum, fixedSharedCardnum, fixedSharedCard, playerRangenum, playerRange);
-    await setTimeout(function() { 
-      set_response(ctx); 
-    }, playTime * 1050);
+    ctx.status = 200;
+    ctx.body = {success: true};
   } 
   catch (err) {
     ctx.status = 500;
@@ -91,4 +83,15 @@ equity.post('/', async ctx => {
   }
 });
 
+equity.get('/', async ctx => {
+  try {
+    ctx.status = 200;
+    ctx.body = GameResult;
+  } 
+  catch (err) {
+    ctx.status = 500;
+    ctx.body = {success: false}; 
+    error(err, 'GET /api/equity');
+  }
+});
 module.exports = equity;
