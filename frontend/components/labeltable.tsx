@@ -18,17 +18,37 @@ const LabelTable = observer((props) => {
     let phaselist = ["preflop", "flop", "turn", "river"];
     return(<div style={style}>
         <div style={{display:"block", width:"10vw", height:"10vh", fontSize:"3vh", paddingTop:"3vh", fontWeight: "bold"}}>Player</div>
-        {playerStore.list.map(item => 
+        {playerStore.list.map(Nplayer => 
             <div onClick={e => {
-                Refresh.refresh(item, phaseStore.pnow, labelStore, playerStore, phaseStore, blockStore);
-            }}
-            style={{color:playerStore.now===item?"green":"black"}}
+                    Refresh.refresh(Nplayer, phaseStore.pnow, labelStore, playerStore, phaseStore, blockStore);
+                }}
+            style={{cursor: "pointer", color:playerStore.now===Nplayer?"green":"black", display: "flex", flexDirection:"row"}}
             >
-                Player {item}
+                Player {Nplayer}
+                {/* Naming recheck needed */}
+                <div style={{marginLeft:"10px", display: "flex", flexDirection:"row"}}>
+                    {labelStore.data[Nplayer]!==undefined && 
+                    labelStore.data[Nplayer][phaseStore.pnow] !== undefined ?
+                        labelStore.data[Nplayer][phaseStore.pnow].map(Nlabel => {
+                            console.log("K: " + playerStore.useLabel[Nplayer]);
+                            if(playerStore.useLabel[Nplayer] === undefined) {
+                                return(<>{Nlabel} undefined</>);
+                            }
+                            const val = playerStore.useLabel[Nplayer].findIndex(idx => idx === Nlabel);
+                            if(val >= 0) {
+                                return (<button style={{backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.useLabel[Nplayer].splice(val, 1)}>{Nlabel}-</button>);
+                            }
+                            else {
+                                return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.useLabel[Nplayer].push(Nlabel)}>{Nlabel}+</button>);
+                            }
+                        })
+                    :""}
+                </div>
             </div>
         )}
         <button onClick={e => {
             playerStore.list.push((playerStore.list.length+1).toString());
+            playerStore.useLabel[(playerStore.list.length).toString()] = [];
             labelStore.data[(playerStore.list.length).toString()] = {};
             console.log((playerStore.list.length).toString(), playerStore.list.toString());
         }}>New User</button>
@@ -36,14 +56,23 @@ const LabelTable = observer((props) => {
         
         <div>Now Player: {playerStore.now}</div>
         {phaselist.map(Iphase => {
+
             return(<> 
                 {Iphase}:
                 {(labelStore.data[playerStore.now] && labelStore.data[playerStore.now][Iphase])?
-                labelStore.data[playerStore.now][Iphase].map(item => <>
-                    <div onClick={e => labelStore.now = item} style={{border:"1px solid black"}}>
-                        {item}
-                    </div>
-                </>)
+                labelStore.data[playerStore.now][Iphase].map(item => {
+                    if(Iphase === phaseStore.pnow) {
+                        const Ncolor = labelStore.color[item];
+                        return(<div onClick={e => labelStore.now = item} style={{backgroundColor: Ncolor, cursor: "pointer", border:"1px solid black"}}>
+                            {item}
+                        </div>);
+                    }
+                    else {
+                        return(<div style={{backgroundColor: "#444444", border:"1px solid black"}}>
+                            {item}
+                        </div>);
+                    }
+                })
                 :""}<br/>
             </>);
         })}

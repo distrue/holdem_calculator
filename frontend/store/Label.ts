@@ -9,7 +9,9 @@ export class Label {
         this.color = {};
     }
     @observable data:object;
+    // labelStore.data[User][Phase] = [(labels),];
     @observable labelRange:object;
+    // labelRange[labelNum] = [{blockName: blockName, pct:50}, ];
     @observable total:number;
     @observable now:number;
     @observable color:object;

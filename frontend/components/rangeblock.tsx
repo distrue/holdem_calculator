@@ -26,13 +26,24 @@ interface Props {
     keyV: string;
 }
 const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
-
+const manValid = (e, val, idx, blockStore, blockName) => {
+    const fval = parseInt(val);
+    if(e.key === 'Enter') {
+        if(fval !== undefined) {
+            if(fval <= 100 && fval >= 0) {
+                blockStore.label[blockName][idx].pct = fval;
+            }
+        }
+    }
+}
 const PctBar = observer(({labelStore, playerStore, phaseStore, blockStore, blockName, bindMenuItems}) => {
+    const manPct = useState(0);
     return(<>{blockStore.label[blockName]?
-        blockStore.label[blockName].map(item => {
+        blockStore.label[blockName].map((item, idx) => {
             const pct_range = [25, 50, 75, 100];
             return(<>
                 <div {...bindMenuItems}>Label{item.label}: {item.pct}%</div>
+                Now: &nbsp; {item.pct} &nbsp; <br/> 
                 <div {...bindMenuItems}>Pct: 
                     {pct_range.map(pct => 
                         <button onClick={e => LabelPatcher.updateLabelPct(pct, labelStore, blockStore, blockName)}>
@@ -40,6 +51,7 @@ const PctBar = observer(({labelStore, playerStore, phaseStore, blockStore, block
                         </button>
                     )}
                 </div>
+                Manually: &nbsp; <input style={{width:"50px"}} onChange={e => manPct[1](e.target.value)} onKeyPress={e => manValid(e, manPct[0], idx, blockStore, blockName)} placeholder="pct"/>%<br/>
                 <hr/>
             </>);
         })    
@@ -83,7 +95,7 @@ const RangeBlock = observer((props: Props) => {
     }
     
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "move",border: border,  position:"relative"}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 

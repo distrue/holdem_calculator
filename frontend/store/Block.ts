@@ -16,7 +16,7 @@ export class Block {
     constructor(props) {
         this.label = {};
         this.left = {};
-        if(props.labelStore !== undefined) {
+        if(props.labelStore !== undefined && props.labelStore.data[props.newPlayer] !== undefined) {
             for(let nLabel in props.labelStore.data[props.newPlayer][props.newPhase]) {
                 let val = props.labelStore.data[props.newPlayer][props.newPhase][nLabel];
                 // console.log(props.labelStore.labelRange[nLabel].toString());
