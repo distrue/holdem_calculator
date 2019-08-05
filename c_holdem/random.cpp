@@ -90,7 +90,7 @@ void input_cards(){
     scanf("%d", &sharedcard_num);
     // printf("\tInput Fixed Shared cards.\n");
     for(int i = 0; i < sharedcard_num; i++){
-        int x; printf("\t  "); scanf("%d", &x);
+        int x; scanf("%d", &x);
         shared_card[i] = x;
         input_card[x] = false; // shared card not counted in hand combo
     }
@@ -214,107 +214,109 @@ int thirteen_multi(int n){ // 13^n 반환
     return x;
 }
 
+/*
 // for testing..
-void hand_7_check(int * hand){
-    int num[7], pattern[7];
-    for(int i = 0; i < 7; i++){
-        num[i] = hand[i] % 13; pattern[i] = hand[i] / 13;
+    void hand_7_check(int * hand){
+        int num[7], pattern[7];
+        for(int i = 0; i < 7; i++){
+            num[i] = hand[i] % 13; pattern[i] = hand[i] / 13;
+        }
+
+        for(int i = 0; i < 7; i++){
+            if(num[i] <= 8){
+                if(pattern[i] == 0) printf("%d: Spade / %d    ", hand[i], num[i]+2);
+                else if(pattern[i] == 1) printf("%d: Heart / %d    ", hand[i], num[i]+2);
+                else if(pattern[i] == 2) printf("%d: Diamond / %d    ", hand[i], num[i]+2);
+                else if(pattern[i] == 3) printf("%d: Club / %d    ", hand[i], num[i]+2);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 9){
+                if(pattern[i] == 0) printf("%d: Spade / J    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / J    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / J    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / J    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 10){
+                if(pattern[i] == 0) printf("%d: Spade / Q    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / Q    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / Q    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / Q    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 11){
+                if(pattern[i] == 0) printf("%d: Spade / K    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / K    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / K    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / K    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 12){
+                if(pattern[i] == 0) printf("%d: Spade / A    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / A    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / A    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / A    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else printf("error detected..\n");
+        }
+        puts("");
     }
 
-    for(int i = 0; i < 7; i++){
-        if(num[i] <= 8){
-            if(pattern[i] == 0) printf("%d: Spade / %d    ", hand[i], num[i]+2);
-            else if(pattern[i] == 1) printf("%d: Heart / %d    ", hand[i], num[i]+2);
-            else if(pattern[i] == 2) printf("%d: Diamond / %d    ", hand[i], num[i]+2);
-            else if(pattern[i] == 3) printf("%d: Club / %d    ", hand[i], num[i]+2);
-            else printf("error detected...\n");
+    // for testing..
+    void hand_check(int * hand, int * pattern, int * num, int make){
+        if(make == 1) printf("Straight Flush!!!\n");
+        else if(make == 2) printf("Four Card!!!\n");
+        else if(make == 3) printf("Full House!!!\n");
+        else if(make == 4) printf("Flush!!!\n");
+        else if(make == 5) printf("Straight!!!\n");
+        else if(make == 6) printf("Triple!!!\n");
+        else if(make == 7) printf("Two Pair!!!\n");
+        else if(make == 8) printf("One Pair!!\n");
+        else if(make == 9) printf("Top!\n");
+        else printf("error detected.. (in hand check func)\n");
+        
+        for(int i = 0; i < 5; i++){
+            if(num[i] <= 8){
+                if(pattern[i] == 0) printf("%d: Spade / %d    ", hand[i], num[i]+2);
+                else if(pattern[i] == 1) printf("%d: Heart / %d    ", hand[i], num[i]+2);
+                else if(pattern[i] == 2) printf("%d: Diamond / %d    ", hand[i], num[i]+2);
+                else if(pattern[i] == 3) printf("%d: Club / %d    ", hand[i], num[i]+2);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 9){
+                if(pattern[i] == 0) printf("%d: Spade / J    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / J    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / J    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / J    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 10){
+                if(pattern[i] == 0) printf("%d: Spade / Q    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / Q    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / Q    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / Q    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 11){
+                if(pattern[i] == 0) printf("%d: Spade / K    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / K    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / K    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / K    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else if(num[i] == 12){
+                if(pattern[i] == 0) printf("%d: Spade / A    ", hand[i]);
+                else if(pattern[i] == 1) printf("%d: Heart / A    ", hand[i]);
+                else if(pattern[i] == 2) printf("%d: Diamond / A    ", hand[i]);
+                else if(pattern[i] == 3) printf("%d: Club / A    ", hand[i]);
+                else printf("error detected...\n");
+            }
+            else printf("error detected..\n");
         }
-        else if(num[i] == 9){
-            if(pattern[i] == 0) printf("%d: Spade / J    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / J    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / J    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / J    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 10){
-            if(pattern[i] == 0) printf("%d: Spade / Q    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / Q    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / Q    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / Q    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 11){
-            if(pattern[i] == 0) printf("%d: Spade / K    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / K    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / K    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / K    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 12){
-            if(pattern[i] == 0) printf("%d: Spade / A    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / A    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / A    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / A    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else printf("error detected..\n");
+        puts("");
     }
-    puts("");
-}
-
-// for testing..
-void hand_check(int * hand, int * pattern, int * num, int make){
-    if(make == 1) printf("Straight Flush!!!\n");
-    else if(make == 2) printf("Four Card!!!\n");
-    else if(make == 3) printf("Full House!!!\n");
-    else if(make == 4) printf("Flush!!!\n");
-    else if(make == 5) printf("Straight!!!\n");
-    else if(make == 6) printf("Triple!!!\n");
-    else if(make == 7) printf("Two Pair!!!\n");
-    else if(make == 8) printf("One Pair!!\n");
-    else if(make == 9) printf("Top!\n");
-    else printf("error detected.. (in hand check func)\n");
-    
-    for(int i = 0; i < 5; i++){
-        if(num[i] <= 8){
-            if(pattern[i] == 0) printf("%d: Spade / %d    ", hand[i], num[i]+2);
-            else if(pattern[i] == 1) printf("%d: Heart / %d    ", hand[i], num[i]+2);
-            else if(pattern[i] == 2) printf("%d: Diamond / %d    ", hand[i], num[i]+2);
-            else if(pattern[i] == 3) printf("%d: Club / %d    ", hand[i], num[i]+2);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 9){
-            if(pattern[i] == 0) printf("%d: Spade / J    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / J    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / J    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / J    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 10){
-            if(pattern[i] == 0) printf("%d: Spade / Q    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / Q    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / Q    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / Q    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 11){
-            if(pattern[i] == 0) printf("%d: Spade / K    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / K    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / K    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / K    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else if(num[i] == 12){
-            if(pattern[i] == 0) printf("%d: Spade / A    ", hand[i]);
-            else if(pattern[i] == 1) printf("%d: Heart / A    ", hand[i]);
-            else if(pattern[i] == 2) printf("%d: Diamond / A    ", hand[i]);
-            else if(pattern[i] == 3) printf("%d: Club / A    ", hand[i]);
-            else printf("error detected...\n");
-        }
-        else printf("error detected..\n");
-    }
-    puts("");
-}
+*/
 
 // 5장으로 만들 수 있는 조합 만드는 함수
 // 패 강함에 따라 숫자 부여, 대소관계로 패 비교
@@ -498,54 +500,74 @@ int check_hand(int * player_hand, int player){
     return result; // 가장 높은 패 숫자 반환
 }
 
-void print_player_hand_combo(){
-    for(int i = 0; i < player_num; i++) printf("  [ player %d Hand combo ]: %d\n", i+1, player_hand_combo[i]);
-}
+/*
+    // for test..
+    void print_player_hand_combo(){
+        for(int i = 0; i < player_num; i++) printf("  [ player %d Hand combo ]: %d\n", i+1, player_hand_combo[i]);
+    }
+*/
 
-void print_percentage_calculate(){
-    for(int i = 0; i < player_num; i++){
-        double solo_win_ratio = ((double)player_solo_win[i] / (double)all_game_num) * 100;
-        double draw_win_ratio = (player_draw_win[i] / (double) all_game_num) * 100;
-        result_win_percentage[i] = solo_win_ratio + draw_win_ratio;
+/*
+    // for test..
+    void print_percentage_calculate(){
+        for(int i = 0; i < player_num; i++){
+            double solo_win_ratio = ((double)player_solo_win[i] / (double)all_game_num) * 100;
+            double draw_win_ratio = (player_draw_win[i] / (double) all_game_num) * 100;
+            result_win_percentage[i] = solo_win_ratio + draw_win_ratio;
+            
+            printf("\n  [ player %d Equity ]\n", i+1);
+            printf("\t %.2f%% ( 1 win: %.2f%% / 2 or more win: %.2f%% )\n", result_win_percentage[i], solo_win_ratio, draw_win_ratio);
+        }
+        puts("");
+    }
+
+    // 만들어지는 hand 퍼센티지 체크
+    // 스티플 > 포카드 > 풀하우스 > 플러쉬 > 스트레이트 > 트리플 > 투페어 > 원페어 > 탑
+    void print_made_hand_percentage(){
+        for(int i = 0; i < player_num; i++){
+            result_straight_flush_percentage[i] = (double) result_straight_flush_num[i] / all_game_num * 100;
+            result_four_card_percentage[i] = (double) result_four_card_num[i] / all_game_num * 100;
+            result_full_house_percentage[i] = (double) result_full_house_num[i] / all_game_num * 100;
+            result_flush_percentage[i] = (double) result_flush_num[i] / all_game_num * 100;
+            result_straight_percentage[i] = (double) result_straight_num[i] / all_game_num * 100;
+            result_triple_percentage[i] = (double) result_triple_num[i] / all_game_num * 100;
+            result_two_pair_percentage[i] = (double) result_two_pair_num[i] / all_game_num * 100;
+            result_one_pair_percentage[i] = (double) result_one_pair_num[i] / all_game_num * 100;
+            result_top_percentage[i] = (double) result_top_num[i] / all_game_num * 100;
+        }
         
-        printf("\n  [ player %d Equity ]\n", i+1);
-        printf("\t %.2f%% ( 1 win: %.2f%% / 2 or more win: %.2f%% )\n", result_win_percentage[i], solo_win_ratio, draw_win_ratio);
-    }
-    puts("");
-}
-
-// 만들어지는 hand 퍼센티지 체크
-// 스티플 > 포카드 > 풀하우스 > 플러쉬 > 스트레이트 > 트리플 > 투페어 > 원페어 > 탑
-void print_made_hand_percentage(){
-    for(int i = 0; i < player_num; i++){
-        result_straight_flush_percentage[i] = (double) result_straight_flush_num[i] / all_game_num * 100;
-        result_four_card_percentage[i] = (double) result_four_card_num[i] / all_game_num * 100;
-        result_full_house_percentage[i] = (double) result_full_house_num[i] / all_game_num * 100;
-        result_flush_percentage[i] = (double) result_flush_num[i] / all_game_num * 100;
-        result_straight_percentage[i] = (double) result_straight_num[i] / all_game_num * 100;
-        result_triple_percentage[i] = (double) result_triple_num[i] / all_game_num * 100;
-        result_two_pair_percentage[i] = (double) result_two_pair_num[i] / all_game_num * 100;
-        result_one_pair_percentage[i] = (double) result_one_pair_num[i] / all_game_num * 100;
-        result_top_percentage[i] = (double) result_top_num[i] / all_game_num * 100;
-    }
-    
-    // for testing...
-    for(int i = 0; i < player_num; i++){
-        printf("\n  [ player %d result Ratio ]\n", i+1);
-        printf("\t Straight Flush: %.2f%% (Frequency: %d) \n", result_straight_flush_percentage[i], result_straight_flush_num[i]);
-        printf("\t Four Card:      %.2f%% (Frequency: %d) \n", result_four_card_percentage[i], result_four_card_num[i]);
-        printf("\t Full House:     %.2f%% (Frequency: %d) \n", result_full_house_percentage[i], result_full_house_num[i]);
-        printf("\t Flush:          %.2f%% (Frequency: %d) \n", result_flush_percentage[i], result_flush_num[i]);
-        printf("\t Straight:       %.2f%% (Frequency: %d) \n", result_straight_percentage[i], result_straight_num[i]);
-        printf("\t Triple:         %.2f%% (Frequency: %d) \n", result_triple_percentage[i], result_triple_num[i]);
-        printf("\t Two Pair:       %.2f%% (Frequency: %d) \n", result_two_pair_percentage[i], result_two_pair_num[i]);
-        printf("\t One Pair:       %.2f%% (Frequency: %d) \n", result_one_pair_percentage[i], result_one_pair_num[i]);
-        printf("\t Top:            %.2f%% (Frequency: %d) \n", result_top_percentage[i], result_top_num[i]);
+        // for testing...
+        for(int i = 0; i < player_num; i++){
+            printf("\n  [ player %d result Ratio ]\n", i+1);
+            printf("\t Straight Flush: %.2f%% (Frequency: %d) \n", result_straight_flush_percentage[i], result_straight_flush_num[i]);
+            printf("\t Four Card:      %.2f%% (Frequency: %d) \n", result_four_card_percentage[i], result_four_card_num[i]);
+            printf("\t Full House:     %.2f%% (Frequency: %d) \n", result_full_house_percentage[i], result_full_house_num[i]);
+            printf("\t Flush:          %.2f%% (Frequency: %d) \n", result_flush_percentage[i], result_flush_num[i]);
+            printf("\t Straight:       %.2f%% (Frequency: %d) \n", result_straight_percentage[i], result_straight_num[i]);
+            printf("\t Triple:         %.2f%% (Frequency: %d) \n", result_triple_percentage[i], result_triple_num[i]);
+            printf("\t Two Pair:       %.2f%% (Frequency: %d) \n", result_two_pair_percentage[i], result_two_pair_num[i]);
+            printf("\t One Pair:       %.2f%% (Frequency: %d) \n", result_one_pair_percentage[i], result_one_pair_num[i]);
+            printf("\t Top:            %.2f%% (Frequency: %d) \n", result_top_percentage[i], result_top_num[i]);
+            printf("\n\n");
+        }
+        printf("\n  [ Total result Ratio ]\n");
+        printf("\t Probability:    %.2f%% (Frequency: %d) \n", 100.0, all_game_num);
         printf("\n\n");
     }
-    printf("\n  [ Total result Ratio ]\n");
-    printf("\t Probability:    %.2f%% (Frequency: %d) \n", 100.0, all_game_num);
-    printf("\n\n");
+*/
+
+void print_win(){
+    for(int i = 0; i < player_num; i++) printf("%d %lf\n", player_solo_win[i], player_draw_win[i]);
+}
+
+void print_hand(){
+    for(int i = 0; i < player_num; i++) printf("%d %d %d %d %d %d %d %d %d\n", result_straight_flush_num[i], result_four_card_num[i], result_full_house_num[i], result_flush_num[i], result_straight_num[i], result_triple_num[i], result_two_pair_num[i], result_one_pair_num[i], result_top_num[i]);
+}
+
+void print_result(){
+    printf("%d\n", all_game_num);
+    print_win();
+    print_hand();
 }
 
 int main()
@@ -557,7 +579,7 @@ int main()
     player_ordering(); // range num 기준 순서 정하기 (먼저 hand 배분할 순서)
     calculate_hand_combo(); // dead card 가 전부 주어졌으므로 hand combo 수 계산 가능
 
-    printf("\n  counting...\n\n");
+    // printf("\n  counting...\n\n");
     sum_time = 0;
     while(1){
         if(sum_time >= play_time) break; 
@@ -619,8 +641,6 @@ int main()
         clock_t end_time = clock();
         sum_time += (end_time / CLOCKS_PER_SEC) - (start_time / CLOCKS_PER_SEC);
     }
-    print_player_hand_combo();
-    print_percentage_calculate();
-    print_made_hand_percentage();
+    print_result();
     return 0;
 }
