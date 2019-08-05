@@ -13,7 +13,7 @@ import share from '../store/Share';
 const askPct = (playerStore, phaseStore, shareStore) => {
     // 1. Check share cards
     let phaseMatch = {0: "preflop", 1:"flop", 2:"turn", 3:"river", "preflop": [0, 0], "flop": [1, 3], "turn": [2, 1], "river": [3, 1]};
-    let nVal = phaseMatch[phaseStore.pnow];
+    let nVal = phaseMatch[phaseStore.now];
     for(let idx in [...Array(nVal[0]+1).keys()]) {
         console.log(phaseMatch[phaseMatch[idx]]);
         for(let id2 in [...Array(phaseMatch[phaseMatch[idx]][1]).keys()]) {
@@ -29,7 +29,7 @@ const askPct = (playerStore, phaseStore, shareStore) => {
     }
     // 2. Check player labels
     for(let Nplayer in playerStore.list) {
-        if(playerStore.useLabel[playerStore.list[Nplayer]].length === 0) {
+        if(playerStore.ownLabel[playerStore.list[Nplayer]].length === 0) {
             alert("No selected lael for User " + playerStore.list[Nplayer]);
             return;
         }
@@ -61,18 +61,26 @@ const HandTable = observer((props) => {
     let phaseName = [["preflop",0], ["flop",3], ["turn",1], ["river", 1]];
 
     return(<div style={style}>
-        <div style={{display:"block", width:"100%", height:"7vh", fontWeight:"bold", fontSize:"3vh"}}>Now Phase</div>
+        <div style={{display:"block", width:"10vw", marginBottom:"2vh", fontSize:"3vh", fontWeight: "bold"}}>Status</div>
+        <div style={{border: "1px solid black", marginBottom:"4vh"}}>
+        <div>Now Player: {playerStore.now}</div>
+        <div>Now Phase: {phaseStore.now}</div>
+        <div>Now Label: {labelStore.now}</div>
+        </div>
+        
+        <div style={{display:"block", width:"100%", paddingBottom:"2vh", fontWeight:"bold", fontSize:"3vh"}}>Phase Setting</div>
         {phaseName.map((idx, ni) => {
-            const ncolor = phaseStore.pnow===idx[0]?"green":"black";
-            const pnowVal = phaseName.findIndex(item => item[0] === phaseStore.pnow);
+            const ncolor = phaseStore.now===idx[0]?"green":"black";
+            const pnowVal = phaseName.findIndex(item => item[0] === phaseStore.now);
             return(<div 
-                    style={{display:"block", width:"100%", height:"10vh", color: ncolor, cursor:"pointer"}} onClick={e => {
+                    style={{display:"block", width:"100%", paddingBottom:"2vh", color: ncolor, cursor:"pointer"}} onClick={e => {
                         Refresh.refresh(playerStore.now, idx[0], labelStore, playerStore, phaseStore, blockStore);
                         }}>
                 {idx[0]}
                 <div style={{display:"flex"}}>
                     {[...Array(idx[1]).keys()].map(item => <SelectCard need={ni <= pnowVal} phase={idx[0]} num={item}/>)}
                 </div>
+                <hr/>
             </div>);
         })}
         <button onClick={e => askPct(playerStore, phaseStore, shareStore)}>Get Percentage</button>

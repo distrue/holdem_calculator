@@ -4,9 +4,9 @@ import {action, observable, computed } from 'mobx';
 type PhaseType = "preflop" | "flop" | "turn" | "river";
 export class Phase {
     constructor(props) {
-        this.pnow = "preflop";
+        this.now = "preflop";
     }
-    @observable pnow: PhaseType;
+    @observable now: PhaseType;
 };
 
 export default createContext(new Phase({}));

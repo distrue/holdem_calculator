@@ -19,9 +19,9 @@ export class Block {
         if(props.labelStore !== undefined && props.labelStore.data[props.newPlayer] !== undefined) {
             for(let nLabel in props.labelStore.data[props.newPlayer][props.newPhase]) {
                 let val = props.labelStore.data[props.newPlayer][props.newPhase][nLabel];
-                // console.log(props.labelStore.labelRange[nLabel].toString());
-                for(let item in props.labelStore.labelRange[val]) {
-                    let cal = props.labelStore.labelRange[val][item];
+                // console.log(props.labelStore.cardRange[nLabel].toString());
+                for(let item in props.labelStore.cardRange[val]) {
+                    let cal = props.labelStore.cardRange[val][item];
                     console.log(cal.blockName, cal.pct, props.labelStore.color[val]);
                     if(this.label[cal.blockName] === undefined) {
                         this.label[cal.blockName] = [];

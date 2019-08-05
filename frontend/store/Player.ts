@@ -5,11 +5,11 @@ export class Player {
     constructor(props) {
         this.list = [];
         this.now = "";
-        this.useLabel = {};
+        this.ownLabel = {};
     }
     @observable list:string[];
     @observable now:string;   
-    @observable useLabel:object;
+    @observable ownLabel:object;
     // useLabel[playerNum] = [LabelNum];
 };
 
