@@ -5,6 +5,7 @@ import player from '../store/Player';
 import phase from '../store/Phase';
 import label from '../store/Label';
 import block from '../store/Block';
+import result from '../store/Result';
 import * as LabelPatcher from '../dispatcher/label';
 import * as Refresh from '../dispatcher/refresh';
 
@@ -13,10 +14,11 @@ const LabelTable = observer((props) => {
     const phaseStore = useContext(phase);
     const labelStore = useContext(label);
     const blockStore = useContext(block);
+    const resultStore = useContext(result);
 
-    const style = {display:"flex", flexDirection: "column", ...props.style};
+    let astyle = {flexDirection: "column", ...props.style};
     let phaselist = ["preflop", "flop", "turn", "river"];
-    return(<div style={style}>
+    return(<div style={{...astyle, display: resultStore.submitted===undefined?"flex":"none"}}>
         <div style={{display:"block", width:"10vw", marginBottom:"2vh", fontSize:"3vh", fontWeight: "bold"}}>Player</div>
         {playerStore.list.map(Nplayer => 
             <div onClick={e => {
@@ -40,7 +42,6 @@ const LabelTable = observer((props) => {
                             }
                             else {
                                 return(<></>);
-                                return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer].push(Nlabel)}>{Nlabel}+</button>);
                             }
                         })
                     :""}
@@ -57,7 +58,6 @@ const LabelTable = observer((props) => {
                             const val = playerStore.ownLabel[Nplayer].findIndex(idx => idx === Nlabel);
                             if(val >= 0) {
                                 return(<></>);
-                                return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer].splice(val, 1)}>{Nlabel}-</button>);
                             }
                             else {
                                 return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer].push(Nlabel)}>{Nlabel}+</button>);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState, useContext} from 'react';
-import {observer} from 'mobx-react-lite';
+import {observer, useObservable} from 'mobx-react-lite';
 import label from '../store/Label';
 import phase from '../store/Phase';
 import player from '../store/Player';
@@ -36,22 +36,116 @@ const manValid = (e, val, idx, blockStore, blockName) => {
         }
     }
 }
-const PctBar = observer(({labelStore, playerStore, phaseStore, blockStore, blockName, bindMenuItems}) => {
+const PctBar = observer(({target, blockName, labelStore, idx, blockStore, bindMenuItems}) => {
     const manPct = useState(0);
+    const pct_range = [25, 50, 75, 100];
+    
+    return(<>
+    <div {...bindMenuItems}> 
+        pct:
+        <input style={{width:"30px"}} 
+            onChange={e => manPct[1](e.target.value)} 
+            onKeyPress={e => manValid(e, manPct[0], idx, blockStore, blockName)} 
+        placeholder={target.pct}/>%
+    </div>
+    <div {...bindMenuItems}> 
+        {pct_range.map(pct => 
+            <button onClick={e => LabelPatcher.updateLabelPct(pct, labelStore, blockStore, blockName, target.label)}>
+                {pct}
+            </button>
+        )}
+    </div>
+    </>);
+});
+const PatternBar = observer(({bindMenuItems, blockName}) => {
+    const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
+
+    if(blockName[2] === undefined) {
+        const store = useObservable({
+            one: [0, 1, 2, 3],
+        });
+        return(<div>
+        pattern(p)<br/>
+        {blockName[0]}:{Object.keys(pattern).map(item => {
+        let bckcol = "white"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        return(<button 
+            style={{backgroundColor: bckcol,
+                    color: col}}
+            onClick={e => {
+                const x = store.one.findIndex(ic => ic === pattern[item]);
+                if(x >= 0) { store.one.splice(x, 1); }
+                else { store.one.push(pattern[item]); }
+            }}>
+                {item}
+        </button>);
+        })}
+        </div>);
+    }
+    if(blockName[2] === 'o') {
+        const store = useObservable({
+            one: [0, 1, 2, 3],
+            two: [0, 1, 2, 3]
+        });
+        return(<div>
+            pattern(o)<br/>
+            {blockName[0]}:{Object.keys(pattern).map(item => {
+                let bckcol = "white"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                return(<button style={{backgroundColor: bckcol, color: col}}
+                    onClick={e => {
+                        const x = store.one.findIndex(ic => ic === pattern[item]);
+                        if(x >= 0) { store.one.splice(x, 1); }
+                        else { store.one.push(pattern[item]); }
+                    }}>{item}</button>);
+            })}<br/>
+            {blockName[1]}:{Object.keys(pattern).map(item => {
+                let bckcol = "white"; if(store.two.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(store.two.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                return(<button style={{backgroundColor: bckcol, color: col}}
+                    onClick={e => {
+                        const x = store.two.findIndex(ic => ic === pattern[item]);
+                        if(x >= 0) { store.two.splice(x, 1); }
+                        else { store.two.push(pattern[item]); }
+                    }}>{item}</button>);
+            })}<br/>
+        </div>);
+    }
+    if(blockName[2] === 's') {
+        const store = useObservable({
+            one: [0, 1, 2, 3],
+        });
+        return(<div>
+        pattern(s)<br/>
+        {blockName[0]}:{Object.keys(pattern).map(item => {
+        let bckcol = "white"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        return(<button 
+            style={{backgroundColor: bckcol,
+                    color: col}}
+            onClick={e => {
+                const x = store.one.findIndex(ic => ic === pattern[item]);
+                if(x >= 0) { store.one.splice(x, 1); }
+                else { store.one.push(pattern[item]); }
+            }}>
+                {item}
+        </button>);
+        })}
+        </div>);
+    }
+});
+const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, visibleSet, Out}) => {
     return(<>{blockStore.label[blockName]?
         blockStore.label[blockName].map((item, idx) => {
-            const pct_range = [25, 50, 75, 100];
             return(<>
-                <div {...bindMenuItems}>Label{item.label}: {item.pct}%</div>
-                Now: &nbsp; {item.pct} &nbsp; <br/> 
-                <div {...bindMenuItems}>Pct: 
-                    {pct_range.map(pct => 
-                        <button onClick={e => LabelPatcher.updateLabelPct(pct, labelStore, blockStore, blockName)}>
-                            {pct}
-                        </button>
-                    )}
+                <div {...bindMenuItems}>
+                    Label{item.label}: {item.pct}% 
+                    <img onClick={e => {
+                        LabelPatcher.deleteLabelRange(labelStore, blockStore, item.label, blockName, visibleSet, Out)
+                    }} style={{position:"absolute", right:"0%", cursor:"pointer", width:"20px"}} src="/static/bin.png" />
                 </div>
-                Manually: &nbsp; <input style={{width:"50px"}} onChange={e => manPct[1](e.target.value)} onKeyPress={e => manValid(e, manPct[0], idx, blockStore, blockName)} placeholder="pct"/>%<br/>
+                <PctBar idx={idx} target={item} blockName={blockName} labelStore={labelStore} blockStore={blockStore} bindMenuItems={bindMenuItems}/>
+                <PatternBar bindMenuItems={bindMenuItems} blockName={blockName}/>
                 <hr/>
             </>);
         })    
@@ -62,11 +156,11 @@ const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visi
     const playerStore = useContext(player);
     const phaseStore = useContext(phase);
     return(<nav {...bindMenu} className="menu">
-        <PctBar labelStore={labelStore} playerStore={playerStore} phaseStore={phaseStore} blockStore={blockStore} blockName={blockName} bindMenuItems={bindMenuItems}/>
-        <div {...bindMenuItems}>Left: {blockStore.left[blockName]}%</div>
-        <div onClick={e => {
-            LabelPatcher.deleteLabelRange(labelStore, blockStore, blockName, visibleSet, Out)
-        }} style={{cursor:"pointer"}}>clear</div>
+        <LabelSet labelStore={labelStore} playerStore={playerStore} phaseStore={phaseStore}
+        visibleSet={visibleSet} Out={Out} blockStore={blockStore} blockName={blockName} bindMenuItems={bindMenuItems}/>
+        <div {...bindMenuItems}>
+            Left: {blockStore.left[blockName]}%
+        </div>
     </nav>);
     // items.splice(items.indexOf('c'), 1);
 });
