@@ -4,13 +4,17 @@ const Router = require('koa-router');
 const app = new Koa();
 const bodyParser = require('koa-bodyparser');
 const router = new Router();
+const cors = require('koa-cors');
 
 const normal = require('./normal');
 
 app
     .use(bodyParser())
     .use(router.routes())
-    .use(router.allowedMethods());   
+    .use(router.allowedMethods())
+    .use(cors({
+        origin: true
+      }));   
 
 app.listen(3000, () => console.log("Server started on port 3000"));
 

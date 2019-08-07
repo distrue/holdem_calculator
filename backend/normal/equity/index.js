@@ -79,8 +79,11 @@ async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum,
 };
 
 equity.post('/', async ctx => {
-  // console.log(ctx.request.body);
+  ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
 
+  console.dir(ctx.request.body);
   const playTime = Number(ctx.request.body.playTime);
   const fixedSharedCardnum = Number(ctx.request.body.fixedSharedCardnum);
   const fixedSharedCard = ctx.request.body.fixedSharedCard;
@@ -101,6 +104,9 @@ equity.post('/', async ctx => {
 });
 
 equity.get('/', async ctx => {
+  ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
   try {
     ctx.status = 200;
     ctx.body = GameResult;
