@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState, useContext} from 'react';
-import {observer, useObservable} from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import label from '../store/Label';
 import phase from '../store/Phase';
 import player from '../store/Player';
@@ -57,25 +57,23 @@ const PctBar = observer(({target, blockName, labelStore, idx, blockStore, bindMe
     </div>
     </>);
 });
-const PatternBar = observer(({bindMenuItems, blockName}) => {
+const PatternBar = observer(({bindMenuItems, blockStore,idx, blockName}) => {
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
 
     if(blockName[2] === undefined) {
-        const store = useObservable({
-            one: [0, 1, 2, 3],
-        });
         return(<div>
         pattern(p)<br/>
         {blockName[0]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        console.log(blockStore.label[blockName][idx].pattern[0].length);
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
                     color: col}}
             onClick={e => {
-                const x = store.one.findIndex(ic => ic === pattern[item]);
-                if(x >= 0) { store.one.splice(x, 1); }
-                else { store.one.push(pattern[item]); }
+                const x = blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item]);
+                if(x >= 0) { blockStore.label[blockName][idx].pattern[0].splice(x, 1); }
+                else { blockStore.label[blockName][idx].pattern[0].push(pattern[item]); }
             }}>
                 {item}
         </button>);
@@ -83,50 +81,43 @@ const PatternBar = observer(({bindMenuItems, blockName}) => {
         </div>);
     }
     if(blockName[2] === 'o') {
-        const store = useObservable({
-            one: [0, 1, 2, 3],
-            two: [0, 1, 2, 3]
-        });
         return(<div>
             pattern(o)<br/>
             {blockName[0]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
-                        const x = store.one.findIndex(ic => ic === pattern[item]);
-                        if(x >= 0) { store.one.splice(x, 1); }
-                        else { store.one.push(pattern[item]); }
+                        const x = blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item]);
+                        if(x >= 0) { blockStore.label[blockName][idx].pattern[0].splice(x, 1); }
+                        else { blockStore.label[blockName][idx].pattern[0].push(pattern[item]); }
                     }}>{item}</button>);
             })}<br/>
             {blockName[1]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(store.two.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(store.two.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
-                        const x = store.two.findIndex(ic => ic === pattern[item]);
-                        if(x >= 0) { store.two.splice(x, 1); }
-                        else { store.two.push(pattern[item]); }
+                        const x = blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item]);
+                        if(x >= 0) { blockStore.label[blockName][idx].pattern[1].splice(x, 1); }
+                        else { blockStore.label[blockName][idx].pattern[1].push(pattern[item]); }
                     }}>{item}</button>);
             })}<br/>
         </div>);
     }
     if(blockName[2] === 's') {
-        const store = useObservable({
-            one: [0, 1, 2, 3],
-        });
         return(<div>
         pattern(s)<br/>
-        {blockName[0]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(store.one.findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        {blockName[0]}{blockName[1]}:{Object.keys(pattern).map(item => {
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
                     color: col}}
             onClick={e => {
-                const x = store.one.findIndex(ic => ic === pattern[item]);
-                if(x >= 0) { store.one.splice(x, 1); }
-                else { store.one.push(pattern[item]); }
+                const x = blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item]);
+                if(x >= 0) { blockStore.label[blockName][idx].pattern[0].splice(x, 1); }
+                else { blockStore.label[blockName][idx].pattern[0].push(pattern[item]); }
             }}>
                 {item}
         </button>);
@@ -145,7 +136,8 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
                     }} style={{position:"absolute", right:"0%", cursor:"pointer", width:"20px"}} src="/static/bin.png" />
                 </div>
                 <PctBar idx={idx} target={item} blockName={blockName} labelStore={labelStore} blockStore={blockStore} bindMenuItems={bindMenuItems}/>
-                <PatternBar bindMenuItems={bindMenuItems} blockName={blockName}/>
+                <PatternBar bindMenuItems={bindMenuItems} blockStore={blockStore} idx={idx} blockName={blockName}/>
+                Combos: {item.combo}
                 <hr/>
             </>);
         })    
@@ -170,7 +162,7 @@ const RangeBlock = observer((props: Props) => {
     const playerStore = useContext(player); const phaseStore = useContext(phase); const labelStore = useContext(label); const blockStore = useContext(block);
     const [bindMenu, bindMenuItems, useContextTrigger, visibleSet] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
-    let blockName, border;
+    let blockName, border, opacity=1;
 
     if(props.com[0] < props.com[1]) {
         border = "1px solid green"; blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "s";
@@ -179,25 +171,28 @@ const RangeBlock = observer((props: Props) => {
         border="1px solid blue"; blockName = combiBase[props.com[0]] + combiBase[props.com[1]];
     }
     else {
-        border="1px solid red"; blockName = combiBase[props.com[1]] + combiBase[props.com[0]] + "o";
-    }
-    if(blockStore.left[blockName] === undefined) {
-        blockStore.left[blockName] = 100;
+        border="1px solid purple"; blockName = combiBase[props.com[1]] + combiBase[props.com[0]] + "o";
     }
     if(blockStore.label[blockName] === undefined) {
         blockStore.label[blockName] = []; 
     }
-    
+    if(blockStore.left[blockName] === 0 && blockStore.label[blockName].length === 0) {
+        opacity = 0.1;
+    }
+    let dead = 100 - blockStore.left[blockName];
+
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "pointer",border: border,  position:"relative"}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 
                 {
                     let nColor = item.color || "#cccccc";
+                    dead -= item.pct;
                     return(<div style={{display: "block", width:`${0.4*item.pct}px`, backgroundColor:nColor}}>{item.pct}</div>);
                 })}
                 <div style={{display: "block", width:`${0.4*blockStore.left[blockName]}px`, backgroundColor:"#ffffff"}}></div>
+                <div style={{display: "block", width:`${0.4*dead}px`, backgroundColor:"#444444"}}></div>
             </div>
         </StyledBlock>
         <LabelBox bindMenu={bindMenu} bindMenuItems={bindMenuItems} labelStore={labelStore} blockName={blockName} visibleSet={visibleSet} blockStore={blockStore} Out={ghost}/>

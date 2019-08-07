@@ -20,6 +20,7 @@ const LabelTable = observer((props) => {
     let phaselist = ["preflop", "flop", "turn", "river"];
     return(<div style={{...astyle, display: resultStore.submitted===undefined?"flex":"none"}}>
         <div style={{display:"block", width:"10vw", marginBottom:"2vh", fontSize:"3vh", fontWeight: "bold"}}>Player</div>
+        <div style={{height:"150px", overflow:"scroll", border:"2px solid black", padding:"10px"}}>
         {playerStore.list.map(Nplayer => 
             <div onClick={e => {
                     Refresh.refresh(Nplayer, phaseStore.now, labelStore, playerStore, phaseStore, blockStore);
@@ -32,7 +33,6 @@ const LabelTable = observer((props) => {
                     {labelStore.data[Nplayer]!==undefined && 
                     labelStore.data[Nplayer][phaseStore.now] !== undefined ?
                         labelStore.data[Nplayer][phaseStore.now].map(Nlabel => {
-                            console.log("K: " + playerStore.ownLabel[Nplayer]);
                             if(playerStore.ownLabel[Nplayer] === undefined) {
                                 return(<>{Nlabel} undefined</>);
                             }
@@ -51,7 +51,6 @@ const LabelTable = observer((props) => {
                     {labelStore.data[Nplayer]!==undefined && 
                     labelStore.data[Nplayer][phaseStore.now] !== undefined ?
                         labelStore.data[Nplayer][phaseStore.now].map(Nlabel => {
-                            console.log("K: " + playerStore.ownLabel[Nplayer]);
                             if(playerStore.ownLabel[Nplayer] === undefined) {
                                 return(<>{Nlabel} undefined</>);
                             }
@@ -67,7 +66,7 @@ const LabelTable = observer((props) => {
                 </div>
                 </div>
             </div>
-        )}
+        )}</div>
         <button onClick={e => {
             playerStore.list.push((playerStore.list.length+1).toString());
             playerStore.ownLabel[(playerStore.list.length).toString()] = [];
@@ -77,6 +76,7 @@ const LabelTable = observer((props) => {
         
         <div style={{display:"block", width:"10vw", marginTop:"2vh", marginBottom:"2vh",fontSize:"3vh", fontWeight: "bold"}}>Choose Label</div>
         <div>Now Player: {playerStore.now}</div>
+        <div style={{height:"150px", overflow:"scroll", border:"2px solid black", padding:"10px"}}>
         {phaselist.map(Iphase => {
             return(<div style={{border:Iphase === phaseStore.now?"1px solid black":"0px solid black"}}> 
                 {Iphase}:
@@ -97,7 +97,7 @@ const LabelTable = observer((props) => {
                 })
                 :""}</div><br/>
             </div>);
-        })}
+        })}</div>
         <button onClick={e => LabelPatcher.addLabel({player:playerStore.now, phase:phaseStore.now, labelStore: labelStore})}>New label</button>
     </div>);
 });

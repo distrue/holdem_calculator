@@ -28,22 +28,31 @@ export const addLabelRange = (e, labelStore, blockName, blockStore) => {
     }
     if(labelStore.cardRange[labelStore.now].indexOf(blockName) < 0) {
         let initPct = blockStore.left[blockName];
-        labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: initPct});
+        labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: initPct, pattern:[[0, 1, 2, 3], [0, 1, 2, 3]]});
         if(blockStore.label[blockName] === undefined) {
             blockStore.label[blockName] = [];
         }
-        blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now]});
+        // blockStore label .push()
+        if(blockName[2] === undefined) {
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: 6*initPct/100});
+        }
+        if(blockName[2] === 's') {
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: 4*initPct/100});
+        }
+        if(blockName[2] === 'o') {
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3], [0, 1, 2, 3]], combo: 12*initPct/100});
+        }
         blockStore.left[blockName] -= initPct;
     }
 }
 
 export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, labelName) => {
-    let cut = labelStore.cardRange[labelStore.now].findIndex(i => i.blockName === blockName);
+    let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
     let delta = now - labelStore.cardRange[labelName][cut].pct;
     blockStore.left[blockName] -= delta;
-    labelStore.cardRange[labelStore.now][cut].pct = now;
+    labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
 }
 
