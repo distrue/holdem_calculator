@@ -8,6 +8,7 @@ import useContextMenu from 'react-use-context-menu';
 import block from '../store/Block';
 import styled from 'styled-components';
 import * as LabelPatcher from '../dispatcher/label';
+import * as BlockPatcher from '../dispatcher/block';
 
 const StyledBlock = styled.div`
     display: block; width: 40px; height: 40px;
@@ -57,7 +58,7 @@ const PctBar = observer(({target, blockName, labelStore, idx, blockStore, bindMe
     </div>
     </>);
 });
-const PatternBar = observer(({bindMenuItems, blockStore,idx, blockName}) => {
+const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx, blockName}) => {
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
 
     if(blockName[2] === undefined) {
@@ -71,9 +72,7 @@ const PatternBar = observer(({bindMenuItems, blockStore,idx, blockName}) => {
             style={{backgroundColor: bckcol,
                     color: col}}
             onClick={e => {
-                const x = blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item]);
-                if(x >= 0) { blockStore.label[blockName][idx].pattern[0].splice(x, 1); }
-                else { blockStore.label[blockName][idx].pattern[0].push(pattern[item]); }
+                BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
             }}>
                 {item}
         </button>);
@@ -88,9 +87,7 @@ const PatternBar = observer(({bindMenuItems, blockStore,idx, blockName}) => {
                 let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
-                        const x = blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item]);
-                        if(x >= 0) { blockStore.label[blockName][idx].pattern[0].splice(x, 1); }
-                        else { blockStore.label[blockName][idx].pattern[0].push(pattern[item]); }
+                        BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
                     }}>{item}</button>);
             })}<br/>
             {blockName[1]}:{Object.keys(pattern).map(item => {
@@ -98,9 +95,7 @@ const PatternBar = observer(({bindMenuItems, blockStore,idx, blockName}) => {
                 let col = "black"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
-                        const x = blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item]);
-                        if(x >= 0) { blockStore.label[blockName][idx].pattern[1].splice(x, 1); }
-                        else { blockStore.label[blockName][idx].pattern[1].push(pattern[item]); }
+                        BlockPatcher.patternChange(1, blockStore, labelStore, idx, target, item, blockName)
                     }}>{item}</button>);
             })}<br/>
         </div>);
@@ -115,9 +110,7 @@ const PatternBar = observer(({bindMenuItems, blockStore,idx, blockName}) => {
             style={{backgroundColor: bckcol,
                     color: col}}
             onClick={e => {
-                const x = blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item]);
-                if(x >= 0) { blockStore.label[blockName][idx].pattern[0].splice(x, 1); }
-                else { blockStore.label[blockName][idx].pattern[0].push(pattern[item]); }
+                BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
             }}>
                 {item}
         </button>);
@@ -136,7 +129,7 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
                     }} style={{position:"absolute", right:"0%", cursor:"pointer", width:"20px"}} src="/static/bin.png" />
                 </div>
                 <PctBar idx={idx} target={item} blockName={blockName} labelStore={labelStore} blockStore={blockStore} bindMenuItems={bindMenuItems}/>
-                <PatternBar bindMenuItems={bindMenuItems} blockStore={blockStore} idx={idx} blockName={blockName}/>
+                <PatternBar target={item.label} labelStore={labelStore} bindMenuItems={bindMenuItems} blockStore={blockStore} idx={idx} blockName={blockName}/>
                 Combos: {item.combo}
                 <hr/>
             </>);
