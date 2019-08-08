@@ -27,22 +27,29 @@ export const addLabelRange = (e, labelStore, blockName, blockStore) => {
         return;
     }
     if(labelStore.cardRange[labelStore.now].indexOf(blockName) < 0) {
-        let initPct = blockStore.left[blockName];
-        labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: initPct, pattern:[[0, 1, 2, 3], [0, 1, 2, 3]]});
+        let initCombo = blockStore.left[blockName];
+        let initPct;
         if(blockStore.label[blockName] === undefined) {
             blockStore.label[blockName] = [];
         }
         // blockStore label .push()
         if(blockName[2] === undefined) {
-            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: 6*initPct/100});
+            initPct = initCombo / 6 * 100;
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: initCombo});
+            blockStore.totalCombo += initCombo;
         }
         if(blockName[2] === 's') {
-            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: 4*initPct/100});
+            initPct = initCombo / 6 * 100;
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: initCombo});
+            blockStore.totalCombo += initCombo;
         }
         if(blockName[2] === 'o') {
-            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3], [0, 1, 2, 3]], combo: 12*initPct/100});
+            initPct = initCombo / 6 * 100;
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3], [0, 1, 2, 3]], combo: initCombo});
+            blockStore.totalCombo += initCombo;
         }
-        blockStore.left[blockName] -= initPct;
+        labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: initPct, pattern:[[0, 1, 2, 3], [0, 1, 2, 3]]});
+        blockStore.left[blockName] -= initCombo;
     }
 }
 
@@ -50,8 +57,13 @@ export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, la
     let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
-    let delta = now - labelStore.cardRange[labelName][cut].pct;
-    blockStore.left[blockName] -= delta;
+    let deltaCombo = blockStore.label[blockName][Lcut].combo;
+    blockStore.label[blockName][Lcut].combo /= labelStore.cardRange[labelName][cut].pct;
+    blockStore.label[blockName][Lcut].combo *= now;
+    deltaCombo -= blockStore.label[blockName][Lcut].combo;
+    blockStore.totalCombo -= deltaCombo;
+    if( blockStore.left[blockName] + deltaCombo < 0) { alert(blockStore.left[blockName] + "@" + deltaCombo + "wrong mapping; size overflow"); return; }
+    blockStore.left[blockName] += deltaCombo;
     labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
 }
@@ -62,7 +74,7 @@ export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, v
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     
     if(cut < 0) { return; }
-    blockStore.left[blockName] += labelStore.cardRange[labelName][cut].pct;
+    blockStore.left[blockName] += labelStore.cardRange[labelName][cut].combo;
     labelStore.cardRange[labelName].splice(cut, 1);
     visibleSet.setVisible(false);
     console.log(Out[0]);

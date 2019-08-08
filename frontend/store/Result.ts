@@ -1,6 +1,7 @@
 import {createContext} from 'react';
 import {action, observable, computed } from 'mobx';
 
+type submitted = "calculating" | "downloading" | "received" | undefined;
 type detailRange = {
     pct: number;
 };
@@ -20,6 +21,7 @@ export class Result {
     }
     @observable submitted: string;
     @observable playerRange: playerRange;
+    @observable phase: object;
 };
 
 export default createContext(new Result({}));

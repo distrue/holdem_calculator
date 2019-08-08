@@ -1,12 +1,7 @@
 import * as React from 'react';
 import {useContext} from 'react';
 import {observer, useObservable} from 'mobx-react-lite';
-import player from '../store/Player';
-import phase from '../store/Phase';
-import share from '../store/Share';
-import result from '../store/Result';
-import label from '../store/Label';
-import block from '../store/Block';
+import {player, phase, share, result, label, block} from '../store';
 import Axios from 'axios';
 import querystring from 'querystring';
 import * as Refresh from '../dispatcher/refresh';
@@ -46,18 +41,20 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     let phaseMatch = {0: "preflop", 1:"flop", 2:"turn", 3:"river", "preflop": [0, 0], "flop": [1, 3], "turn": [2, 1], "river": [3, 1]};
     let nVal = phaseMatch[phaseStore.now];
     let shareCount = 0;
+    resultStore.phase = {name: phaseStore.now, shared:[]};
     for(let idx in [...Array(nVal[0]+1).keys()]) {
         for(let id2 in [...Array(phaseMatch[phaseMatch[idx]][1]).keys()]) {
-            if(shareStore[phaseMatch[idx]] === undefined) {
+            if(shareStore[phaseMatch[idx]] !== undefined) {
                 if(typeof shareStore[phaseMatch[idx]][id2] === "number") { 
                     if(shareStore[phaseMatch[idx]][id2] >= 0 && shareStore[phaseMatch[idx]][id2] < 52) {
                         SendData[`fixedSharedCard[${shareCount}]`] = String(shareStore[phaseMatch[idx]][id2]);
                         shareCount += 1;
+                        resultStore.phase.shared.push(String(shareStore[phaseMatch[idx]][id2]));
                         continue;
                     }
                 }
-                alert("We need table range of " + phaseMatch[idx] + id2 + ":" + shareStore[phaseMatch[idx]][id2]); return;
             }
+            alert("We need table range of " + phaseMatch[idx] + id2 + ":" + shareStore[phaseMatch[idx]][id2]); return;
         }
     }
     SendData["fixedSharedCardnum"]= String(shareCount);
@@ -135,21 +132,20 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     console.log(JSONtoString(SendData));
     
     // 4. wait for post response -> put Pending event on it
+    
+    resultStore.submitted = "calculating";
     Axios.post("http://127.0.0.1:3000/normal/equity", querystring.stringify(SendData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-    .then(res => {
-        alert("POST req sended"); 
+    .then(res => {    
+        resultStore.submitted = "downloading";
         // 5. completed -> ask percentage data by get
         Axios.get("http://127.0.0.1:3000/normal/equity", {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then(res => {
+            resultStore.submitted = "received";
             Board.string = JSONtoString(res.data);
             Board.json = res.data;
         });
     })
     .catch(err => console.log(err));
-    
-    // 6. view complete data
-    resultStore.submitted = "ok";
-    alert("Percentage!" + resultStore.submitted);
 }
 
 const HandTable = observer((props) => {
@@ -166,7 +162,13 @@ const HandTable = observer((props) => {
     }); 
 
     return(<div style={{...props.style}}>
-        <div style={{display: resultStore.submitted===undefined?"none":"block"}}>
+        <div style={{display: resultStore.submitted==="received"?"block":"none"}}>
+            {resultStore.phase?
+                <>
+                Phase: {resultStore.phase.name}<br/><br/>
+                Shared: {resultStore.phase.shared.toString()} <br/><br/>        
+                </>
+            :""}
             {res.json && res.json.playerResult? 
                 res.json.playerResult.map((item, idx) => {
                     return(
@@ -182,6 +184,16 @@ const HandTable = observer((props) => {
             : ""}
             <button onClick={e => resultStore.submitted = undefined}>
                 New Result
+            </button>
+        </div>
+        <div style={{display: resultStore.submitted==="downloading"?"block":"none"}}>
+            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+                Downloading
+            </button>
+        </div>
+        <div style={{display: resultStore.submitted==="calculating"?"block":"none"}}>
+            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+                Calculating
             </button>
         </div>
         <div style={{display: resultStore.submitted===undefined?"block":"none"}}>
