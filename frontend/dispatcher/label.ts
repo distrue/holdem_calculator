@@ -28,33 +28,42 @@ export const addLabelRange = (e, labelStore, blockName, blockStore) => {
     }
     if(labelStore.cardRange[labelStore.now].indexOf(blockName) < 0) {
         let initPct = blockStore.left[blockName];
-        labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: initPct});
+        labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: initPct, pattern:[[0, 1, 2, 3], [0, 1, 2, 3]]});
         if(blockStore.label[blockName] === undefined) {
             blockStore.label[blockName] = [];
         }
-        blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now]});
+        // blockStore label .push()
+        if(blockName[2] === undefined) {
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: 6*initPct/100});
+        }
+        if(blockName[2] === 's') {
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: 4*initPct/100});
+        }
+        if(blockName[2] === 'o') {
+            blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3], [0, 1, 2, 3]], combo: 12*initPct/100});
+        }
         blockStore.left[blockName] -= initPct;
     }
 }
 
-export const updateLabelPct = (pct:number, labelStore, blockStore, blockName) => {
-    let cut = labelStore.cardRange[labelStore.now].findIndex(i => i.blockName === blockName);
-    let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelStore.now);
+export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, labelName) => {
+    let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
+    let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
-    let delta = now - labelStore.cardRange[labelStore.now][cut].pct;
+    let delta = now - labelStore.cardRange[labelName][cut].pct;
     blockStore.left[blockName] -= delta;
-    labelStore.cardRange[labelStore.now][cut].pct = now;
+    labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
 }
 
-export const deleteLabelRange = (labelStore, blockStore, blockName, visibleSet, Out) => {
-    if(labelStore.cardRange[labelStore.now] === undefined) { return; }
-    let cut = labelStore.cardRange[labelStore.now].findIndex(i => i.blockName === blockName);
-    let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelStore.now);
+export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, visibleSet, Out) => {
+    if(labelStore.cardRange[labelName] === undefined) { return; }
+    let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
+    let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     
     if(cut < 0) { return; }
-    blockStore.left[blockName] += labelStore.cardRange[labelStore.now][cut].pct;
-    labelStore.cardRange[labelStore.now].splice(cut, 1);
+    blockStore.left[blockName] += labelStore.cardRange[labelName][cut].pct;
+    labelStore.cardRange[labelName].splice(cut, 1);
     visibleSet.setVisible(false);
     console.log(Out[0]);
     blockStore.label[blockName].splice(Lcut, 1);

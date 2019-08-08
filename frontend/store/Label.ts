@@ -11,7 +11,7 @@ export class Label {
     @observable data:object;
     // labelStore.data[User][Phase] = [(labels),];
     @observable cardRange:object;
-    // labelRange[labelNum] = [{blockName: blockName, pct:50}, ];
+    // cardRange[labelNum] = [{blockName: blockName, pct:50, pattern: [[0, 1, 2, 3], [0, 1]]}, ];
     @observable total:number;
     @observable now:number;
     @observable color:object;
