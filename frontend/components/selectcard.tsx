@@ -45,8 +45,12 @@ const selectCard = observer((props) => {
     const shareStore = useContext(share);
     const color = useState('black');
     const border = props.need? "2px solid black": "1px solid black";
-    return(<div style={{display:"block", width:"35px", border:border}}>
-        <input style={{color: color[0], width:"25px", border:"0px solid black"}} onChange={e => setCard(e, props.phase, props.num, shareStore, color[1])}/>
+    return(
+    <div style={{display:"block", width:"35px", border:border}}>
+        <input style={{color: color[0], width:"25px", border:"0px solid black"}} 
+        onChange={e => 
+            setCard(e, props.phase, props.num, shareStore, color[1])
+        }/>
     </div>);
 });
 

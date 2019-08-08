@@ -165,25 +165,29 @@ const HandTable = observer((props) => {
         json: null
     }); 
 
-    let style = {...props.style};
-
-    return(<div style={style}>
+    return(<div style={{...props.style}}>
         <div style={{display: resultStore.submitted===undefined?"none":"block"}}>
-            {res.json && res.json.playerResult? res.json.playerResult.map((item, idx) => {
-                return(<div onClick={e => {
-                    Refresh.refresh(Number(idx)+1, phaseStore.now, labelStore, playerStore, phaseStore, blockStore);
-                }}
-            style={{cursor: "pointer", color:playerStore.now===Number(idx)+1?"green":"black", border:"1px solid black"}}>
-                    Player {Number(idx)+1}<br/>
-                    Solowin: {item.soloWin}<br/>
-                    Drawwin: {item.drawWin}<br/>
-                </div>);
-            }): ""}
-            <button onClick={e => {resultStore.submitted = undefined;
-    }}>New Result</button>
+            {res.json && res.json.playerResult? 
+                res.json.playerResult.map((item, idx) => {
+                    return(
+                    <div style={{cursor: "pointer", color:playerStore.now===Number(idx)+1?"green":"black", border:"1px solid black"}} 
+                    onClick={e => {
+                        Refresh.refresh(Number(idx)+1, phaseStore.now, labelStore, playerStore, phaseStore, blockStore);
+                    }}>
+                        Player {Number(idx)+1}<br/>
+                        Solowin: {item.soloWin}<br/>
+                        Drawwin: {item.drawWin}<br/>
+                    </div>);
+                })
+            : ""}
+            <button onClick={e => resultStore.submitted = undefined}>
+                New Result
+            </button>
         </div>
         <div style={{display: resultStore.submitted===undefined?"block":"none"}}>
-            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>Get Percentage</button>
+            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+                Get Percentage
+            </button>
         </div>
     </div>);
 });

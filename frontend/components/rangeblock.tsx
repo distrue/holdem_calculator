@@ -10,18 +10,6 @@ import styled from 'styled-components';
 import * as LabelPatcher from '../dispatcher/label';
 import * as BlockPatcher from '../dispatcher/block';
 
-const StyledBlock = styled.div`
-    display: block; width: 40px; height: 40px;
-    border: 1px solid black;
-    text-align: center;
-    .blockName {
-        position: absolute; left: 20%; top: 20%; z-index:1;
-    }
-    .backColor {
-        position: absolute; top: 0%; left: 0%; width: 100%; height: 100%; 
-        display: flex; flexDirection: row;
-    }
-`;
 interface Props {
     com: number[];
     keyV: string;
@@ -152,7 +140,8 @@ const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visi
 
 const RangeBlock = observer((props: Props) => {
     const ghost = useState("");
-    const playerStore = useContext(player); const phaseStore = useContext(phase); const labelStore = useContext(label); const blockStore = useContext(block);
+    const labelStore = useContext(label); 
+    const blockStore = useContext(block);
     const [bindMenu, bindMenuItems, useContextTrigger, visibleSet] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
     let blockName, border, opacity=1;
@@ -170,7 +159,7 @@ const RangeBlock = observer((props: Props) => {
         blockStore.label[blockName] = []; 
     }
     if(blockStore.left[blockName] === 0 && blockStore.label[blockName].length === 0) {
-        opacity = 0.1;
+        opacity = 0.5;
     }
     let dead = 100 - blockStore.left[blockName];
 
@@ -193,3 +182,16 @@ const RangeBlock = observer((props: Props) => {
 });
 
 export default RangeBlock;
+
+const StyledBlock = styled.div`
+    display: block; width: 40px; height: 40px;
+    border: 1px solid black;
+    text-align: center;
+    .blockName {
+        position: absolute; left: 20%; top: 40%; z-index:1;
+    }
+    .backColor {
+        position: absolute; top: 0%; left: 0%; width: 100%; height: 100%; 
+        display: flex; flexDirection: row;
+    }
+`;
