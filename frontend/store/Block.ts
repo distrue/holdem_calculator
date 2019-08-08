@@ -35,7 +35,7 @@ export class Block {
                         maxPct = 6;
                     }
                     else {
-                        maxPct = 12;
+                        maxPct = 16;
                     }
                     if(Number(idx_f) < Number(idx_s)) {
                         blockName = combiBase[idx_f] + combiBase[idx_s] + "s";

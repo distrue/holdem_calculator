@@ -154,7 +154,7 @@ const RangeBlock = observer((props: Props) => {
     }
     else {
         border="1px solid purple"; blockName = combiBase[props.com[1]] + combiBase[props.com[0]] + "o";
-        dead = 12; maB = 12;
+        dead = 16; maB = 16;
     }
     if(blockStore.label[blockName] === undefined) {
         blockStore.label[blockName] = []; 

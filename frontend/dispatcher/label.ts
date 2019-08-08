@@ -39,12 +39,12 @@ export const addLabelRange = (e, labelStore, blockName, blockStore) => {
             blockStore.totalCombo += initCombo;
         }
         if(blockName[2] === 's') {
-            initPct = initCombo / 6 * 100;
+            initPct = initCombo / 4 * 100;
             blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3]], combo: initCombo});
             blockStore.totalCombo += initCombo;
         }
         if(blockName[2] === 'o') {
-            initPct = initCombo / 6 * 100;
+            initPct = initCombo / 16 * 100;
             blockStore.label[blockName].push({label:labelStore.now, pct:initPct, color:labelStore.color[labelStore.now], pattern:[[0, 1, 2, 3], [0, 1, 2, 3]], combo: initCombo});
             blockStore.totalCombo += initCombo;
         }
