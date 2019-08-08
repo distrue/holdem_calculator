@@ -25,14 +25,19 @@ paths:
         
       responses:
         200:
-          description: "return {success: true}"
+          description: "return { success: true, key: GameId }"
+        500:
+          description: "return \"Impossible Range Setting\""
     get:
       summary: "Calculate Equity & Hand (by Fixed Game Info)"
       produces:
         - application/json
+      parameters:
+        - $ref: "#/parameters/Type_Urlencoded"
+        - $ref: "#/parameters/GameId"
       responses:
         200:
-          description: "return { GameResult }"
+          description: "return { GameResultList[GameId] (GameResult) }"
           schema:
             $ref: "#/definitions/GameResult"
 
@@ -44,6 +49,9 @@ definitions:
       gameNum:
         type: integer
         description: 전체 게임 횟수
+      winNum:
+        type: number
+        description: percentage 를 고려한 전체 승리 수치
       playerResult:
         type: object
         properties:
@@ -90,6 +98,13 @@ parameters:
     required: true
     description: (must be) application/x-www-form-urlencoded
     
+  GameId:
+    name: GameId
+    in: formData
+    type: integer
+    required: true
+    description: 요청 보낸 사용자 식별
+    
   playTime:
     name: playTime
     in: formData
@@ -125,7 +140,7 @@ parameters:
       type: integer
     required: true
     description: 참가자별 range 에 포함되는 pair 수
-  # [(player 1 range)[[13, 13], [12, 12], ...], (player 2 range)[...], [...], ...]
+  # [(player 1 range)[[13, 13, 0.33(percentage)], [12, 12, 1], ...], (player 2 range)[...], [...], ...]
   playerRange:
     name: playerRange
     in: formData
@@ -137,4 +152,4 @@ parameters:
         items:
           type: integer
     required: true
-    description: 참가자별 hand range
+    description: 참가자별 hand range -> [hand1, hand2, percentage]
