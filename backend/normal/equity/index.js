@@ -12,7 +12,7 @@ let GameId = 1;
 
 function error(content, context) {
   // tslint:disable-next-line: no-console
-    console.error(context, content);
+  console.error(context, content);
 }
 
 function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum, playrange){
@@ -97,8 +97,8 @@ function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum, playr
 
 equity.post('/', async ctx => {
   ctx.set('Access-Control-Allow-Origin', '*');
-    ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+  ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
 
   console.dir(ctx.request.body);
   const playTime = Number(ctx.request.body.playTime);
