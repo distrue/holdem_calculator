@@ -66,13 +66,13 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     '9':5, '8':6, '7':7, '6':8, '5':9, '4':10, '3':11, '2':12};
     for(let _Nplayer in playerStore.list) {
         Nplayer = playerStore.list[_Nplayer];
-        if(!playerStore.ownLabel[Nplayer] || playerStore.ownLabel[Nplayer].length === 0) {
+        if(!playerStore.ownLabel[Nplayer][phaseStore.now] || playerStore.ownLabel[Nplayer][phaseStore.now].length === 0) {
             alert("No selected lael for User " + Nplayer);
             return;
         }
         resultStore.playerRange[Nplayer] = undefined;
-        for(let _Nlabel in playerStore.ownLabel[Nplayer]) {
-            Nlabel = playerStore.ownLabel[Nplayer][_Nlabel];
+        for(let _Nlabel in playerStore.ownLabel[Nplayer][phaseStore.now]) {
+            Nlabel = playerStore.ownLabel[Nplayer][phaseStore.now][_Nlabel];
             for(let _Nblock in labelStore.cardRange[Nlabel]) {
                 Nblock = labelStore.cardRange[Nlabel][_Nblock];
                 console.log(JSONtoString(Nblock), Nlabel);
@@ -113,12 +113,10 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
         }
     }
     
-    console.log(JSONtoString(resultStore.playerRange));
     // 3-4. input (range #, ranges) of each User
     for(let _Nplayer in playerStore.list) {
         Nplayer = playerStore.list[_Nplayer];
         let cnt = 0;
-        console.log(JSONtoString(resultStore.playerRange[Nplayer]));
         for(let _Nf in resultStore.playerRange[Nplayer]) {
             for(let _Ns in resultStore.playerRange[Nplayer][_Nf]) {
                 SendData[`playerRange[${_Nplayer}][${cnt}][0]`] = _Nf;
@@ -129,7 +127,6 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
         }
         SendData[`playerRangenum[${Nplayer}]`] = String(cnt);
     }
-    console.log(JSONtoString(SendData));
     
     // 4. wait for post response -> put Pending event on it
     
@@ -138,12 +135,16 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     .then(res => {    
         resultStore.submitted = "downloading";
         // 5. completed -> ask percentage data by get
-        Axios.get("http://127.0.0.1:3000/normal/equity", {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+        Axios.get(`http://127.0.0.1:3000/normal/equity?GameId=${res.data.key}`, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then(res => {
             resultStore.submitted = "received";
             Board.string = JSONtoString(res.data);
             Board.json = res.data;
-        });
+            console.log(Board.string);
+        })
+        .catch(err => {
+            console.log("get Method", err);
+        })
     })
     .catch(err => console.log(err));
 }
@@ -177,8 +178,9 @@ const HandTable = observer((props) => {
                         Refresh.refresh(Number(idx)+1, phaseStore.now, labelStore, playerStore, phaseStore, blockStore);
                     }}>
                         Player {Number(idx)+1}<br/>
-                        Solowin: {item.soloWin}<br/>
-                        Drawwin: {item.drawWin}<br/>
+                        Total: {(Number(item.soloWin) + Number(item.drawWin)) / res.json.winNum * 100} %<br/>
+                        Solowin: {item.soloWin / res.json.winNum * 100} %<br/>
+                        Drawwin: {item.drawWin / res.json.winNum * 100} %<br/>
                     </div>);
                 })
             : ""}
@@ -187,13 +189,25 @@ const HandTable = observer((props) => {
             </button>
         </div>
         <div style={{display: resultStore.submitted==="downloading"?"block":"none"}}>
-            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+            <div>
                 Downloading
+            </div>
+            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+                Redirect
+            </button>
+            <button onClick={e => resultStore.submitted = undefined}>
+                New Result
             </button>
         </div>
         <div style={{display: resultStore.submitted==="calculating"?"block":"none"}}>
-            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+            <div>
                 Calculating
+            </div>
+            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
+                Redirect
+            </button>
+            <button onClick={e => resultStore.submitted = undefined}>
+                New Result
             </button>
         </div>
         <div style={{display: resultStore.submitted===undefined?"block":"none"}}>

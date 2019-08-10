@@ -53,7 +53,6 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
         pattern(p)<br/>
         {blockName[0]}:{Object.keys(pattern).map(item => {
-        console.log(blockStore.label[blockName][idx].pattern[0].length);
         let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
         let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
         return(<button 
@@ -107,10 +106,12 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
     }
 });
 const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, visibleSet, Out}) => {
-    return(<>{blockStore.label[blockName]?
+    return(
+    <div style={{maxHeight: "40vh", overflow:"scroll", paddingBottom:"10px", marginBottom:"10px", borderBottom:"2px solid black"}}>
+        {blockStore.label[blockName]?
         blockStore.label[blockName].map((item, idx) => {
             return(<>
-                <div {...bindMenuItems}>
+                <div {...bindMenuItems} style={{position: "relative"}}>
                     Label{item.label}: {item.pct}% 
                     <img onClick={e => {
                         LabelPatcher.deleteLabelRange(labelStore, blockStore, item.label, blockName, visibleSet, Out)
@@ -122,13 +123,13 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
                 <hr/>
             </>);
         })    
-    :""}</>);
+    :""}</div>);
 });
 const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visibleSet, blockStore, Out}) => {
     const playerStore = useContext(player);
     const phaseStore = useContext(phase);
     return(<nav {...bindMenu} className="menu">
-        <LabelSet labelStore={labelStore} playerStore={playerStore} phaseStore={phaseStore}
+        <LabelSet {...bindMenuItems} labelStore={labelStore} playerStore={playerStore} phaseStore={phaseStore}
         visibleSet={visibleSet} Out={Out} blockStore={blockStore} blockName={blockName} bindMenuItems={bindMenuItems}/>
         <div {...bindMenuItems}>
             Left: {blockStore.left[blockName]} Combo
@@ -154,7 +155,7 @@ const RangeBlock = observer((props: Props) => {
     }
     else {
         border="1px solid purple"; blockName = combiBase[props.com[1]] + combiBase[props.com[0]] + "o";
-        dead = 16; maB = 16;
+        dead = 12; maB = 12;
     }
     if(blockStore.label[blockName] === undefined) {
         blockStore.label[blockName] = []; 

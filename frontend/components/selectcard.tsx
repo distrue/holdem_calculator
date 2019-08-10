@@ -5,7 +5,9 @@ import share from '../store/Share';
 
 const looker = {'a': 0, 'A': 0, 'k':1, 'K':1, 'q':2, 'Q':2, 'j':3, 'J':3, 't':4, 'T':4, 
 '9':5, '8':6, '7':7, '6':8, '5':9, '4':10, '3':11, '2':12};
+const backLooker = "AKQJT98765432";
 const pattern = {'s': 0, 'S': 0, 'c': 1, 'C': 1, 'h': 2, 'H': 2, 'd': 3, 'D': 3};
+const backPattern = {0: 's', 1: 'c', 2: 'h', 3: 'd'};
 const setCard = (e, phase, num, shareStore, colorChange) => {
     // Validation
     if(e.target.value.length !== 2) {
@@ -39,7 +41,6 @@ const setCard = (e, phase, num, shareStore, colorChange) => {
     else if(phase === "river") {
         shareStore.river[num] = res;
     }
-    alert(shareStore.flop.toString() + shareStore.turn + shareStore.river);
 }
 const selectCard = observer((props) => {
     const shareStore = useContext(share);
@@ -50,7 +51,7 @@ const selectCard = observer((props) => {
         <input style={{color: color[0], width:"25px", border:"0px solid black"}} 
         onChange={e => 
             setCard(e, props.phase, props.num, shareStore, color[1])
-        }/>
+        } placeholder={shareStore[props.phase][props.num] !== Number? "" : backLooker[shareStore[props.phase][props.num] % 13] + backPattern[ shareStore[props.phase][props.num] / 13 ]} />
     </div>);
 });
 

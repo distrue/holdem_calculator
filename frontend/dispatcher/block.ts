@@ -5,15 +5,6 @@ export const patternChange = (fd, blockStore, labelStore, idx, target, item, blo
 
     const y = labelStore.cardRange[target].findIndex(ic => ic.blockName === blockName);
     deltaCombo = blockStore.label[blockName][idx].combo;
-    if(blockName[2] === 'o') {
-        blockStore.label[blockName][idx].combo /= labelStore.cardRange[target][y].pattern[0].length * labelStore.cardRange[target][y].pattern[1].length;
-    }
-    if(blockName[2] === 's') {
-        blockStore.label[blockName][idx].combo /= labelStore.cardRange[target][y].pattern[0].length;
-    }
-    if(blockName[2] === undefined) {
-        blockStore.label[blockName][idx].combo /= match[labelStore.cardRange[target][y].pattern[0].length];
-    }
 
     const z = labelStore.cardRange[target][y].pattern[fd].findIndex(ic => ic === pattern[item]) // [_Nblock]
     if(blockName[2] === undefined && z >= 0 && labelStore.cardRange[target][y].pattern[fd].length === 2) {
@@ -24,15 +15,7 @@ export const patternChange = (fd, blockStore, labelStore, idx, target, item, blo
     if(z >= 0) { labelStore.cardRange[target][y].pattern[fd].splice(z, 1); }
     else { labelStore.cardRange[target][y].pattern[fd].push(pattern[item]); }
 
-    if(blockName[2] === 'o') {
-        blockStore.label[blockName][idx].combo *= labelStore.cardRange[target][y].pattern[0].length * labelStore.cardRange[target][y].pattern[1].length;
-    }
-    if(blockName[2] === 's') {
-        blockStore.label[blockName][idx].combo *= labelStore.cardRange[target][y].pattern[0].length; 
-    }
-    if(blockName[2] === undefined) {
-        blockStore.label[blockName][idx].combo *= match[labelStore.cardRange[target][y].pattern[0].length];
-    }
+    blockStore.label[blockName][idx].combo = patternCount(blockName, labelStore.cardRange[target][y].pattern[0], labelStore.cardRange[target][y].pattern[1]) * blockStore.label[blockName][idx].pct / 100;
     deltaCombo -= blockStore.label[blockName][idx].combo;
     
     const x = blockStore.label[blockName][idx].pattern[fd].findIndex(ic => ic === pattern[item]);
@@ -41,4 +24,34 @@ export const patternChange = (fd, blockStore, labelStore, idx, target, item, blo
 
     blockStore.totalCombo -= deltaCombo;
     blockStore.left[blockName] += deltaCombo;
+}
+
+export const patternCount = (blockName, pattern_1, pattern_2) => {
+    if(blockName[2] === 'o') {
+        let pat1, pat2, cnt = 0;
+        for(let _pat1 in pattern_1) {
+            pat1 = pattern_1[_pat1];
+            for(let _pat2 in pattern_2) {
+                pat2 = pattern_2[_pat2];
+                if(pat1 !== pat2) {
+                    cnt += 1;
+                }
+            }
+        }
+        return cnt;
+    }
+    if(blockName[2] === 's') {
+        return pattern_1.length;
+    }
+    if(blockName[2] === undefined) {
+        if(pattern_1.length === 2) {
+            return 1;
+        }
+        if(pattern_1.length === 3) {
+            return 3;
+        }
+        if(pattern_1.length === 4) {
+            return 6;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 import {createContext} from 'react';
 import {action, observable, computed } from 'mobx';
+import * as blockPatcher from '../dispatcher/block';
 
 type labelContent = {
     label: string;
@@ -35,7 +36,7 @@ export class Block {
                         maxPct = 6;
                     }
                     else {
-                        maxPct = 16;
+                        maxPct = 12;
                     }
                     if(Number(idx_f) < Number(idx_s)) {
                         blockName = combiBase[idx_f] + combiBase[idx_s] + "s";
@@ -63,15 +64,14 @@ export class Block {
                     for(let item in props.labelStore.cardRange[val]) {
                         let cal = props.labelStore.cardRange[val][item];
                         if(cal.blockName[2] === undefined) {
-                            nCombo = cal.pattern[0].length * (cal.pattern[0].length-1) / 2;
+                            nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], []);
                         }
                         if(cal.blockName[2] === 's') {
-                            nCombo = cal.pattern[0].length;
+                            nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], []);
                         }
                         if(cal.blockName[2] === 'o') {
-                            nCombo = cal.pattern[0].length * cal.pattern[1].length;
+                            nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], cal.pattern[1]);
                         }
-                        console.log(cal.blockName[2], nCombo);
                         nCombo *= cal.pct / 100;
                         this.left[cal.blockName] += nCombo;
                     }
@@ -83,20 +83,18 @@ export class Block {
                 // console.log(props.labelStore.cardRange[nLabel].toString());
                 for(let item in props.labelStore.cardRange[val]) {
                     let cal = props.labelStore.cardRange[val][item];
-                    console.log(cal.blockName, cal.pct, props.labelStore.color[val]);
                     if(this.label[cal.blockName] === undefined) {
                         this.label[cal.blockName] = [];
                     }
                     if(cal.blockName[2] === undefined) {
-                        nCombo = cal.pattern[0].length * (cal.pattern[0].length-1) / 2;
+                        nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], []);
                     }
                     if(cal.blockName[2] === 's') {
-                        nCombo = cal.pattern[0].length;
+                        nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], []);
                     }
                     if(cal.blockName[2] === 'o') {
-                        nCombo = cal.pattern[0].length * cal.pattern[1].length;
+                        nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], cal.pattern[1]);
                     }
-                    console.log(cal.blockName[2], nCombo);
                     nCombo *= cal.pct / 100;
                     this.label[cal.blockName].push({label: val, pct: cal.pct, color: props.labelStore.color[val], pattern: cal.pattern, combo: nCombo});
                     this.totalCombo += nCombo;

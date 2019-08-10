@@ -3,9 +3,9 @@ import {action, observable, computed } from 'mobx';
 
 export class Share {
     constructor(props) {
-        this.flop = ["", "", ""];
-        this.turn = [""];
-        this.river = [""];
+        this.flop = [null, null, null];
+        this.turn = [null];
+        this.river = [null];
     }
     @observable flop:string[];
     @observable turn:string[];

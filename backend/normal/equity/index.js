@@ -122,7 +122,8 @@ equity.post('/', async ctx => {
 
 equity.get('/', async ctx => {
   // console.log(ctx.request.body);
-  requestId = ctx.request.body.GameId;
+  requestId = ctx.request.query.GameId;
+  console.log("get reqID", requestId);
   
   ctx.set('Access-Control-Allow-Origin', '*');
   ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');

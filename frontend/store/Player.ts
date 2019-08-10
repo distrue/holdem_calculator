@@ -10,7 +10,7 @@ export class Player {
     @observable list:string[];
     @observable now:string;   
     @observable ownLabel:object;
-    // useLabel[playerNum] = [LabelNum];
+    // useLabel[playerNum][phaseName] = [LabelNum];
 };
 
 export default createContext(new Player({}));

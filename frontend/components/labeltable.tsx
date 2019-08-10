@@ -18,9 +18,9 @@ const PlayerSelectLabel = observer(({playerStore, phaseStore, labelStore, blockS
             <div style={{marginLeft:"10px", display: "flex", flexDirection:"row", flexWrap:"wrap"}}>
                 {jsonExistChecker(labelStore.data, [Nplayer, phaseStore.now])?
                     labelStore.data[Nplayer][phaseStore.now].map(Nlabel => {
-                        const val = playerStore.ownLabel[Nplayer].findIndex(idx => idx === Nlabel);
+                        const val = playerStore.ownLabel[Nplayer][phaseStore.now].findIndex(idx => idx === Nlabel);
                         if(val >= 0) {
-                            return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer].splice(val, 1)}>{Nlabel}</button>);
+                            return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer][phaseStore.now].splice(val, 1)}>{Nlabel}</button>);
                         }
                         else {
                             return(<></>);
@@ -32,12 +32,12 @@ const PlayerSelectLabel = observer(({playerStore, phaseStore, labelStore, blockS
             <div style={{marginLeft:"10px", display: "flex", flexDirection:"row", flexWrap:"wrap"}}>
                 {jsonExistChecker(labelStore.data, [Nplayer, phaseStore.now])?
                     labelStore.data[Nplayer][phaseStore.now].map(Nlabel => {
-                        const val = playerStore.ownLabel[Nplayer].findIndex(idx => idx === Nlabel);
+                        const val = playerStore.ownLabel[Nplayer][phaseStore.now].findIndex(idx => idx === Nlabel);
                         if(val >= 0) {
                             return(<></>);
                         }
                         else {
-                            return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer].push(Nlabel)}>{Nlabel}</button>);
+                            return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer][phaseStore.now].push(Nlabel)}>{Nlabel}</button>);
                         }
                     })
                 :""}
