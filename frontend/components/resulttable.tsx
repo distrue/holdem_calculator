@@ -131,11 +131,11 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     // 4. wait for post response -> put Pending event on it
     
     resultStore.submitted = "calculating";
-    Axios.post("http://holdem_back:3000/normal/equity", querystring.stringify(SendData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    Axios.post("http://www.rangeq.com/api/normal/equity", querystring.stringify(SendData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
     .then(res => {    
         resultStore.submitted = "downloading";
         // 5. completed -> ask percentage data by get
-        Axios.get(`http://holdem_back:3000/normal/equity?GameId=${res.data.key}`, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+        Axios.get(`http://www.rangeq.com/api/normal/equity?GameId=${res.data.key}`, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then(res => {
             resultStore.submitted = "received";
             Board.string = JSONtoString(res.data);
