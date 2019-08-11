@@ -62,8 +62,8 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     // 2. Check player labels
     SendData["playernum"]= String(playerStore.list.length);
     let Nplayer, Nlabel, Nblock, Nf, Ns, pf, ps;
-    const looker = {'a': 0, 'A': 0, 'k':1, 'K':1, 'q':2, 'Q':2, 'j':3, 'J':3, 't':4, 'T':4, 
-    '9':5, '8':6, '7':7, '6':8, '5':9, '4':10, '3':11, '2':12};
+    const looker = {'a': 12, 'A': 12, 'k':11, 'K':11, 'q':10, 'Q':10, 'j':9, 'J':9, 't':8, 'T':8, 
+    '9':7, '8':6, '7':5, '6':4, '5':3, '4':2, '3':1, '2':0};
     for(let _Nplayer in playerStore.list) {
         Nplayer = playerStore.list[_Nplayer];
         if(!playerStore.ownLabel[Nplayer][phaseStore.now] || playerStore.ownLabel[Nplayer][phaseStore.now].length === 0) {
