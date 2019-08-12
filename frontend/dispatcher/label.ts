@@ -21,7 +21,6 @@ export const addLabel = (props) => {
 
 export const addLabelRange = (e, labelStore, blockName, blockStore) => {  
     if(labelStore.now === undefined) {
-        alert("choose label first!");
         return;
     }
     if(blockStore.left[blockName] <= 0) {

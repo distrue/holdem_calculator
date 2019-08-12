@@ -212,7 +212,7 @@ const HandTable = observer((props) => {
         </div>
         <div style={{display: resultStore.submitted===undefined?"block":"none"}}>
             <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
-                Get Percentage
+                Calculate
             </button>
         </div>
     </div>);
