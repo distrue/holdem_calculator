@@ -5,7 +5,15 @@ ADD ./ /app
 RUN npm install -g yarn
 WORKDIR /app
 RUN yarn install --ignore-engines
+
+RUN apt-get -qq update \
+    && apt-get -qq install -y g++ cmake \
+    && apt-get clean
+
+RUN g++ -o random random.cpp
+
 ENTRYPOINT ["yarn", "start"]
+
 # for debug
 # ENTRYPOINT ["yarn", "loop"]
 
