@@ -20,7 +20,7 @@ const HandTable = observer((props) => {
         <div style={{border: "1px solid black", marginBottom:"4vh"}}>
             <div>Now Player: {playerStore.now}</div>
             <div>Now Phase: {phaseStore.now}</div>
-            <div>Now Label: {labelStore.now}</div>
+            <div>Now Label: {labelStore.displayMatch[labelStore.now]}</div>
         </div>
         
         {phaseName.map((idx, ni) => {

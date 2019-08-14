@@ -34,7 +34,7 @@ export const addLabel = (player, phase, labelStore, blockStore) => {
 
     const before = {"flop": "preflop", "turn": "flop", "river": "turn"};
     // inherit
-    if(before[phase] !== undefined) {
+    if(typeof(before[phase]) === "string") {
         let nCombo;
         let nowVal = labelStore.total;
         let fromVal = labelStore.data[player][before[phase]][labelStore.displayTotal[player][phase]-1];
