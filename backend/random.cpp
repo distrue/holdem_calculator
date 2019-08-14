@@ -188,7 +188,7 @@ void Monte_Carlo_person(){
         if(now1 < now2) swap(now1, now2); // 순서 ) now1 > now2
 
         double spending = (double)(clock() - check_time);
-        if(spending > 300) error_handling(-1);
+        if(spending > 2000) error_handling(-1);
 
         if(input_card[now1] == false || check_card[now1] == true || input_card[now2] == false || check_card[now2] == true){
             i--; continue;
