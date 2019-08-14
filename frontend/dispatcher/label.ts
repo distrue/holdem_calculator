@@ -123,9 +123,22 @@ export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, v
     blockStore.left[blockName] += blockPatcher.patternCount(blockName, blockStore.label[blockName][Lcut].pattern[0], blockStore.label[blockName][Lcut].pattern[1]) * blockStore.label[blockName][Lcut].pct / 100;
     blockStore.totalCombo -= blockPatcher.patternCount(blockName, blockStore.label[blockName][Lcut].pattern[0], blockStore.label[blockName][Lcut].pattern[1]) * blockStore.label[blockName][Lcut].pct / 100;
     labelStore.cardRange[labelName].splice(cut, 1);
-    visibleSet.setVisible(false);
-    console.log(Out[0]);
+    if(visibleSet !== false) { visibleSet.setVisible(false); }
     blockStore.label[blockName].splice(Lcut, 1);
-    Out[1]("F");
-    console.log(Out[0]);
+    if(Out !== false) { Out[1]("F"); }
+}
+
+export const deleteLabel = (labelStore, blockStore, labelName, player, phase) => {
+    let nowBlock, x;
+    console.log(labelName, labelStore.cardRange[labelName]);
+    for(let _nowBlock in labelStore.cardRange[labelName]) {
+        nowBlock = labelStore.cardRange[labelName][_nowBlock];
+        x = blockStore.label[nowBlock.blockName].findIndex(item => item.label === labelName);
+        blockStore.left[nowBlock.blockName] += blockStore.label[nowBlock.blockName][x].combo;
+        blockStore.totalCombo -= blockStore.label[nowBlock.blockName][x].combo;
+        blockStore.label[nowBlock.blockName].splice(x, 1);
+    }
+    labelStore.cardRange[labelName] = [];
+    let y = labelStore.data[player][phase].findIndex(item => item === labelName);
+    labelStore.data[player][phase].splice(y, 1);
 }

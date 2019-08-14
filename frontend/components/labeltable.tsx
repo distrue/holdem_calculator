@@ -45,7 +45,7 @@ const PlayerSelectLabel = observer(({playerStore, phaseStore, labelStore, blockS
         </div>
     </div>);
 });
-const PhaseSelectLabel = observer(({phaseStore, labelStore, playerStore, Iphase}) => {
+const PhaseSelectLabel = observer(({phaseStore, labelStore, playerStore, Iphase, blockStore, }) => {
     return(<div style={{border:Iphase === phaseStore.now?"1px solid black":"0px solid black"}}> 
         {Iphase}:
         <div style={{display:"flex", flexDirection:"row", flexWrap:"wrap"}}>
@@ -53,15 +53,23 @@ const PhaseSelectLabel = observer(({phaseStore, labelStore, playerStore, Iphase}
             labelStore.data[playerStore.now][Iphase].map(item => {
                 if(Iphase === phaseStore.now) {
                     const Ncolor = labelStore.color[item];
-                    return(<div onClick={e => labelStore.now = item}
+                    return(<><div onClick={e => labelStore.now = item}
                     style={{backgroundColor: Ncolor, cursor: "pointer", border:"1px solid black", width:"50px", textAlign:"center"}}>
                         {labelStore.displayMatch[item]}
-                    </div>);
+                    </div>
+                    <img onClick={e => {
+                        LabelPatcher.deleteLabel(labelStore, blockStore, item, playerStore.now, Iphase)
+                    }} style={{cursor:"pointer", width:"20px"}} src="/static/bin.png" />
+                    </>);
                 }
                 else {
-                    return(<div style={{backgroundColor: "#444444", border:"1px solid black", width:"50px"}}>
+                    return(<><div style={{backgroundColor: "#444444", border:"1px solid black", width:"50px"}}>
                         {labelStore.displayMatch[item]}
-                    </div>);
+                    </div>
+                    <img onClick={e => {
+                        LabelPatcher.deleteLabel(labelStore, blockStore, item, playerStore.now, Iphase)
+                    }} style={{cursor:"pointer", width:"20px"}} src="/static/bin.png" />
+                    </>);
                 }
             })
         :""}
@@ -96,7 +104,7 @@ const LabelTable = observer((props) => {
         Now Player: {playerStore.now}
         <div style={{height:"150px", overflow:"scroll", border:"2px solid black", padding:"10px"}}>
             {phaselist.map(Iphase => 
-                <PhaseSelectLabel phaseStore={phaseStore} labelStore={labelStore} playerStore={playerStore} Iphase={Iphase}/>
+                <PhaseSelectLabel phaseStore={phaseStore} labelStore={labelStore} playerStore={playerStore} Iphase={Iphase} blockStore={blockStore} />
             )}
         </div>
         <button onClick={e => LabelPatcher.addLabel(playerStore.now, phaseStore.now, labelStore, blockStore)}>
