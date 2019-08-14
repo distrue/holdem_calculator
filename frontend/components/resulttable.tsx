@@ -35,7 +35,7 @@ function addResult(resultStore, Nplayer, Nf, Ns, Nblock) {
 const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Board) => {
     let SendData = {};
     // input play time
-    SendData["playTime"]= String(1);
+    SendData["playTime"]= String(5);
     
     // 1. Check share cards
     let phaseMatch = {0: "preflop", 1:"flop", 2:"turn", 3:"river", "preflop": [0, 0], "flop": [1, 3], "turn": [2, 1], "river": [3, 1]};
@@ -132,7 +132,7 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     
     resultStore.submitted = "calculating";
     Axios.post("http://www.rangeq.com/api/normal/equity", querystring.stringify(SendData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-    .then(res => {    
+    .then(res => {
         resultStore.submitted = "downloading";
         // 5. completed -> ask percentage data by get
         Axios.get(`http://www.rangeq.com/api/normal/equity?GameId=${res.data.key}`, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
@@ -212,7 +212,7 @@ const HandTable = observer((props) => {
         </div>
         <div style={{display: resultStore.submitted===undefined?"block":"none"}}>
             <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
-                Get Percentage
+                Calculate
             </button>
         </div>
     </div>);

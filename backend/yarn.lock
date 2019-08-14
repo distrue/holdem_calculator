@@ -2713,6 +2713,11 @@ next-tick@1, next-tick@^1.0.0:
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
 
+nginx@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/nginx/-/nginx-0.0.0.tgz#a917c46faf4710aa8c051d9adeb21bf66475123a"
+  integrity sha1-qRfEb69HEKqMBR2a3rIb9mR1Ejo=
+
 node-fetch@1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-1.6.3.tgz#dc234edd6489982d58e8f0db4f695029abcd8c04"
