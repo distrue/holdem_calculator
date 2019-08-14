@@ -20,7 +20,7 @@ const PlayerSelectLabel = observer(({playerStore, phaseStore, labelStore, blockS
                     labelStore.data[Nplayer][phaseStore.now].map(Nlabel => {
                         const val = playerStore.ownLabel[Nplayer][phaseStore.now].findIndex(idx => idx === Nlabel);
                         if(val >= 0) {
-                            return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer][phaseStore.now].splice(val, 1)}>{Nlabel}</button>);
+                            return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer][phaseStore.now].splice(val, 1)}>{labelStore.displayMatch[Nlabel]}</button>);
                         }
                         else {
                             return(<></>);
@@ -37,7 +37,7 @@ const PlayerSelectLabel = observer(({playerStore, phaseStore, labelStore, blockS
                             return(<></>);
                         }
                         else {
-                            return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer][phaseStore.now].push(Nlabel)}>{Nlabel}</button>);
+                            return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer][phaseStore.now].push(Nlabel)}>{labelStore.displayMatch[Nlabel]}</button>);
                         }
                     })
                 :""}
@@ -55,12 +55,12 @@ const PhaseSelectLabel = observer(({phaseStore, labelStore, playerStore, Iphase}
                     const Ncolor = labelStore.color[item];
                     return(<div onClick={e => labelStore.now = item}
                     style={{backgroundColor: Ncolor, cursor: "pointer", border:"1px solid black", width:"50px", textAlign:"center"}}>
-                        {item}
+                        {labelStore.displayMatch[item]}
                     </div>);
                 }
                 else {
                     return(<div style={{backgroundColor: "#444444", border:"1px solid black", width:"50px"}}>
-                        {item}
+                        {labelStore.displayMatch[item]}
                     </div>);
                 }
             })
@@ -99,7 +99,7 @@ const LabelTable = observer((props) => {
                 <PhaseSelectLabel phaseStore={phaseStore} labelStore={labelStore} playerStore={playerStore} Iphase={Iphase}/>
             )}
         </div>
-        <button onClick={e => LabelPatcher.addLabel({player:playerStore.now, phase:phaseStore.now, labelStore: labelStore})}>
+        <button onClick={e => LabelPatcher.addLabel(playerStore.now, phaseStore.now, labelStore, blockStore)}>
             New label
         </button>
     </div>);

@@ -50,7 +50,7 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
 
     if(blockName[2] === undefined) {
-        return(<div>
+        return(<div {...bindMenuItems}>
         pattern(p)<br/>
         {blockName[0]}:{Object.keys(pattern).map(item => {
         let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
@@ -112,7 +112,7 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
         blockStore.label[blockName].map((item, idx) => {
             return(<>
                 <div {...bindMenuItems} style={{position: "relative"}}>
-                    Label{item.label}: {item.pct}% 
+                    Label{labelStore.displayMatch[item.label]}: {item.pct}% 
                     <img onClick={e => {
                         LabelPatcher.deleteLabelRange(labelStore, blockStore, item.label, blockName, visibleSet, Out)
                     }} style={{position:"absolute", right:"0%", cursor:"pointer", width:"20px"}} src="/static/bin.png" />
@@ -172,7 +172,7 @@ const RangeBlock = observer((props: Props) => {
                 {blockStore.label[blockName].map(item => 
                 {
                     let nColor = item.color || "#cccccc";
-                    dead -= item.pct;
+                    dead -= item.combo;
                     return(<div style={{display: "block", width:`${40*item.combo/maB}px`, backgroundColor:nColor}}>{item.combo}</div>);
                 })}
                 <div style={{display: "block", width:`${40*blockStore.left[blockName]/maB}px`, backgroundColor:"#ffffff"}}></div>
