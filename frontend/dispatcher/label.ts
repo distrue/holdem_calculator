@@ -12,7 +12,7 @@ function JSONtoString(object) {
             results.push(property.toString() + ': ' + value);
         }
                 
-        return '{' + results.join(', ') + '}';
+        return '{\n' + results.join(', ') + '}\n';
 }
 export const addLabel = (player, phase, labelStore, blockStore) => {
     if(player == "") {
@@ -38,11 +38,11 @@ export const addLabel = (player, phase, labelStore, blockStore) => {
         let nCombo;
         let nowVal = labelStore.total;
         let fromVal = labelStore.data[player][before[phase]][labelStore.displayTotal[player][phase]-1];
+        console.log(JSONtoString(labelStore.data));
         // console.log(props.labelStore.cardRange[nLabel].toString());
-        labelStore.cardRange[nowVal] = labelStore.cardRange[fromVal];
-        console.log(JSONtoString(labelStore.cardRange[nowVal]));
+        labelStore.cardRange[nowVal] = JSON.parse(JSON.stringify(labelStore.cardRange[fromVal]));
+        console.log(JSONtoString(labelStore.cardRange));
         for(let item in labelStore.cardRange[nowVal]) {
-            console.log("!");
             let cal = labelStore.cardRange[nowVal][item];
             if(blockStore.label[cal.blockName] === undefined) {
                 blockStore.label[cal.blockName] = [];
@@ -100,6 +100,7 @@ export const addLabelRange = (e, labelStore, blockName, blockStore) => {
 
 export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, labelName) => {
     console.log(blockName, labelName);
+    console.log(JSONtoString(labelStore.cardRange));
     let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
@@ -112,6 +113,7 @@ export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, la
     blockStore.left[blockName] += deltaCombo;
     labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
+    console.log(JSONtoString(labelStore.cardRange));
 }
 
 export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, visibleSet, Out) => {
