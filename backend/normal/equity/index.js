@@ -30,11 +30,19 @@ async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum,
     random_input(random, time);
     random_input(random, playnum);
     random_input(random, sharedcardnum);
-    for(let i = 0; i < sharedcardnum; i++) random_input(random, sharedcard[i]);
-    for(let i = 0; i < playnum; i++) random_input(random, playrangenum[i]);
+    for(let i = 0; i < sharedcardnum; i++){
+      random_input(random, sharedcard[i]); // console.log(sharedcard[i]);
+    }
+    for(let i = 0; i < playnum; i++){
+      random_input(random, playrangenum[i]); // console.log(playrangenum[i]);
+    }
     for(let i = 0; i < playnum; i++){
       let k = playrangenum[i];
-      for(var j = 0; j < k; j++) for(var t = 0; t < 3; t++) random_input(random, playrange[i][j][t]);
+      for(var j = 0; j < k; j++){
+        for(var t = 0; t < 3; t++){
+          random_input(random, playrange[i][j][t]);
+        }
+      }
     }
     
     random.stdout.on('data', (data) => {
@@ -96,15 +104,68 @@ equity.post('/', async ctx => {
   ctx.set('Access-Control-Allow-Origin', '*');
   ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+  
+  // console.dir(ctx.request);
+  // console.dir(ctx.request.body);
 
-  console.dir(ctx.request.body);
-  // console.dir(ctx.request.body.playerRange);
-  const playTime = Number(ctx.request.body.playTime);
-  const fixedSharedCardnum = Number(ctx.request.body.fixedSharedCardnum);
-  const fixedSharedCard = ctx.request.body.fixedSharedCard;
-  const playernum =  Number(ctx.request.body.playernum);
-  const playerRangenum = ctx.request.body.playerRangenum;
-  const playerRange = ctx.request.body.playerRange;
+  const querystring = require('querystring');
+  let body = querystring.parse(ctx.request.body.data, '&', '=', { maxKeys: 0 });
+  // console.log(body);
+
+  const playTime = Number(body.playTime);
+  const fixedSharedCardnum = Number(body.fixedSharedCardnum);
+  const playernum =  Number(body.playernum);
+
+  let playerRange = new Array();
+  for(let i = 0; i < playernum; i++){
+    playerRange[i] = new Array(1326).fill(null).map(() => Array());
+  }
+
+    // 삼차원 배열 idx1: 0 ~ playernum - 1 / 0 ~ playerRange[idx1] - 1 /  0 ~ 2
+  let playerRangenum = new Array();
+  let fixedSharedCard = new Array();
+
+  for(key in body) {
+    const prn = "playerRangenum";
+    const pr = "playerRange";
+    const fsc = "fixedSharedCard";
+    
+    if(key.includes(prn)){ // playerRangenum
+      let idx_1 = Number(key[15]);
+      playerRangenum[Number(idx_1)-1] = Number(body[key]);
+    }
+    else if(key.includes(pr)){ // playerRange
+      let idx_1 = Number(key[12]);
+      let idx_2, idx_3;
+
+      if(key[16] == ']'){ // 일의 자리
+        idx_2 = Number(key[15]);
+        idx_3 = Number(key[18]);
+      }
+      else if(key[17] == ']'){ // 십의 자리
+        idx_2 = Number(key[15]) * 10 + Number(key[16]);
+        idx_3 = Number(key[19]);
+      }
+      else if(key[18] == ']'){ // 백의 자리
+        idx_2 = Number(key[15]) * 100 + Number(key[16]) * 10 + Number(key[17]);
+        idx_3 = Number(key[20]);
+      }
+      else if(key[19] == ']'){ // 천의 자리
+        idx_2 = Number(key[15]) * 1000 + Number(key[16]) * 100 + Number(key[17]) * 10 + Number(key[18]);
+        idx_3 = Number(key[21]);
+      }
+      else{
+        console.log("Error detected..");
+      }
+
+      playerRange[Number(idx_1)][Number(idx_2)][Number(idx_3)] = Number(body[key]);
+    }
+    else if(key.includes(fsc)){ // fixedSharedCard
+      let idx_1 = Number(key[16]);
+      fixedSharedCard[Number(idx_1)] = Number(body[key]);
+    }
+    else{}
+  }
 
   try {
     await calequity(playTime, playernum, fixedSharedCardnum, fixedSharedCard, playerRangenum, playerRange);
