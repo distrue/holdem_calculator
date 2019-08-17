@@ -9,7 +9,9 @@ const cors = require('koa-cors');
 const normal = require('./normal');
 
 app
-    .use(bodyParser())
+    .use(bodyParser({ formLimit: '50mb' }))
+    .use(bodyParser({ jsonLimit: '50mb' }))
+    .use(bodyParser({ textLimit: '50mb' }))
     .use(router.routes())
     .use(router.allowedMethods())
     .use(cors({
