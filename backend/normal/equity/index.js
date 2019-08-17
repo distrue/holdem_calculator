@@ -18,6 +18,13 @@ function error(content, context) {
 async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum, playrange){
   // console.log(GameResultList);
 
+  // console.log(time);
+  // console.log(playnum);
+  // console.log(sharedcardnum);
+  // console.log(sharedcard);
+  // console.log(playrangenum);
+  // console.log(playrange);
+  
   function random_input(param1, param2){
     param1.stdin.write(String(param2) + "\n");
   }
@@ -45,8 +52,9 @@ async function calequity(time, playnum, sharedcardnum, sharedcard, playrangenum,
       }
     }
     
+    console.log("Input completed");
     random.stdout.on('data', (data) => {
-      const result_out = `${data}`;
+      const result_out = `${data}`; 
       const result = result_out.split('\n');
       console.log(result);
 
@@ -106,7 +114,7 @@ equity.post('/', async ctx => {
   ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
   
   // console.dir(ctx.request);
-  // console.dir(ctx.request.body);
+  console.dir(ctx.request.body);
 
   const querystring = require('querystring');
   let body = querystring.parse(ctx.request.body.data, '&', '=', { maxKeys: 0 });

@@ -35,7 +35,7 @@ function addResult(resultStore, Nplayer, Nf, Ns, Nblock) {
 const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Board) => {
     let SendData = {};
     // input play time
-    SendData["playTime"]= String(5);
+    SendData["playTime"]= String(3);
     
     // 1. Check share cards
     let phaseMatch = {0: "preflop", 1:"flop", 2:"turn", 3:"river", "preflop": [0, 0], "flop": [1, 3], "turn": [2, 1], "river": [3, 1]};
@@ -131,7 +131,12 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     // 4. wait for post response -> put Pending event on it
     
     resultStore.submitted = "calculating";
-    Axios.post("http://www.rangeq.com/api/normal/equity", querystring.stringify(SendData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    Axios.post("http://www.rangeq.com/api/normal/equity", {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: querystring.stringify(SendData),
+    })
     .then(res => {
         resultStore.submitted = "downloading";
         // 5. completed -> ask percentage data by get
