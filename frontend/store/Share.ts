@@ -3,13 +3,9 @@ import {action, observable, computed } from 'mobx';
 
 export class Share {
     constructor(props) {
-        this.flop = [null, null, null];
-        this.turn = [null];
-        this.river = [null];
+        this.card = [null, null, null, null, null];
     }
-    @observable flop:string[];
-    @observable turn:string[];
-    @observable river:string[];   
+    @observable card:string[];
 };
 
 export default createContext(new Share({}));

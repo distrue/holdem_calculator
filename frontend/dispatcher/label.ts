@@ -14,54 +14,20 @@ function JSONtoString(object) {
                 
         return '{\n' + results.join(', ') + '}\n';
 }
-export const addLabel = (player, phase, labelStore, blockStore) => {
+export const addLabel = (player, labelStore) => {
     if(player == "") {
         alert("choose player first!");
         return;
     }
-    if(labelStore.data[player] === undefined) {
-        labelStore.data[player] = {};
+    if(labelStore.playerLabel[player] === undefined) {
+        labelStore.playerLabel[player] = [];
     }
-    if(labelStore.data[player][phase] === undefined) {
-        labelStore.data[player][phase] = [];
-    }
-    labelStore.data[player][phase].push(labelStore.total + 1);
+    labelStore.playerLabel[player].push(labelStore.total + 1);
     labelStore.total = labelStore.total + 1;
     labelStore.cardRange[labelStore.total] = [];
-    labelStore.displayTotal[player][phase] += 1;
-    labelStore.displayMatch[labelStore.total] = labelStore.displayTotal[player][phase];
-    labelStore.color[labelStore.total] = ColorBox[labelStore.displayTotal[player][phase]*30%445];
-
-    const before = {"flop": "preflop", "turn": "flop", "river": "turn"};
-    // inherit
-    if(typeof(before[phase]) === "string") {
-        let nCombo;
-        let nowVal = labelStore.total;
-        let fromVal = labelStore.data[player][before[phase]][labelStore.displayTotal[player][phase]-1];
-        console.log(JSONtoString(labelStore.data));
-        // console.log(props.labelStore.cardRange[nLabel].toString());
-        labelStore.cardRange[nowVal] = JSON.parse(JSON.stringify(labelStore.cardRange[fromVal]));
-        console.log(JSONtoString(labelStore.cardRange));
-        for(let item in labelStore.cardRange[nowVal]) {
-            let cal = labelStore.cardRange[nowVal][item];
-            if(blockStore.label[cal.blockName] === undefined) {
-                blockStore.label[cal.blockName] = [];
-            }
-            if(cal.blockName[2] === undefined) {
-                nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], []);
-            }
-            if(cal.blockName[2] === 's') {
-                nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], []);
-            }
-            if(cal.blockName[2] === 'o') {
-                nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], cal.pattern[1]);
-            }
-            nCombo *= cal.pct / 100;
-            blockStore.label[cal.blockName].push({label: nowVal, pct: cal.pct, color: labelStore.color[nowVal], pattern: cal.pattern, combo: nCombo});
-            blockStore.totalCombo += nCombo;
-            blockStore.left[cal.blockName] -= nCombo;
-        }
-    }
+    labelStore.displayTotal[player] += 1;
+    labelStore.displayMatch[labelStore.total] = labelStore.displayTotal[player];
+    labelStore.color[labelStore.total] = ColorBox[labelStore.displayTotal[player]*30%445];
 }
 
 export const addLabelRange = (e, labelStore, blockName, blockStore) => {  
@@ -130,7 +96,7 @@ export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, v
     if(Out !== false) { Out[1]("F"); }
 }
 
-export const deleteLabel = (labelStore, blockStore, labelName, player, phase) => {
+export const deleteLabel = (labelStore, blockStore, labelName, player) => {
     let nowBlock, x;
     console.log(labelName, labelStore.cardRange[labelName]);
     for(let _nowBlock in labelStore.cardRange[labelName]) {
@@ -141,6 +107,6 @@ export const deleteLabel = (labelStore, blockStore, labelName, player, phase) =>
         blockStore.label[nowBlock.blockName].splice(x, 1);
     }
     labelStore.cardRange[labelName] = [];
-    let y = labelStore.data[player][phase].findIndex(item => item === labelName);
-    labelStore.data[player][phase].splice(y, 1);
+    let y = labelStore.playerLabel[player].findIndex(item => item === labelName);
+    labelStore.playerLabel[player].splice(y, 1);
 }

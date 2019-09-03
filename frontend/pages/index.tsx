@@ -1,16 +1,19 @@
 import * as React from 'react';
-import {RangeTable, LabelTable, HandTable, ResultTable} from '../components';
+import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad} from '../components';
 
 export default () => {
     return(<>
-    <div style={{position: "absolute", left:"5vw", top: "3vh", fontSize:"3vh", fontWeight:"bold"}}>Range Calculator</div>
-    <div style={{position:"absolute", top:"10%", left:"10%", display:"flex", flexDirection:"row", width:"80vw", flexWrap: "wrap"}}>
-        <div style={{display:"flex", flexDirection:"column"}}>
-            <LabelTable style={{display:"block", width:"200px"}}/>
-            <ResultTable style={{display:"block", width:"200px", marginTop:"5vh"}}/>
+    <div style={{position: "absolute", left:"5vw", top: "3vh", fontSize:"4vh", fontWeight:"bold"}}>Range Calculator</div>
+    <PlayerPad style={{position: "absolute", left:"5vw", top: "12vh", display:"block", width:"100px"}}/>
+    <div style={{position:"absolute", top:"8%", left:"10%", display:"flex", flexDirection:"row", width:"80vw", flexWrap: "wrap"}}>
+        <div style={{display:"block", paddingLeft:"5vw", width:"500px", flexDirection: "row"}}>
+            <RangePad style={{display:"block", width:"550px", paddingBottom:"20px"}}/>
+            <LabelPad style={{display:"block", width:"550px", paddingBottom:"30px"}}/>
         </div>
-        <RangeTable style={{display:"block", paddingLeft:"5vw", width:"550px", paddingBottom:"30px"}}/>
-        <HandTable style={{display:"block", paddingLeft:"5vw", width:"200px"}}/>
+        <div style={{display:"block", paddingLeft:"5vw", width:"200px", flexDirection: "row"}}>
+            <FixedPad style={{display:"block", width:"200px", paddingBottom:"20px"}}/>
+            <ResultPad style={{display:"block", width:"400px"}}/>
+        </div>
     </div>
     </>);
 };

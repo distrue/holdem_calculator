@@ -1,21 +1,19 @@
 import * as React from 'react';
 import {useState, useContext} from 'react';
 import {observer} from 'mobx-react-lite';
-import label from '../store/Label';
-import phase from '../store/Phase';
-import player from '../store/Player';
 import useContextMenu from 'react-use-context-menu';
-import block from '../store/Block';
 import styled from 'styled-components';
-import * as LabelPatcher from '../dispatcher/label';
-import * as BlockPatcher from '../dispatcher/block';
+
+import {player, label, block} from '../../store';
+import * as LabelPatcher from '../../dispatcher/label';
+import * as BlockPatcher from '../../dispatcher/block';
 
 interface Props {
     com: number[];
     keyV: string;
 }
 const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
-const manValid = (e, val, idx, blockStore, blockName, labelStore, target) => {
+const manValid = (e, val, blockStore, blockName, labelStore, target) => {
     const fval = parseInt(val);
     if(e.key === 'Enter') {
         if(fval !== undefined) {
@@ -25,7 +23,7 @@ const manValid = (e, val, idx, blockStore, blockName, labelStore, target) => {
         }
     }
 }
-const PctBar = observer(({target, blockName, labelStore, idx, blockStore, bindMenuItems}) => {
+const PctBar = observer(({target, blockName, labelStore, blockStore, bindMenuItems}) => {
     const manPct = useState(0);
     const pct_range = [25, 50, 75, 100];
     
@@ -34,7 +32,7 @@ const PctBar = observer(({target, blockName, labelStore, idx, blockStore, bindMe
         pct:
         <input style={{width:"30px"}} 
             onChange={e => manPct[1](e.target.value)} 
-            onKeyPress={e => manValid(e, manPct[0], idx, blockStore, blockName, labelStore, target)} 
+            onKeyPress={e => manValid(e, manPct[0], blockStore, blockName, labelStore, target)} 
         placeholder={target.pct}/>%
     </div>
     <div {...bindMenuItems}> 
@@ -117,7 +115,7 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
                         LabelPatcher.deleteLabelRange(labelStore, blockStore, item.label, blockName, visibleSet, Out)
                     }} style={{position:"absolute", right:"0%", cursor:"pointer", width:"20px"}} src="/static/bin.png" />
                 </div>
-                <PctBar idx={idx} target={item} blockName={blockName} labelStore={labelStore} blockStore={blockStore} bindMenuItems={bindMenuItems}/>
+                <PctBar target={item} blockName={blockName} labelStore={labelStore} blockStore={blockStore} bindMenuItems={bindMenuItems}/>
                 <PatternBar target={item.label} labelStore={labelStore} bindMenuItems={bindMenuItems} blockStore={blockStore} idx={idx} blockName={blockName}/>
                 Combos: {item.combo}
                 <hr/>
@@ -127,9 +125,8 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
 });
 const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visibleSet, blockStore, Out}) => {
     const playerStore = useContext(player);
-    const phaseStore = useContext(phase);
     return(<nav {...bindMenu} className="menu">
-        <LabelSet {...bindMenuItems} labelStore={labelStore} playerStore={playerStore} phaseStore={phaseStore}
+        <LabelSet {...bindMenuItems} labelStore={labelStore} playerStore={playerStore}
         visibleSet={visibleSet} Out={Out} blockStore={blockStore} blockName={blockName} bindMenuItems={bindMenuItems}/>
         <div {...bindMenuItems}>
             Left: {blockStore.left[blockName]} Combo
@@ -173,10 +170,10 @@ const RangeBlock = observer((props: Props) => {
                 {
                     let nColor = item.color || "#cccccc";
                     dead -= item.combo;
-                    return(<div style={{display: "block", width:`${40*item.combo/maB}px`, backgroundColor:nColor}}>{item.combo}</div>);
+                    return(<div style={{display: "block", width:`${36*item.combo/maB}px`, backgroundColor:nColor}}>{item.combo}</div>);
                 })}
-                <div style={{display: "block", width:`${40*blockStore.left[blockName]/maB}px`, backgroundColor:"#ffffff"}}></div>
-                <div style={{display: "block", width:`${40*dead/maB}px`, backgroundColor:"#444444"}}></div>
+                <div style={{display: "block", width:`${36*blockStore.left[blockName]/maB}px`, backgroundColor:"#ffffff"}}></div>
+                <div style={{display: "block", width:`${36*dead/maB}px`, backgroundColor:"#444444"}}></div>
             </div>
         </StyledBlock>
         <LabelBox bindMenu={bindMenu} bindMenuItems={bindMenuItems} labelStore={labelStore} blockName={blockName} visibleSet={visibleSet} blockStore={blockStore} Out={ghost}/>
@@ -186,7 +183,7 @@ const RangeBlock = observer((props: Props) => {
 export default RangeBlock;
 
 const StyledBlock = styled.div`
-    display: block; width: 40px; height: 40px;
+    display: block; width: 36px; height: 36px;
     border: 1px solid black;
     text-align: center;
     .blockName {

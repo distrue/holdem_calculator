@@ -3,15 +3,15 @@ import {action, observable, computed } from 'mobx';
 
 export class Label {
     constructor(props) {
-        this.data = {};
+        this.playerLabel = {};
         this.cardRange = {};
         this.total = 0;
         this.color = {};
         this.displayMatch = {};
         this.displayTotal = {};
     }
-    @observable data:object;
-    // labelStore.data[User][Phase] = [(labels),];
+    @observable playerLabel:object;
+    // labelStore.playerLabel[User] = [(labels),];
     @observable cardRange:object;
     // cardRange[labelNum] = [{blockName: blockName, pct:50, pattern: [[0, 1, 2, 3], [0, 1]]}, ];
     @observable total:number;
@@ -19,8 +19,9 @@ export class Label {
     @observable color:object;
     @observable displayMatch:object;
     // displayMatch[labelNum] = []
+    // 실제 labelnum -> display의 labelnum
     @observable displayTotal:object;
-    // displayMatch[User][Phase] = number
+    // displayTotal[User] = number
 };
 
 export default createContext(new Label({}));

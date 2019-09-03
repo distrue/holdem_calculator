@@ -1,6 +1,7 @@
-export {default as RangeBlock} from './rangeblock';
-export {default as RangeTable} from './rangetable';
-export {default as HandTable} from './handtable';
-export {default as LabelTable} from './labeltable';
-export {default as SelectCard} from './selectcard';
-export {default as ResultTable} from './resulttable';
+export {default as RangeBlock} from './block/rangeblock';
+export {default as RangePad} from './rangepad';
+export {default as FixedPad} from './fixedpad';
+export {default as PlayerPad} from './playerpad';
+export {default as SelectcardBlock} from './block/sltcardblock';
+export {default as ResultPad} from './resultpad';
+export {default as LabelPad} from './labelpad';

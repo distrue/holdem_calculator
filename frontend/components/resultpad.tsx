@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {useContext} from 'react';
+import {useContext, useEffect} from 'react';
 import {observer, useObservable} from 'mobx-react-lite';
-import {player, phase, share, result, label, block} from '../store';
+import {player, share, result, label, block} from '../store';
 import Axios from 'axios';
 import querystring from 'querystring';
 import * as Refresh from '../dispatcher/refresh';
-
+import jsonExistChecker from '../tools/jsonExistChecker';
+import styled from 'styled-components';
 
 function JSONtoString(object) {
     var results = [];
@@ -32,7 +33,7 @@ function addResult(resultStore, Nplayer, Nf, Ns, Nblock) {
     }
     resultStore.playerRange[Nplayer][String(Nf)][String(Ns)].pct +=  Nblock.pct / 100;
 }
-const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Board) => {
+const makeRequest = (playerStore, phaseStore, shareStore, resultStore, labelStore, Board) => {
     let SendData = {};
     // input play time
     SendData["playTime"]= String(3);
@@ -154,74 +155,68 @@ const askPct = (playerStore, phaseStore, shareStore, resultStore, labelStore, Bo
     .catch(err => console.log(err));
 }
 
-const HandTable = observer((props) => {
+const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, Nplayer}) => {
+    return(
+    <div style={{display:"flex", flexDirection:"row"}}>
+        <div style={{margin: "10px"}}>{Nplayer}:</div>
+        <PlayerSelectLabelStyle 
+            style={{color:playerStore.now===Nplayer?"green":"black"}}
+            onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore);}}
+        >
+            <div className="playerLabel">
+                <div className="Chosen">
+                    {jsonExistChecker(labelStore.playerLabel, [Nplayer])?
+                        labelStore.playerLabel[Nplayer].map(Nlabel => {
+                            const isChosen = playerStore.ownLabel[Nplayer].findIndex(idx => idx === Nlabel);
+                            if(isChosen >= 0) {
+                                return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer].splice(isChosen, 1)}>{labelStore.displayMatch[Nlabel]}</button>);
+                            }
+                            else {
+                                return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer].push(Nlabel)}>{labelStore.displayMatch[Nlabel]}</button>);
+                            }
+                        })
+                    :""}
+                </div>
+            </div>
+        </PlayerSelectLabelStyle>
+    </div>);
+});
+const ResultPad = observer((props) => {
     const playerStore = useContext(player);
-    const phaseStore = useContext(phase);
-    const shareStore = useContext(share);
-    const resultStore = useContext(result);
     const labelStore = useContext(label);
     const blockStore = useContext(block);
-    
-    const res = useObservable({
-        string: "",
-        json: null
-    }); 
+    const resultStore = useContext(result);
 
-    return(<div style={{...props.style}}>
-        <div style={{display: resultStore.submitted==="received"?"block":"none"}}>
-            {resultStore.phase?
-                <>
-                Phase: {resultStore.phase.name}<br/><br/>
-                Shared: {resultStore.phase.shared.toString()} <br/><br/>        
-                </>
-            :""}
-            {res.json && res.json.playerResult? 
-                res.json.playerResult.map((item, idx) => {
-                    return(
-                    <div style={{cursor: "pointer", color:playerStore.now===Number(idx)+1?"green":"black", border:"1px solid black"}} 
-                    onClick={e => {
-                        Refresh.refresh(Number(idx)+1, phaseStore.now, labelStore, playerStore, phaseStore, blockStore);
-                    }}>
-                        Player {Number(idx)+1}<br/>
-                        Total: {(Number(item.soloWin) + Number(item.drawWin)) / res.json.winNum * 100} %<br/>
-                        Solowin: {item.soloWin / res.json.winNum * 100} %<br/>
-                        Drawwin: {item.drawWin / res.json.winNum * 100} %<br/>
-                    </div>);
-                })
-            : ""}
-            <button onClick={e => resultStore.submitted = undefined}>
-                New Result
-            </button>
+    return(
+    <div style={{flexDirection: "column", ...props.style, display: resultStore.submitted===undefined?"flex":"none"}}>
+        <div style={{display:"block", width:"5vw", fontSize:"3vh", fontWeight: "bold"}}>
+            Result
         </div>
-        <div style={{display: resultStore.submitted==="downloading"?"block":"none"}}>
-            <div>
-                Downloading
-            </div>
-            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
-                Redirect
-            </button>
-            <button onClick={e => resultStore.submitted = undefined}>
-                New Result
-            </button>
-        </div>
-        <div style={{display: resultStore.submitted==="calculating"?"block":"none"}}>
-            <div>
-                Calculating
-            </div>
-            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
-                Redirect
-            </button>
-            <button onClick={e => resultStore.submitted = undefined}>
-                New Result
-            </button>
-        </div>
-        <div style={{display: resultStore.submitted===undefined?"block":"none"}}>
-            <button onClick={e => askPct(playerStore, phaseStore, shareStore, resultStore, labelStore, res)}>
-                Calculate
-            </button>
+        <div style={{overflow:"scroll", padding:"10px"}}>
+            {playerStore.list.map(Nplayer => 
+                <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} Nplayer={Nplayer}/>
+            )}
         </div>
     </div>);
 });
 
-export default HandTable;
+const PlayerSelectLabelStyle = styled.div`
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    .playerLabel {
+        display: flex;
+        flex-direction: column;
+        div {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+    }
+`;
 
+export default ResultPad;

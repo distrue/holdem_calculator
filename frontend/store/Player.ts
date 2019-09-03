@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-import {action, observable, computed } from 'mobx';
+import { observable } from 'mobx';
 
 export class Player {
     constructor(props) {
@@ -10,7 +10,7 @@ export class Player {
     @observable list:string[];
     @observable now:string;   
     @observable ownLabel:object;
-    // useLabel[playerNum][phaseName] = [LabelNum];
+    // useLabel[playerNum] = [LabelNum];
 };
 
 export default createContext(new Player({}));

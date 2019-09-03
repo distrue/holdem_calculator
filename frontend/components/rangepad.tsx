@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useContext} from 'react';
-import {RangeBlock} from '../components';
+import {RangeBlock} from '.';
 import {observer} from 'mobx-react-lite';
 import styled from 'styled-components' ;
 import {block} from '../store';
@@ -10,7 +10,7 @@ const Totalcombo = observer(() => {
     const blockStore = useContext(block);
     return(<div>TotalCombo: {blockStore.totalCombo}</div>);
 });
-const RangeTable = (props) => {
+const RangePad = (props) => {
     const style = {...props.style};
     return(<div style={style}>
         <Totalcombo/>
@@ -24,7 +24,7 @@ const RangeTable = (props) => {
     </div>);
 }
 
-export default RangeTable;
+export default RangePad;
 
 const Line = styled.div`
     display: flex; width: 80vw;

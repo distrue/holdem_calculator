@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-import { action, observable, computed } from 'mobx'
+import { observable, computed } from 'mobx'
 import { useStaticRendering } from 'mobx-react'
 
 const isServer = typeof window === 'undefined'
