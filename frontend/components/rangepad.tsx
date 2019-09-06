@@ -47,4 +47,5 @@ const Line = styled.div`
 
 const RangePadStyle = styled.div`
     display: block; position: relative;
+    z-index: 3;
 `;

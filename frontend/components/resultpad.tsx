@@ -207,6 +207,7 @@ const PlayerSelectLabelStyle = styled.div`
     border: 1px solid black;
     margin-bottom: 10px;
     margin-top: 10px;
+    z-index: 3;
     .playerLabel {
         display: flex;
         flex-direction: column;

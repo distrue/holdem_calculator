@@ -160,7 +160,7 @@ const RangeBlock = observer((props: Props) => {
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >
-        <StyledBlock {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 
