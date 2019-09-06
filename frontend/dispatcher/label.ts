@@ -19,7 +19,24 @@ export const addLabel = (player, labelStore) => {
     labelStore.color[labelStore.total] = ColorBox[labelStore.displayTotal[player]*30%445];
 }
 
-export const addLabelRange = (e, labelStore, blockName, blockStore, rangeView) => {  
+import {patternCount} from './block';
+export const addRange = (pct, pattern, blockName, blockStore, labelStore, cacheStore, change) => {
+    let cacheName = blockName[2] === undefined? "p": blockName[2];
+    cacheStore.range[cacheName] = {blockName: blockName, pct: pct, pattern:pattern};
+    cacheStore.blockEnv[cacheName] = Object.assign(cacheStore.blockEnv[cacheName], blockStore.label[blockName]);
+    
+    let initCombo = patternCount(blockName, pattern[0], pattern[1]) * pct / 100;
+    blockStore.label[blockName].push({label:labelStore.now, pct:pct, color:labelStore.color[labelStore.now], pattern:pattern, combo: initCombo});
+    blockStore.totalCombo += initCombo;
+    labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: pct, pattern:pattern});
+    blockStore.left[blockName] -= initCombo;
+    change(false);
+}
+
+import {checkEnv} from './cache';
+import { registerInterceptor } from "mobx/lib/internal";
+export const addLabelRange = (e, labelStore, blockName, blockStore, cacheStore, rangeView, onDrag) => {  
+    //  onKeyDown={() => {cacheStore.available = true;}} onKeyUp={() => {cacheStore.available = false;}}
     if(labelStore.now === undefined) {
         return;
     }
@@ -29,7 +46,18 @@ export const addLabelRange = (e, labelStore, blockName, blockStore, rangeView) =
     if(blockStore.label[blockName] === undefined) {
         blockStore.label[blockName] = [];
     }
-    if(blockStore.label[blockName].findIndex((item) => item.label === labelStore.now) < 0) { // 현재 label의 range가 이미 존재하는지 확인    
+    if(blockStore.label[blockName].findIndex((item) => item.label === labelStore.now) >= 0) { // 현재 label의 range가 이미 존재하는지 확인    
+        return;
+    }
+    let cacheName = blockName[2] === undefined? "p": blockName[2];
+    if(e.shiftKey) {
+        if(cacheStore.range[cacheName].pct !== undefined) { // cache가 존재하는지
+        if(checkEnv(blockStore.label[blockName], cacheStore.blockEnv[cacheName]) === false) { return; } // blockEnv가 일치하는지
+        addRange(cacheStore.range[cacheName].pct, cacheStore.range[cacheName].pattern, blockName, blockStore, labelStore, cacheStore, rangeView);
+        }
+    }
+    else {
+        if(onDrag === true) { return; }
         rangeView({blockName: blockName, existing: blockStore.label[blockName]});
     }
 }
