@@ -53,6 +53,40 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
     }    
 }
 
+export const setCard = (e, colorChange, changeNum, shareStore, blockStore, labelStore, playerStore) => {
+    // 요약 -> 공유 카드의 숫자가 특정 Block 에 포함될 경우, 해당 Block 에서는 공유 카드를 포함하는 Block combo 가 제거되어야 한다.
+    // 현재 바꾸고 있는 공유 카드 순서
+    shareStore.onChange = changeNum;
+
+    const looker = {'a': 12, 'A': 12, 'k':11, 'K':11, 'q':10, 'Q':10, 'j':9, 'J':9, 't':8, 'T':8, '9':7, '8':6, '7':5, '6':4, '5':3, '4':2, '3':1, '2':0};
+    const pattern = {'s': 0, 'S': 0, 'c': 1, 'C': 1, 'h': 2, 'H': 2, 'd': 3, 'D': 3};
+
+    // Validation
+    if(e.target.value.length !== 2) {
+        colorChange("black");
+    }
+    else{
+        let x = e.target.value[0];
+        let xc = looker[x];
+        let y = e.target.value[1];
+        let yc = pattern[y];
+
+        if(looker.hasOwnProperty(x) && pattern.hasOwnProperty(y)){ // 정상적으로 신규 공유 카드가 등록되는 상황
+            colorChange("green"); // valid shared Card
+
+            // 0. shareStore 에 신규 카드 입력
+            shareStore.card[changeNum] = xc + yc * 13;
+            shareStore.valid[changeNum] = true;
+            shareStore.onChange++; // onChange 번째가 정상적으로 입력된 상황은 onChange+1 번째를 바꾸고 있는 상황과 같다.
+        }
+        else{ // 정상적이지 못한 상황
+            colorChange("red");
+        }
+    }
+    console.log(shareStore.card);
+    shareChange(shareStore, playerStore, labelStore, blockStore);
+}
+
 // 공유 카드를 고려한 Block combo를 구하는 함수
 export const blockComboCount = (shareCard, shareCardNum, blockName, pattern_1, pattern_2) => {
     let cnt = 0;
