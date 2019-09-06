@@ -42,8 +42,8 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div {...bindMenuItems}>
         pattern(p)<br/>
         {blockName[0]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
                     color: col}}
@@ -59,16 +59,16 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
             pattern(o)<br/>
             {blockName[0]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
                         BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
                     }}>{item}</button>);
             })}<br/>
             {blockName[1]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
                         BlockPatcher.patternChange(1, blockStore, labelStore, idx, target, item, blockName)
@@ -80,8 +80,8 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
         pattern(s)<br/>
         {blockName[0]}{blockName[1]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
                     color: col}}

@@ -90,8 +90,8 @@ const rangeSetBlock = observer(({view, change}) => {
                     <div>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
-                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black"}} 
-                        onClick={() => flop(sendStore, 0, item)}>
+                        style={{backgroundColor: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "white": "black"}} 
+                        onClick={() => flop(sendStore, 1, item)}>
                             {item}
                         </button>);
                     })}
