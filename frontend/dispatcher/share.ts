@@ -30,6 +30,8 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
                 let N = blockStore.label[cal.blockName].length;
                 for(let idx = 0; idx < N; idx++){
                     let deltaCombo = blockStore.label[cal.blockName][idx].combo;
+                    console.log(cal.blockName);
+                    console.log(deltaCombo);
                     // console.log(nowPlayer);
                     // console.log(cal.blockName);
 
