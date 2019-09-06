@@ -8,7 +8,7 @@ export const addUser = (labelStore, playerStore) => {
     labelStore.displayTotal[(playerStore.list.length).toString()] = 0;
 
     for(let idx in [...Array(12).keys()]) {
-        console.log(idx);
+        // console.log(idx);
         addLabel((playerStore.list.length).toString(), labelStore);
     }
 }

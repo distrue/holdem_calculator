@@ -65,8 +65,8 @@ export const addLabelRange = (e, labelStore, blockName, blockStore) => {
 }
 
 export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, labelName) => {
-    console.log(blockName, labelName);
-    console.log(JSONtoString(labelStore.cardRange));
+    // console.log(blockName, labelName);
+    // console.log(JSONtoString(labelStore.cardRange));
     let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
@@ -79,7 +79,7 @@ export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, la
     blockStore.left[blockName] += deltaCombo;
     labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
-    console.log(JSONtoString(labelStore.cardRange));
+    // console.log(JSONtoString(labelStore.cardRange));
 }
 
 export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, visibleSet, Out) => {

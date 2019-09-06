@@ -17,7 +17,7 @@ const LabelPad = observer(() => {
                         return;
                     }
                     labelStore.now = labelStore.playerLabel[playerStore.now][item]; 
-                    console.log(labelStore.playerLabel[playerStore.now][item]);
+                    // console.log(labelStore.playerLabel[playerStore.now][item]); // (이용하고 있는) label 번호 출력
                 }}>{item+1}</div>);
         })}
     </div>);

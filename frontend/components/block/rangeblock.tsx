@@ -108,6 +108,7 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
     <div style={{maxHeight: "40vh", overflow:"scroll", paddingBottom:"10px", marginBottom:"10px", borderBottom:"2px solid black"}}>
         {blockStore.label[blockName]?
         blockStore.label[blockName].map((item, idx) => {
+            // console.log(idx);
             return(<>
                 <div {...bindMenuItems} style={{position: "relative"}}>
                     Label{labelStore.displayMatch[item.label]}: {item.pct}% 

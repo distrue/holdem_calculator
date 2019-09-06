@@ -2,7 +2,6 @@ export const patternChange = (fd, blockStore, labelStore, idx, target, item, blo
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
     const match = {2: 1, 3:3, 4:6};
     let deltaCombo;
-    console.log(target);
 
     const x = blockStore.label[blockName][idx].pattern[fd].findIndex(ic => ic === pattern[item]);
     console.log("pattern Done", blockStore.label[blockName][idx].pattern[fd].toString(), x, pattern[item]);
@@ -37,8 +36,6 @@ export const patternChange = (fd, blockStore, labelStore, idx, target, item, blo
 
     blockStore.label[blockName][idx].combo = patternCount(blockName, labelStore.cardRange[target][y].pattern[0], labelStore.cardRange[target][y].pattern[1]) * blockStore.label[blockName][idx].pct / 100;
     deltaCombo -= blockStore.label[blockName][idx].combo;
-    
-
     
     blockStore.totalCombo -= deltaCombo;
     blockStore.left[blockName] += deltaCombo;
