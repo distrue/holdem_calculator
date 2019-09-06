@@ -11,7 +11,7 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
     // 0. 현재 존재하는 공유 카드 확인
     let sharedCard = [];
     let sharedCardNum = shareStore.onChange;
-    console.log(sharedCardNum);
+    // console.log(sharedCardNum);
     for(let i = 0; i < sharedCardNum; i++){
         sharedCard[i] = shareStore.card[i];
     }
@@ -21,33 +21,47 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
     // console.log(playerNum);
     for(let nowPlayer = 1; nowPlayer <= playerNum; nowPlayer++){ // 모든 플레이어의 totalCombo 변경 필요
         let nCombo = 0;
+        let blockNameVisitNum = {};
 
         // 해당 플레이어의 block 확인하는 과정
         for(let nLabel in labelStore.playerLabel[nowPlayer]) {
             let labelVal = labelStore.playerLabel[nowPlayer][nLabel];
+            let idx;
+
             for(let item in labelStore.cardRange[labelVal]) {
                 let cal = labelStore.cardRange[labelVal][item];
-                let N = blockStore.label[cal.blockName].length;
-                for(let idx = 0; idx < N; idx++){
-                    let deltaCombo = blockStore.label[cal.blockName][idx].combo;
-                    // console.log(nowPlayer);
-                    // console.log(cal.blockName);
-
-                    if(cal.blockName[2] === undefined) { // 페어 (6)
-                        nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
-                    }
-                    if(cal.blockName[2] === 's') { // 같은 문양 (4)
-                        nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
-                    }
-                    if(cal.blockName[2] === 'o') { // 다른 문양 (12)
-                        nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], cal.pattern[1]);
-                    }
-                    nCombo *= cal.pct / 100;
-                    blockStore.label[cal.blockName][idx].combo = nCombo;
-                    deltaCombo -= blockStore.label[cal.blockName][idx].combo;
-                    blockStore.totalCombo -= deltaCombo;
-                    blockStore.left[cal.blockName] += deltaCombo;
+                
+                let tmpBlockName = cal.blockName;
+                // console.log(cal.blockName);
+                if(!blockNameVisitNum.hasOwnProperty(cal.blockName)){ // 존재하지 않는다면
+                    blockNameVisitNum[tmpBlockName] = 0;
                 }
+                idx = blockNameVisitNum[tmpBlockName]++;
+                
+                let deltaCombo = blockStore.label[cal.blockName][idx].combo;
+                // console.log(nowPlayer);
+                // console.log(cal.blockName);
+
+                if(cal.blockName[2] === undefined) { // 페어 (6)
+                    nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
+                }
+                if(cal.blockName[2] === 's') { // 같은 문양 (4)
+                    nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
+                }
+                if(cal.blockName[2] === 'o') { // 다른 문양 (12)
+                    nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], cal.pattern[1]);
+                }
+                nCombo *= cal.pct / 100;
+                blockStore.label[cal.blockName][idx].combo = nCombo;
+                deltaCombo -= blockStore.label[cal.blockName][idx].combo;
+                blockStore.totalCombo -= deltaCombo;
+                blockStore.left[cal.blockName] += deltaCombo;
+                
+                console.log(blockNameVisitNum);
+                console.log(cal.blockName);
+                console.log(cal.pct);
+                console.log(nCombo);
+                console.log(deltaCombo);
             }
         }
     }    
