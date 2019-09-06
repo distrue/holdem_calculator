@@ -1,10 +1,9 @@
 import * as React from 'react';
 import {useState, useContext} from 'react';
 import {observer, useObservable} from 'mobx-react-lite';
-import jts from '../../tools/JSONtoString';
 import styled from 'styled-components';
-import {block, label} from '../../store';
-import {patternCount} from '../../dispatcher/block';
+import {block, label, cache} from '../../store';
+import {addRange} from '../../dispatcher/label';
 
 const flop = (sendStore, line, target) => {
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};
@@ -15,12 +14,14 @@ const flop = (sendStore, line, target) => {
     console.log(change);
     sendStore.change(change);
 }
-const addRange = (pct, pattern, blockName, blockStore, labelStore) => {
-    let initCombo = patternCount(blockName, pattern[0], pattern[1]) * pct / 100;
-    blockStore.label[blockName].push({label:labelStore.now, pct:pct, color:labelStore.color[labelStore.now], pattern:pattern, combo: initCombo});
-    blockStore.totalCombo += initCombo;
-    labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: pct, pattern:pattern});
-    blockStore.left[blockName] -= initCombo;
+const pctCheck = (to, constraint, target, pct) => {
+    for(let line in [...Array(to).keys()]) {
+        for(let idx in target[line]) {
+            console.log(constraint[line][target[line][idx]], pct);
+            if(constraint[line][target[line][idx]] < pct) return false;
+        }
+    }
+    return true;
 }
 const rangeSetBlock = observer(({view, change}) => {
     const manPct = useState(0);
@@ -28,6 +29,7 @@ const rangeSetBlock = observer(({view, change}) => {
     const pct_range = [25, 50, 75, 100];
     const blockStore = useContext(block);
     const labelStore = useContext(label);
+    const cacheStore = useContext(cache);
     const sendStore = useObservable({
         pattern: [[0, 1, 2, 3], [0, 1, 2, 3]],
         change(res) {
@@ -45,7 +47,6 @@ const rangeSetBlock = observer(({view, change}) => {
     }
     for(let idx in view.existing) {
         let pLabel = view.existing[idx];
-        console.log(idx, jts(pLabel.pattern));
         for(let pidx in pLabel.pattern[0]) {
             let pNow = pLabel.pattern[0][pidx];
             Using[0][pNow] -= pLabel.pct;
@@ -117,7 +118,14 @@ const rangeSetBlock = observer(({view, change}) => {
                 <div> {pct_range.map(pct => <button onClick={() => manPct[1](pct)}>{pct}</button>)} </div>
             </div>
         </SetterStyle>
-        <button style={{position:"absolute", right:"5%", top:"17%", width:"15%", height:"15%"}} onClick={() => addRange(manPct[0], sendStore.pattern, view.blockName, blockStore, labelStore)}>제출</button>
+        <button style={{position:"absolute", right:"5%", top:"17%", width:"15%", height:"15%"}} onClick={() => {
+            if(pctCheck(view.blockName[2]==='o'?2:1, Using, sendStore.pattern, manPct[0]) === true) {
+                addRange(manPct[0], sendStore.pattern, view.blockName, blockStore, labelStore, cacheStore, change);
+            }
+            else {
+                alert("Percentage 범위를 벗어났습니다.");
+            }
+        }}>제출</button>
         <div style={{position:"absolute", right:"2%", top:"5%", cursor:"pointer"}} onClick={() => {change(false);}}>X</div>
     </RangeSetBlockStyle>);
 });

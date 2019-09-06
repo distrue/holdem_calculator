@@ -4,7 +4,7 @@ import {observer} from 'mobx-react-lite';
 import useContextMenu from 'react-use-context-menu';
 import styled from 'styled-components';
 
-import {player, label, block} from '../../store';
+import {player} from '../../store';
 import * as LabelPatcher from '../../dispatcher/label';
 import * as BlockPatcher from '../../dispatcher/block';
 
@@ -12,6 +12,9 @@ interface Props {
     com: number[];
     keyV: string;
     rangeView: any;
+    labelStore: any;
+    blockStore: any;
+    cacheStore: any;
 }
 
 const PctBar = observer(({target, blockName, labelStore, blockStore, bindMenuItems}) => {
@@ -128,13 +131,14 @@ const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visi
 });
 const RangeBlock = observer((props: Props) => {
     const ghost = useState("");
-    const labelStore = useContext(label); 
-    const blockStore = useContext(block);
+    const labelStore = props.labelStore; 
+    const blockStore = props.blockStore;
+    const cacheStore = props.cacheStore;
     const [bindMenu, bindMenuItems, useContextTrigger, visibleSet] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
     let blockName, border, opacity=1, dead, maB;
     const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
-
+    
     if(props.com[0] < props.com[1]) {
         border = "1px solid green"; blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "s";
         dead = 4; maB = 4;
@@ -156,7 +160,7 @@ const RangeBlock = observer((props: Props) => {
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, props.rangeView)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, props.rangeView)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 
