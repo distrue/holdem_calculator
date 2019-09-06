@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {useContext} from 'react';
-import {RangeBlock} from '.';
+import {useContext, useState} from 'react';
+import {RangeBlock, RangeSetBlock} from '.';
 import {observer} from 'mobx-react-lite';
 import styled from 'styled-components' ;
 import {block} from '../store';
@@ -10,18 +10,23 @@ const Totalcombo = observer(() => {
     const blockStore = useContext(block);
     return(<div>TotalCombo: {blockStore.totalCombo}</div>);
 });
+
 const RangePad = (props) => {
+    const RangeSetterView = useState(false);
     const style = {...props.style};
-    return(<div style={style}>
+    return(<RangePadStyle style={style}>
         <Totalcombo/>
         {NumRange.map(first => {
             return(<Line>
                 {NumRange.map(second => {
-                    return(<RangeBlock keyV={first.toString() + second.toString()} com={[first, second]}/>);
+                    return(<RangeBlock keyV={first.toString() + second.toString()} com={[first, second]} rangeView={RangeSetterView[1]}/>);
                 })}
             </Line>);
         })}
-    </div>);
+        {RangeSetterView[0] !== false?
+            <RangeSetBlock view={RangeSetterView[0]} change={RangeSetterView[1]}/>
+        :""}
+    </RangePadStyle>);
 }
 
 export default RangePad;
@@ -34,4 +39,8 @@ const Line = styled.div`
         border: 1px solid black;
         z-index: 2;
     }
+`;
+
+const RangePadStyle = styled.div`
+    display: block; position: relative;
 `;
