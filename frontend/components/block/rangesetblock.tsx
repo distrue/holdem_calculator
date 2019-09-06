@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {useState, useContext} from 'react';
 import {observer, useObservable} from 'mobx-react-lite';
-import jts from '../../tools/JSONtoString';
 import styled from 'styled-components';
 import {block, label, cache} from '../../store';
 import {addRange} from '../../dispatcher/label';

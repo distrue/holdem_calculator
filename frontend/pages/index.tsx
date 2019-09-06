@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad} from '../components';
+import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad, CacheChecker} from '../components';
 
 export default () => {
     return(<>
@@ -14,6 +14,7 @@ export default () => {
             <FixedPad style={{display:"block", width:"200px", paddingBottom:"20px"}}/>
             <ResultPad style={{display:"block", width:"400px"}}/>
         </div>
+        <CacheChecker/>
     </div>
     </>);
 };

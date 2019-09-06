@@ -174,7 +174,6 @@ const RangeBlock = observer((props: Props) => {
             </div>
         </StyledBlock>
         <LabelBox bindMenu={bindMenu} bindMenuItems={bindMenuItems} labelStore={labelStore} blockName={blockName} visibleSet={visibleSet} blockStore={blockStore} Out={ghost}/>
-        <div style={{display:"none"}}>{cacheStore.available}</div>
     </div>);
 });
 

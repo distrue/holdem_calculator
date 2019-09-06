@@ -36,7 +36,6 @@ export const addRange = (pct, pattern, blockName, blockStore, labelStore, cacheS
 import {checkEnv} from './cache';
 import { registerInterceptor } from "mobx/lib/internal";
 export const addLabelRange = (e, labelStore, blockName, blockStore, cacheStore, rangeView, onDrag) => {  
-    //  onKeyDown={() => {cacheStore.available = true;}} onKeyUp={() => {cacheStore.available = false;}}
     if(labelStore.now === undefined) {
         return;
     }
@@ -50,7 +49,7 @@ export const addLabelRange = (e, labelStore, blockName, blockStore, cacheStore, 
         return;
     }
     let cacheName = blockName[2] === undefined? "p": blockName[2];
-    if(e.shiftKey) {
+    if(cacheStore.available | e.shiftKey) {
         if(cacheStore.range[cacheName].pct !== undefined) { // cache가 존재하는지
         if(checkEnv(blockStore.label[blockName], cacheStore.blockEnv[cacheName]) === false) { return; } // blockEnv가 일치하는지
         addRange(cacheStore.range[cacheName].pct, cacheStore.range[cacheName].pattern, blockName, blockStore, labelStore, cacheStore, rangeView);
