@@ -29,8 +29,6 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
 
             for(let item in labelStore.cardRange[labelVal]) {
                 let cal = labelStore.cardRange[labelVal][item];
-                 console.log(labelVal, item, cal.blockName);
-                
                 let N = blockStore.label[cal.blockName].length;
                 let idx;
                 for(idx = 0; idx < N; idx++){
