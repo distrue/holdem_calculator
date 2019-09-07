@@ -21,23 +21,21 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
     // console.log(playerNum);
     for(let nowPlayer = 1; nowPlayer <= playerNum; nowPlayer++){ // 모든 플레이어의 totalCombo 변경 필요
         let nCombo = 0;
-        let blockNameVisitNum = {};
 
         // 해당 플레이어의 block 확인하는 과정
         for(let nLabel in labelStore.playerLabel[nowPlayer]) {
             let labelVal = labelStore.playerLabel[nowPlayer][nLabel];
-            let idx;
 
             for(let item in labelStore.cardRange[labelVal]) {
                 let cal = labelStore.cardRange[labelVal][item];
+                console.log(labelVal, item, cal.blockName);
                 
-                let tmpBlockName = cal.blockName;
-                // console.log(cal.blockName);
-                if(!blockNameVisitNum.hasOwnProperty(cal.blockName)){ // 존재하지 않는다면
-                    blockNameVisitNum[tmpBlockName] = 0;
+                let N = blockStore.label[cal.blockName].length;
+                let idx;
+                for(idx = 0; idx < N; idx++){
+                    if(blockStore.label[cal.blockName][idx].label == labelVal) break;
                 }
-                idx = blockNameVisitNum[tmpBlockName]++;
-                
+
                 let deltaCombo = blockStore.label[cal.blockName][idx].combo;
                 // console.log(nowPlayer);
                 // console.log(cal.blockName);
@@ -57,11 +55,11 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
                 blockStore.totalCombo -= deltaCombo;
                 blockStore.left[cal.blockName] += deltaCombo;
                 
-                console.log(blockNameVisitNum);
-                console.log(cal.blockName);
-                console.log(cal.pct);
-                console.log(nCombo);
-                console.log(deltaCombo);
+                // console.log(blockNameVisitNum);
+                // console.log(cal.blockName);
+                // console.log(cal.pct);
+                // console.log(nCombo);
+                // console.log(deltaCombo);
             }
         }
     }    
@@ -97,7 +95,7 @@ export const setCard = (e, colorChange, changeNum, shareStore, blockStore, label
             colorChange("red");
         }
     }
-    console.log(shareStore.card);
+    // console.log(shareStore.card);
     shareChange(shareStore, playerStore, labelStore, blockStore);
 }
 
