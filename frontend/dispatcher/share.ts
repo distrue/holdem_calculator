@@ -63,7 +63,9 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
         }
     }
     let mul = playerStore.list.length;
-    for(let i = 1; i <= 12 * mul; i++) calLabelCombo(i, labelStore, blockStore);
+    for(let i = 1; i <= 12 * mul; i++){
+        calLabelCombo(i, labelStore, blockStore);
+    }
 }
 
 export const setCard = (e, colorChange, changeNum, shareStore, blockStore, labelStore, playerStore) => {

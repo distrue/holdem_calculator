@@ -9,6 +9,7 @@ export class Label {
         this.color = {};
         this.displayMatch = {};
         this.displayTotal = {};
+        this.labelCombo = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     }
     @observable playerLabel:object;
     // labelStore.playerLabel[User] = [(labels),];
@@ -22,6 +23,8 @@ export class Label {
     // 실제 labelnum -> display의 labelnum
     @observable displayTotal:object;
     // displayTotal[User] = number
+    @observable labelCombo:Number[];
+    // labelCombo[labelNum] = label Combo 수
 };
 
 export default createContext(new Label({}));

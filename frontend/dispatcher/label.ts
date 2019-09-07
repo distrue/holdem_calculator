@@ -137,10 +137,9 @@ export const calLabelCombo = (labelNum, labelStore, blockStore) => {
             for (idx = 0; idx < N; idx++) {
                 if (blockStore.label[cal.blockName][idx].label == labelVal) break;
             }
-            if(idx != N) labelCombo += blockStore.label[cal.blockName][idx].combo;
+            labelCombo += idx == N ? 0 : blockStore.label[cal.blockName][idx].combo;
         }
     }
-    // console.log("labelNum: " + labelNum);
-    // console.log("labelCombo: " + labelCombo);
-    return labelCombo;
+    labelStore.labelCombo[labelNum+1] = labelCombo;
+    // return labelCombo;
 }
