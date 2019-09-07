@@ -47,6 +47,7 @@ export class Block {
             let nCombo;
             // NewState update
             for(let nLabel in props.labelStore.playerLabel[props.newPlayer]) {
+                // console.log(props.newPlayer);
                 let labelVal = props.labelStore.playerLabel[props.newPlayer][nLabel];
                 // console.log(props.labelStore.cardRange[nLabel].toString());
                 for(let item in props.labelStore.cardRange[labelVal]) {

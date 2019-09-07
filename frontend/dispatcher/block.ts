@@ -2,43 +2,26 @@ export const patternChange = (fd, blockStore, labelStore, idx, target, item, blo
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
     const match = {2: 1, 3:3, 4:6};
     let deltaCombo;
-    console.log(target);
 
-    const x = blockStore.label[blockName][idx].pattern[fd].findIndex(ic => ic === pattern[item]);
-    console.log("pattern Done", blockStore.label[blockName][idx].pattern[fd].toString(), x, pattern[item]);
+    const x = blockStore.label[blockName][idx].pattern[fd].indexOf(pattern[item]);
     if(x >= 0) { blockStore.label[blockName][idx].pattern[fd].splice(x, 1); }
     else { blockStore.label[blockName][idx].pattern[fd].push(pattern[item]); }
     const ch = blockStore.label[blockName][idx].pattern[fd].length;
-    
+    console.log("pattern Done", blockStore.label[blockName][idx].pattern[fd].toString(), x, pattern[item]);
+
     const y = labelStore.cardRange[target].findIndex(ic => ic.blockName === blockName);
     deltaCombo = blockStore.label[blockName][idx].combo;
 
-    const z = labelStore.cardRange[target][y].pattern[fd].findIndex(ic => ic === pattern[item]) // [_Nblock]
+    const z = labelStore.cardRange[target][y].pattern[fd].indexOf(pattern[item]) // [_Nblock]
     if(blockName[2] === undefined && z >= 0 && labelStore.cardRange[target][y].pattern[fd].length === 2) {
         alert("you should choose at least two patterns");
         blockStore.label[blockName][idx].combo *= match[labelStore.cardRange[target][y].pattern[0].length];
         return;
     }
-    console.log("pattern Done", blockStore.label[blockName][idx].pattern[fd].toString(), pattern[item], z);
-    if(z >= 0) { labelStore.cardRange[target][y].pattern[fd].splice(z, 1); 
-        if(ch !== blockStore.label[blockName][idx].pattern[fd].length) {
-            if(x >= 0) { blockStore.label[blockName][idx].pattern[fd].splice(x, 1); }
-            else { blockStore.label[blockName][idx].pattern[fd].push(pattern[item]); }
-        }
-    }
-    else { labelStore.cardRange[target][y].pattern[fd].push(pattern[item]); 
-        if(ch !== blockStore.label[blockName][idx].pattern[fd].length) {
-            if(x >= 0) { blockStore.label[blockName][idx].pattern[fd].splice(x, 1); }
-            else { blockStore.label[blockName][idx].pattern[fd].push(pattern[item]); }
-        }
-    }
-
-    console.log("pattern Done", blockStore.label[blockName][idx].pattern[fd].toString(), pattern[item]);
+    console.log("pattern c1", blockStore.label[blockName][idx].pattern[fd].toString(), pattern[item], z);
 
     blockStore.label[blockName][idx].combo = patternCount(blockName, labelStore.cardRange[target][y].pattern[0], labelStore.cardRange[target][y].pattern[1]) * blockStore.label[blockName][idx].pct / 100;
     deltaCombo -= blockStore.label[blockName][idx].combo;
-    
-
     
     blockStore.totalCombo -= deltaCombo;
     blockStore.left[blockName] += deltaCombo;

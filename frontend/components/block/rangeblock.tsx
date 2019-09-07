@@ -4,25 +4,19 @@ import {observer} from 'mobx-react-lite';
 import useContextMenu from 'react-use-context-menu';
 import styled from 'styled-components';
 
-import {player, label, block} from '../../store';
+import {player} from '../../store';
 import * as LabelPatcher from '../../dispatcher/label';
 import * as BlockPatcher from '../../dispatcher/block';
 
 interface Props {
     com: number[];
     keyV: string;
+    rangeView: any;
+    labelStore: any;
+    blockStore: any;
+    cacheStore: any;
 }
-const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
-const manValid = (e, val, blockStore, blockName, labelStore, target) => {
-    const fval = parseInt(val);
-    if(e.key === 'Enter') {
-        if(fval !== undefined) {
-            if(fval <= 100 && fval >= 0) {
-                LabelPatcher.updateLabelPct(fval, labelStore, blockStore, blockName, target.label);
-            }
-        }
-    }
-}
+
 const PctBar = observer(({target, blockName, labelStore, blockStore, bindMenuItems}) => {
     const manPct = useState(0);
     const pct_range = [25, 50, 75, 100];
@@ -32,7 +26,7 @@ const PctBar = observer(({target, blockName, labelStore, blockStore, bindMenuIte
         pct:
         <input style={{width:"30px"}} 
             onChange={e => manPct[1](e.target.value)} 
-            onKeyPress={e => manValid(e, manPct[0], blockStore, blockName, labelStore, target)} 
+            onKeyPress={e => LabelPatcher.manValid(e, manPct[0], blockStore, blockName, labelStore, target)} 
         placeholder={target.pct}/>%
     </div>
     <div {...bindMenuItems}> 
@@ -51,8 +45,8 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div {...bindMenuItems}>
         pattern(p)<br/>
         {blockName[0]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
                     color: col}}
@@ -68,16 +62,16 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
             pattern(o)<br/>
             {blockName[0]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
                         BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
                     }}>{item}</button>);
             })}<br/>
             {blockName[1]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(blockStore.label[blockName][idx].pattern[1].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }        
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { bckcol = "black"; }
+                let col = "black"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { col = "white"; }        
                 return(<button style={{backgroundColor: bckcol, color: col}}
                     onClick={e => {
                         BlockPatcher.patternChange(1, blockStore, labelStore, idx, target, item, blockName)
@@ -89,8 +83,8 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
         pattern(s)<br/>
         {blockName[0]}{blockName[1]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].findIndex(ic => ic === pattern[item])>=0) { col = "white"; }
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
+        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
                     color: col}}
@@ -108,6 +102,7 @@ const LabelSet = observer(({labelStore, blockStore, blockName, bindMenuItems, vi
     <div style={{maxHeight: "40vh", overflow:"scroll", paddingBottom:"10px", marginBottom:"10px", borderBottom:"2px solid black"}}>
         {blockStore.label[blockName]?
         blockStore.label[blockName].map((item, idx) => {
+            // console.log(idx);
             return(<>
                 <div {...bindMenuItems} style={{position: "relative"}}>
                     Label{labelStore.displayMatch[item.label]}: {item.pct}% 
@@ -136,12 +131,14 @@ const LabelBox = observer(({bindMenu, bindMenuItems, labelStore, blockName, visi
 });
 const RangeBlock = observer((props: Props) => {
     const ghost = useState("");
-    const labelStore = useContext(label); 
-    const blockStore = useContext(block);
+    const labelStore = props.labelStore; 
+    const blockStore = props.blockStore;
+    const cacheStore = props.cacheStore;
     const [bindMenu, bindMenuItems, useContextTrigger, visibleSet] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
     let blockName, border, opacity=1, dead, maB;
-
+    const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+    
     if(props.com[0] < props.com[1]) {
         border = "1px solid green"; blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "s";
         dead = 4; maB = 4;
@@ -163,7 +160,7 @@ const RangeBlock = observer((props: Props) => {
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} onDragLeave={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 

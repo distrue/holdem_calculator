@@ -17,7 +17,6 @@ const LabelPad = observer(() => {
                         return;
                     }
                     labelStore.now = labelStore.playerLabel[playerStore.now][item]; 
-                    console.log(labelStore.playerLabel[playerStore.now][item]);
                 }}>{item+1}</div>);
         })}
     </div>);
