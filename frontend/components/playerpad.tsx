@@ -1,17 +1,17 @@
 import * as React from 'react';
 import {useContext, useEffect} from 'react';
 import {observer} from 'mobx-react-lite';
-import {player, label, block, result} from '../store';
+import {player, label, block, result, share} from '../store';
 import * as userPatcher from '../dispatcher/user';
 import * as Refresh from '../dispatcher/refresh';
 import styled from 'styled-components';
 
 
-const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, Nplayer}) => {
+const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
     return(
     <PlayerSelectLabelStyle 
         style={{color:playerStore.now===Nplayer?"green":"black"}}
-        onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore);}}>
+        onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore);}}>
         {Nplayer}
     </PlayerSelectLabelStyle>);
 });
@@ -20,6 +20,7 @@ const PlayerPad = observer((props) => {
     const labelStore = useContext(label);
     const blockStore = useContext(block);
     const resultStore = useContext(result);
+    const shareStore = useContext(share);
 
     useEffect(() => {
         if(playerStore.list.length === 0) {
@@ -34,7 +35,7 @@ const PlayerPad = observer((props) => {
         </div>
         <div style={{overflow:"scroll", padding:"10px"}}>
             {playerStore.list.map(Nplayer => 
-                <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} Nplayer={Nplayer}/>
+                <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
         </div>
         {playerStore.list.length <= 9?

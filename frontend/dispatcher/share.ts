@@ -6,6 +6,7 @@ const backLooker = "23456789TJQKA";
 const pattern = {'s': 0, 'S': 0, 'c': 1, 'C': 1, 'h': 2, 'H': 2, 'd': 3, 'D': 3};
 const backPattern = {0: 's', 1: 'c', 2: 'h', 3: 'd'};
 
+import {calLabelCombo} from './label';
 export const shareChange = (shareStore, playerStore, labelStore, blockStore) => {
     
     // 0. 현재 존재하는 공유 카드 확인
@@ -28,41 +29,41 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
 
             for(let item in labelStore.cardRange[labelVal]) {
                 let cal = labelStore.cardRange[labelVal][item];
-                console.log(labelVal, item, cal.blockName);
-                
-                let N = blockStore.label[cal.blockName].length;
-                let idx;
-                for(idx = 0; idx < N; idx++){
-                    if(blockStore.label[cal.blockName][idx].label == labelVal) break;
-                }
+                // console.log(labelVal, item, cal.blockName);
+                // console.log(blockStore.label[cal.blockName]);
 
-                let deltaCombo = blockStore.label[cal.blockName][idx].combo;
-                // console.log(nowPlayer);
-                // console.log(cal.blockName);
+                if(blockStore.label[cal.blockName] != undefined){
+                    let N = blockStore.label[cal.blockName].length;
+                    let idx;
+                    for(idx = 0; idx < N; idx++){
+                        if(blockStore.label[cal.blockName][idx].label == labelVal) break;
+                    }
+                    if(idx != N){
+                        let deltaCombo = blockStore.label[cal.blockName][idx].combo;
+                        // console.log(nowPlayer);
+                        // console.log(cal.blockName);
 
-                if(cal.blockName[2] === undefined) { // 페어 (6)
-                    nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
+                        if(cal.blockName[2] === undefined) { // 페어 (6)
+                            nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
+                        }
+                        if(cal.blockName[2] === 's') { // 같은 문양 (4)
+                            nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
+                        }
+                        if(cal.blockName[2] === 'o') { // 다른 문양 (12)
+                            nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], cal.pattern[1]);
+                        }
+                        nCombo *= cal.pct / 100;
+                        blockStore.label[cal.blockName][idx].combo = nCombo;
+                        deltaCombo -= blockStore.label[cal.blockName][idx].combo;
+                        blockStore.totalCombo -= deltaCombo;
+                        blockStore.left[cal.blockName] += deltaCombo;
+                    }
                 }
-                if(cal.blockName[2] === 's') { // 같은 문양 (4)
-                    nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], []);
-                }
-                if(cal.blockName[2] === 'o') { // 다른 문양 (12)
-                    nCombo = blockComboCount(sharedCard, sharedCardNum, cal.blockName, cal.pattern[0], cal.pattern[1]);
-                }
-                nCombo *= cal.pct / 100;
-                blockStore.label[cal.blockName][idx].combo = nCombo;
-                deltaCombo -= blockStore.label[cal.blockName][idx].combo;
-                blockStore.totalCombo -= deltaCombo;
-                blockStore.left[cal.blockName] += deltaCombo;
-                
-                // console.log(blockNameVisitNum);
-                // console.log(cal.blockName);
-                // console.log(cal.pct);
-                // console.log(nCombo);
-                // console.log(deltaCombo);
             }
         }
-    }    
+    }
+    let mul = playerStore.list.length;
+    for(let i = 1; i <= 12 * mul; i++) calLabelCombo(i, labelStore, blockStore);
 }
 
 export const setCard = (e, colorChange, changeNum, shareStore, blockStore, labelStore, playerStore) => {
