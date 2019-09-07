@@ -7,6 +7,7 @@ const LabelPad = observer(() => {
     const tmpLabel = [...Array(12).keys()];
     const labelStore = useContext(label);
     const playerStore = useContext(player);
+
     return(<div style={{display:"flex", flexDirection:"row", flexWrap:"wrap"}}>
         {tmpLabel.map(item => {
             return(

@@ -20,22 +20,26 @@ export const addLabel = (player, labelStore) => {
 }
 
 import {patternCount} from './block';
-export const addRange = (pct, pattern, blockName, blockStore, labelStore, cacheStore, change) => {
+import {shareChange} from './share';
+export const addRange = (pct, pattern, blockName, shareStore, playerStore, blockStore, labelStore, cacheStore, change) => {
     let cacheName = blockName[2] === undefined? "p": blockName[2];
     cacheStore.range[cacheName] = {blockName: blockName, pct: pct, pattern:pattern};
     cacheStore.blockEnv[cacheName] = Object.assign(cacheStore.blockEnv[cacheName], blockStore.label[blockName]);
     
     let initCombo = patternCount(blockName, pattern[0], pattern[1]) * pct / 100;
+    // console.log(blockName, blockStore.label[blockName]);
     blockStore.label[blockName].push({label:labelStore.now, pct:pct, color:labelStore.color[labelStore.now], pattern:pattern, combo: initCombo});
     blockStore.totalCombo += initCombo;
     labelStore.cardRange[labelStore.now].push({blockName: blockName, pct: pct, pattern:pattern});
     blockStore.left[blockName] -= initCombo;
+
+    shareChange(shareStore, playerStore, labelStore, blockStore);
     change(false);
 }
 
 import {checkEnv} from './cache';
 import { registerInterceptor } from "mobx/lib/internal";
-export const addLabelRange = (e, labelStore, blockName, blockStore, cacheStore, rangeView, onDrag) => {  
+export const addLabelRange = (e, labelStore, blockName, shareStore, playerStore, blockStore, cacheStore, rangeView, onDrag) => {  
     if(labelStore.now === undefined) {
         return;
     }
@@ -52,7 +56,7 @@ export const addLabelRange = (e, labelStore, blockName, blockStore, cacheStore, 
     if(cacheStore.available | e.shiftKey) {
         if(cacheStore.range[cacheName].pct !== undefined) { // cache가 존재하는지
         if(checkEnv(blockStore.label[blockName], cacheStore.blockEnv[cacheName]) === false) { return; } // blockEnv가 일치하는지
-        addRange(cacheStore.range[cacheName].pct, cacheStore.range[cacheName].pattern, blockName, blockStore, labelStore, cacheStore, rangeView);
+        addRange(cacheStore.range[cacheName].pct, cacheStore.range[cacheName].pattern, blockName, shareStore, playerStore, blockStore, labelStore, cacheStore, rangeView);
         }
     }
     else {
@@ -117,4 +121,19 @@ export const deleteLabel = (labelStore, blockStore, labelName, player) => {
     labelStore.cardRange[labelName] = [];
     let y = labelStore.playerLabel[player].findIndex(item => item === labelName);
     labelStore.playerLabel[player].splice(y, 1);
+}
+
+import {blockComboCount} from './share';
+export const calLabelCombo = (labelNum, labelStore) => {
+    // labelNum = 1 ~ 12 / 13 ~ 24 / 25 ~ 36 / 37 ~ 48
+    let labelCombo = 0;
+
+    labelNum--;
+    let labelVal = labelStore.playerLabel[labelNum / 12][labelNum % 12 + 1];
+    for(let item in labelStore.cardRange[labelVal]) {
+        let cal = labelStore.cardRange[labelVal][item];
+        
+    }
+
+    return labelCombo;
 }
