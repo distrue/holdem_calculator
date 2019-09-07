@@ -65,6 +65,7 @@ export class Block {
                         nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], cal.pattern[1]);
                     }
                     nCombo *= cal.pct / 100;
+                    
                     this.label[cal.blockName].push({label: labelVal, pct: cal.pct, color: props.labelStore.color[labelVal], pattern: cal.pattern, combo: nCombo});
                     this.totalCombo += nCombo;
                     this.left[cal.blockName] -= nCombo;

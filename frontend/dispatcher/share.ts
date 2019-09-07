@@ -6,6 +6,7 @@ const backLooker = "23456789TJQKA";
 const pattern = {'s': 0, 'S': 0, 'c': 1, 'C': 1, 'h': 2, 'H': 2, 'd': 3, 'D': 3};
 const backPattern = {0: 's', 1: 'c', 2: 'h', 3: 'd'};
 
+import { calLabelCombo } from './label';
 export const shareChange = (shareStore, playerStore, labelStore, blockStore) => {
     
     // 0. 현재 존재하는 공유 카드 확인
@@ -28,8 +29,6 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
 
             for(let item in labelStore.cardRange[labelVal]) {
                 let cal = labelStore.cardRange[labelVal][item];
-                console.log(labelVal, item, cal.blockName);
-                
                 let N = blockStore.label[cal.blockName].length;
                 let idx;
                 for(idx = 0; idx < N; idx++){
@@ -62,7 +61,9 @@ export const shareChange = (shareStore, playerStore, labelStore, blockStore) => 
                 // console.log(deltaCombo);
             }
         }
-    }    
+    }
+    let mul= 12 * (playerStore.list.length);
+    for(let i = 1; i <= mul; i++) console.log(i + ": " + calLabelCombo(i, labelStore));
 }
 
 export const setCard = (e, colorChange, changeNum, shareStore, blockStore, labelStore, playerStore) => {

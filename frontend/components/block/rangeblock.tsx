@@ -4,7 +4,7 @@ import {observer} from 'mobx-react-lite';
 import useContextMenu from 'react-use-context-menu';
 import styled from 'styled-components';
 
-import {player} from '../../store';
+import {player, share} from '../../store';
 import * as LabelPatcher from '../../dispatcher/label';
 import * as BlockPatcher from '../../dispatcher/block';
 
@@ -134,6 +134,8 @@ const RangeBlock = observer((props: Props) => {
     const labelStore = props.labelStore; 
     const blockStore = props.blockStore;
     const cacheStore = props.cacheStore;
+    const playerStore = useContext(player);
+    const shareStore = useContext(share);
     const [bindMenu, bindMenuItems, useContextTrigger, visibleSet] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
     let blockName, border, opacity=1, dead, maB;
@@ -160,7 +162,7 @@ const RangeBlock = observer((props: Props) => {
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, shareStore, playerStore, blockStore, cacheStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, shareStore, playerStore,blockStore, cacheStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, shareStore, playerStore, blockStore, cacheStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 

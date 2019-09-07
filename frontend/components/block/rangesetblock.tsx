@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useState, useContext} from 'react';
 import {observer, useObservable} from 'mobx-react-lite';
 import styled from 'styled-components';
-import {block, label, cache} from '../../store';
+import {block, label, cache, share, player} from '../../store';
 import {addRange} from '../../dispatcher/label';
 
 const flop = (sendStore, line, target) => {
@@ -11,13 +11,13 @@ const flop = (sendStore, line, target) => {
     let idx = change[line].indexOf(pattern[target]);
     if(idx >= 0) { change[line].splice(idx, 1); }
     else { change[line].push(pattern[target]); }
-    console.log(change);
+    // console.log(change);
     sendStore.change(change);
 }
 const pctCheck = (to, constraint, target, pct) => {
     for(let line in [...Array(to).keys()]) {
         for(let idx in target[line]) {
-            console.log(constraint[line][target[line][idx]], pct);
+            // console.log(constraint[line][target[line][idx]], pct);
             if(constraint[line][target[line][idx]] < pct) return false;
         }
     }
@@ -30,6 +30,8 @@ const rangeSetBlock = observer(({view, change}) => {
     const blockStore = useContext(block);
     const labelStore = useContext(label);
     const cacheStore = useContext(cache);
+    const shareStore = useContext(share);
+    const playerStore = useContext(player);
     const sendStore = useObservable({
         pattern: [[0, 1, 2, 3], [0, 1, 2, 3]],
         change(res) {
@@ -120,7 +122,7 @@ const rangeSetBlock = observer(({view, change}) => {
         </SetterStyle>
         <button style={{position:"absolute", right:"5%", top:"17%", width:"15%", height:"15%"}} onClick={() => {
             if(pctCheck(view.blockName[2]==='o'?2:1, Using, sendStore.pattern, manPct[0]) === true) {
-                addRange(manPct[0], sendStore.pattern, view.blockName, blockStore, labelStore, cacheStore, change);
+                addRange(manPct[0], sendStore.pattern, view.blockName, shareStore, playerStore, blockStore, labelStore, cacheStore, change);
             }
             else {
                 alert("Percentage 범위를 벗어났습니다.");
