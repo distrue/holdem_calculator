@@ -31,12 +31,12 @@ export default SelectcardBlock;
 
 const SelectcardBlockStyle = styled.div`
     display: block;
-    width: 100%;
+    width: 15vw;
     border: 1px solid black;
     margin-right: 1vw;
     z-index: 4;
     .input {
-        width: 50px;
+        width: 15vw;
         border: 0px solid black;
     }
 `;
