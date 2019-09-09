@@ -11,9 +11,7 @@ const FixedPad = observer((props) => {
     return(<FixedPadStyle>
         <div className="select">
             <div className="title">Board </div>
-            <div style={{display:"flex", marginLeft:"3vh"}}>
-                <SelectcardBlock />
-            </div>
+            <SelectcardBlock />
         </div>
         <div className="status">
             <div className="title">Status</div>
@@ -30,7 +28,8 @@ export default FixedPad;
 const FixedPadStyle = styled.div`
     display:flex; flex-direction: row; position: relative; width: 40vmax;
     .select {
-        display: block; width: 15vmax; height: 10vh; padding-bottom: 2vh; cursor: pointer; z-index: 2;
+        display: block; width: 15vmax; height: 10vh; padding-bottom: 2vh; cursor: pointer; z-index: 3;
+        cursor: pointer;
     }
     .status {
         display: flex; width: 15vmax; flex-direction: column;
