@@ -24,7 +24,7 @@ const pctCheck = (to, constraint, target, pct) => {
     return true;
 }
 const rangeSetBlock = observer(({view, change}) => {
-    const manPct = useState(0);
+    const manPct = useState(100);
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};
     const pct_range = [25, 50, 75, 100];
     const blockStore = useContext(block);
