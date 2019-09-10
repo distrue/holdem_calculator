@@ -76,18 +76,22 @@ export const manValid = (e, val, blockStore, blockName, labelStore, target) => {
     }
 }
 
-export const updateLabelPct = (pct: number, labelStore, blockStore, blockName, labelName) => {
+export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, labelName) => {
     // console.log(blockName, labelName);
     // console.log(JSONtoString(labelStore.cardRange));
     let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
     let deltaCombo = blockStore.label[blockName][Lcut].combo;
-    blockStore.label[blockName][Lcut].combo /= labelStore.cardRange[labelName][cut].pct;
-    blockStore.label[blockName][Lcut].combo *= now;
-    deltaCombo -= blockStore.label[blockName][Lcut].combo;
+    let tmpCombo = blockStore.label[blockName][Lcut].combo / labelStore.cardRange[labelName][cut].pct;
+    tmpCombo *= now;
+    deltaCombo -= tmpCombo;
+    if( blockStore.left[blockName] + deltaCombo < 0) { 
+        alert("Percentage 범위를 벗어났습니다.");
+        return; 
+    }
+    blockStore.label[blockName][Lcut].combo = tmpCombo;
     blockStore.totalCombo -= deltaCombo;
-    if (blockStore.left[blockName] + deltaCombo < 0) { alert(blockStore.left[blockName] + "@" + deltaCombo + "wrong mapping; size overflow"); return; }
     blockStore.left[blockName] += deltaCombo;
     labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
