@@ -14,7 +14,7 @@ const LabelPad = observer(() => {
             return(
             <LabelStyle color={ColorBox[idx]}
             onClick={() => { if(playerStore.now !== "") labelStore.now = labelStore.playerLabel[playerStore.now][item]; }}>
-                {item+1}
+                {(labelStore.labelComboRatio[item+1] * 100).toFixed(1)}%
             </LabelStyle>);
         })}
     </LabelPadStyle>);
