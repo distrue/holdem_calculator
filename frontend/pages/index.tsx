@@ -15,7 +15,7 @@ export default () => {
         refresh(1, labelStore, playerStore, blockStore, shareStore);
         playerStore.now = 1;
         labelStore.now = 1;
-        cacheStore.range = {'o':{ blockName: 'AKo', pct: 100, pattern: [[0, 1, 2, 3], [0, 1, 2, 3]] }, 's':{ blockName: 'AKs', pct: 100, pattern: [[0, 1, 2, 3]] }, 'p':{ blockName: 'AA', pct: 100, pattern: [[0, 1, 2, 3]] }};
+        // cacheStore.range = {'o':{ blockName: 'AKo', pct: 100, pattern: [[0, 1, 2, 3], [0, 1, 2, 3]] }, 's':{ blockName: 'AKs', pct: 100, pattern: [[0, 1, 2, 3]] }, 'p':{ blockName: 'AA', pct: 100, pattern: [[0, 1, 2, 3]] }};
     });
 
     return(<>
