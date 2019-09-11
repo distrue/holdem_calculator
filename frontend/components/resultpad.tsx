@@ -155,13 +155,13 @@ const makeRequest = (playerStore, phaseStore, shareStore, resultStore, labelStor
     .catch(err => console.log(err));
 }
 
-const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, Nplayer}) => {
+const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
     return(
     <div style={{display:"flex", flexDirection:"row"}}>
         <div style={{margin: "10px"}}>{Nplayer}:</div>
         <PlayerSelectLabelStyle 
             style={{color:playerStore.now===Nplayer?"green":"black"}}
-            onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore);}}
+            onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore);}}
         >
             <div className="playerLabel">
                 <div className="Chosen">
@@ -186,6 +186,7 @@ const ResultPad = observer((props) => {
     const labelStore = useContext(label);
     const blockStore = useContext(block);
     const resultStore = useContext(result);
+    const shareStore = useContext(share);
 
     return(
     <div style={{flexDirection: "column", ...props.style, display: resultStore.submitted===undefined?"flex":"none"}}>
@@ -194,7 +195,7 @@ const ResultPad = observer((props) => {
         </div>
         <div style={{overflow:"scroll", padding:"10px"}}>
             {playerStore.list.map(Nplayer => 
-                <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} Nplayer={Nplayer}/>
+                <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
         </div>
     </div>);
