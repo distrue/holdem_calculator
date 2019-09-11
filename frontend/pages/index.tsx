@@ -11,7 +11,7 @@ export default () => {
     const blockStore = useContext(block);
     const shareStore = useContext(share);
     
-    useEffect(() => {
+    useEffect(() => {        
         refresh(1, labelStore, playerStore, blockStore, shareStore);
         playerStore.now = 1;
         labelStore.now = 1;

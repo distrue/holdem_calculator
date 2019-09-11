@@ -6,15 +6,20 @@ import {ColorBox} from '../dispatcher/label';
 import styled from 'styled-components';
 
 const LabelPad = observer(() => {
-    const tmpLabel = [...Array(12).keys()];
     const labelStore = useContext(label);
     const playerStore = useContext(player);
+    
+    let tmpLabel = [];
+    let j = 0;
+    let N = playerStore.now * 12;
+    for(let i = N - 11; i <= N; i++) tmpLabel[j++] = i;
+    
     return(<LabelPadStyle>
         {tmpLabel.map((item,idx) => {
             return(
             <LabelStyle color={ColorBox[idx]}
             onClick={() => { if(playerStore.now !== "") labelStore.now = labelStore.playerLabel[playerStore.now][item]; }}>
-                {(labelStore.labelComboRatio[item+1] * 100).toFixed(1)}%
+                {(labelStore.labelComboRatio[item] * 100).toFixed(1)}%
             </LabelStyle>);
         })}
     </LabelPadStyle>);

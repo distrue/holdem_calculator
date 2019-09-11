@@ -8,7 +8,6 @@ import styled from 'styled-components';
 
 
 const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
-    console.log(playerStore.now, Nplayer);
     return(
     <PlayerSelectLabelStyle
         style={{color:playerStore.now===Nplayer?"green":"black"}}
