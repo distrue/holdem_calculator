@@ -92,7 +92,7 @@ const rangeSetBlock = observer(({view, change}) => {
                     })}
                     </div>
                     <div>
-                    {view.blockName[0]}:{Object.keys(pattern).map(item => {
+                    {view.blockName[1]}:{Object.keys(pattern).map(item => {
                         return(<button 
                         style={{backgroundColor: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "white": "black"}} 
                         onClick={() => flop(sendStore, 1, item)}>
@@ -128,7 +128,7 @@ const rangeSetBlock = observer(({view, change}) => {
             else {
                 alert("Percentage 범위를 벗어났습니다.");
             }
-        }}>제출</button>
+        }}>Set</button>
         <div style={{position:"absolute", right:"2%", top:"5%", cursor:"pointer"}} onClick={() => {change(false);}}>X</div>
     </RangeSetBlockStyle>);
 });

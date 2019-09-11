@@ -16,8 +16,8 @@ const FixedPad = observer((props) => {
         <div className="status">
             <div className="title">Status</div>
             <div style={{border: "1px solid black", marginBottom:"4vh"}}>
-                <div>Player: {playerStore.now}</div>
-                <div>Label: {labelStore.displayMatch[labelStore.now]}</div>
+                <div className="show">Player: {playerStore.now}</div>
+                <div className="show">Label: {labelStore.displayMatch[labelStore.now]}</div>
             </div>
         </div>
     </FixedPadStyle>);
@@ -32,8 +32,11 @@ const FixedPadStyle = styled.div`
         cursor: pointer;
     }
     .status {
-        display: flex; width: 15vmax; flex-direction: column;
+        display: flex; width: 10vmax; flex-direction: column;
         margin-left: 4vw;
+        .show {
+            padding-left: 20px;
+        }
     }
     .title {
         font-size: 3vh; font-weight: bold; margin-bottom: 1vh;

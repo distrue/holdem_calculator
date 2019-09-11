@@ -28,7 +28,7 @@ export default () => {
         </div>
         <div style={{display:"block", paddingLeft:"5vw", width:"200px", flexDirection: "row"}}>
             <FixedPad/>
-            <ResultPad style={{display:"block", width:"400px"}}/>
+            <ResultPad/>
         </div>
         <CacheChecker/>
     </div>

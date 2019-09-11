@@ -110,6 +110,7 @@ export const setCard = (e, colorChange, shareStore, blockStore, labelStore, play
     else if(colorFlg == 0) colorChange("red");
     else if(colorFlg == -1) colorChange("black");
     else {}; // 보통 sharedCard 가 없는 경우
+    shareStore.colorFlg = colorFlg;
 
     // console.log(shareStore.card);
     // console.log(shareStore.onChange);

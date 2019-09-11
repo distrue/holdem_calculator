@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {useContext, useEffect} from 'react';
-import {observer, useObservable} from 'mobx-react-lite';
+import {useContext, useState} from 'react';
+import {observer} from 'mobx-react-lite';
 import {player, share, result, label, block} from '../store';
 import Axios from 'axios';
 import querystring from 'querystring';
@@ -33,30 +33,22 @@ function addResult(resultStore, Nplayer, Nf, Ns, Nblock) {
     }
     resultStore.playerRange[Nplayer][String(Nf)][String(Ns)].pct +=  Nblock.pct / 100;
 }
-const makeRequest = (playerStore, phaseStore, shareStore, resultStore, labelStore, Board) => {
+const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) => {
     let SendData = {};
     // input play time
     SendData["playTime"]= String(3);
     
     // 1. Check share cards
-    let phaseMatch = {0: "preflop", 1:"flop", 2:"turn", 3:"river", "preflop": [0, 0], "flop": [1, 3], "turn": [2, 1], "river": [3, 1]};
-    let nVal = phaseMatch[phaseStore.now];
     let shareCount = 0;
-    resultStore.phase = {name: phaseStore.now, shared:[]};
-    for(let idx in [...Array(nVal[0]+1).keys()]) {
-        for(let id2 in [...Array(phaseMatch[phaseMatch[idx]][1]).keys()]) {
-            if(shareStore[phaseMatch[idx]] !== undefined) {
-                if(typeof shareStore[phaseMatch[idx]][id2] === "number") { 
-                    if(shareStore[phaseMatch[idx]][id2] >= 0 && shareStore[phaseMatch[idx]][id2] < 52) {
-                        SendData[`fixedSharedCard[${shareCount}]`] = String(shareStore[phaseMatch[idx]][id2]);
-                        shareCount += 1;
-                        resultStore.phase.shared.push(String(shareStore[phaseMatch[idx]][id2]));
-                        continue;
-                    }
-                }
-            }
-            alert("We need table range of " + phaseMatch[idx] + id2 + ":" + shareStore[phaseMatch[idx]][id2]); return;
+    if(shareStore.colorFlg !== 1) {
+        alert("Check board card!");
+    }
+    for(let idx in shareStore.valid) {
+        if(shareStore.valid[idx] === false) {
+            break;
         }
+        SendData[`fixedSharedCard[${shareCount}]`] = String(shareStore.card[idx]);
+        shareCount += 1;
     }
     SendData["fixedSharedCardnum"]= String(shareCount);
     
@@ -67,13 +59,13 @@ const makeRequest = (playerStore, phaseStore, shareStore, resultStore, labelStor
     '9':7, '8':6, '7':5, '6':4, '5':3, '4':2, '3':1, '2':0};
     for(let _Nplayer in playerStore.list) {
         Nplayer = playerStore.list[_Nplayer];
-        if(!playerStore.ownLabel[Nplayer][phaseStore.now] || playerStore.ownLabel[Nplayer][phaseStore.now].length === 0) {
-            alert("No selected lael for User " + Nplayer);
+        if(!playerStore.ownLabel[Nplayer] || playerStore.ownLabel[Nplayer].length === 0) {
+            alert("No selected label for User " + Nplayer);
             return;
         }
         resultStore.playerRange[Nplayer] = undefined;
-        for(let _Nlabel in playerStore.ownLabel[Nplayer][phaseStore.now]) {
-            Nlabel = playerStore.ownLabel[Nplayer][phaseStore.now][_Nlabel];
+        for(let _Nlabel in playerStore.ownLabel[Nplayer]) {
+            Nlabel = playerStore.ownLabel[Nplayer][_Nlabel];
             for(let _Nblock in labelStore.cardRange[Nlabel]) {
                 Nblock = labelStore.cardRange[Nlabel][_Nblock];
                 console.log(JSONtoString(Nblock), Nlabel);
@@ -144,9 +136,7 @@ const makeRequest = (playerStore, phaseStore, shareStore, resultStore, labelStor
         Axios.get(`http://www.rangeq.com/api/normal/equity?GameId=${res.data.key}`, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then(res => {
             resultStore.submitted = "received";
-            Board.string = JSONtoString(res.data);
-            Board.json = res.data;
-            console.log(Board.string);
+            console.log(JSONtoString(res.data));
         })
         .catch(err => {
             console.log("get Method", err);
@@ -154,8 +144,7 @@ const makeRequest = (playerStore, phaseStore, shareStore, resultStore, labelStor
     })
     .catch(err => console.log(err));
 }
-
-const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
+const PlayerSelectLabel = observer(({Board, playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
     return(
     <div style={{display:"flex", flexDirection:"row"}}>
         <div style={{margin: "10px"}}>{Nplayer}:</div>
@@ -169,19 +158,21 @@ const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareS
                         labelStore.playerLabel[Nplayer].map(Nlabel => {
                             const isChosen = playerStore.ownLabel[Nplayer].findIndex(idx => idx === Nlabel);
                             if(isChosen >= 0) {
-                                return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff"}} onClick={e => playerStore.ownLabel[Nplayer].splice(isChosen, 1)}>{labelStore.displayMatch[Nlabel]}</button>);
+                                return (<button style={{fontWeight:"bold", backgroundColor: labelStore.color[Nlabel], color:"#ffffff", height:"18px", width:"24px", paddingLeft:"3px"}} onClick={e => playerStore.ownLabel[Nplayer].splice(isChosen, 1)}>{"V"}</button>);
                             }
                             else {
-                                return (<button style={{backgroundColor:labelStore.color[Nlabel]}} onClick={e => playerStore.ownLabel[Nplayer].push(Nlabel)}>{labelStore.displayMatch[Nlabel]}</button>);
+                                return (<button style={{backgroundColor:labelStore.color[Nlabel], height:"18px", width:"24px", paddingLeft:"3px"}} onClick={e => playerStore.ownLabel[Nplayer].push(Nlabel)}></button>);
                             }
                         })
                     :""}
                 </div>
             </div>
         </PlayerSelectLabelStyle>
+        <ResultStyle target={Nplayer}>{Board[0][Nplayer-1]}</ResultStyle>
     </div>);
 });
 const ResultPad = observer((props) => {
+    const Board = useState([0, 1, 0, 2, 0, 0, 0, 0, 0, 0]);
     const playerStore = useContext(player);
     const labelStore = useContext(label);
     const blockStore = useContext(block);
@@ -189,17 +180,24 @@ const ResultPad = observer((props) => {
     const shareStore = useContext(share);
 
     return(
-    <div style={{flexDirection: "column", ...props.style, display: resultStore.submitted===undefined?"flex":"none"}}>
+    <div style={{flexDirection: "column", width:"420px", display: "flex"}}>
         <div style={{display:"block", width:"5vw", fontSize:"3vh", fontWeight: "bold"}}>
             Result
         </div>
         <div style={{overflow:"scroll", padding:"10px"}}>
             {playerStore.list.map(Nplayer => 
-                <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
+                <PlayerSelectLabel Board={Board} playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
+            <button onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</button>
         </div>
     </div>);
 });
+
+export default ResultPad;
+
+const ResultStyle = styled.div`
+    padding: 10px 0px 0px 10px;
+`;
 
 const PlayerSelectLabelStyle = styled.div`
     cursor: pointer;
@@ -220,5 +218,3 @@ const PlayerSelectLabelStyle = styled.div`
         }
     }
 `;
-
-export default ResultPad;

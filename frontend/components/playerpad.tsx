@@ -17,10 +17,8 @@ const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareS
         <><img src="/static/user_selected.png"/>
         <div className="num" style={{color: "black", fontWeight:"bold"}}>{Nplayer}</div>
         </>
-        :<><img src="/static/user.jpg"/>
-        <div className="num">{Nplayer}</div>
+        :<><img src="/static/user.jpg"/><div className="num">{Nplayer}</div>
         </>}
-        
     </PlayerSelectLabelStyle>);
 });
 const PlayerPad = observer((props) => {
@@ -35,11 +33,9 @@ const PlayerPad = observer((props) => {
             userPatcher.addUser(labelStore, playerStore);
             userPatcher.addUser(labelStore, playerStore);
         }
-        // console.log("DOM", document.documentElement.clientWidth, document.documentElement.clientHeight);
         if(isRow[0] === false && document.documentElement.clientWidth < document.documentElement.clientHeight) {
             isRow[1](true);
         }
-        // console.log(isRow[0]);
     });
     return(
     <PlayerPadStyle isRow={isRow[0]}>
@@ -50,10 +46,10 @@ const PlayerPad = observer((props) => {
             {playerStore.list.map(Nplayer => 
                 <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
+            {playerStore.list.length <= 9?
+                <PlusStyle isRow={isRow[0]} src="/static/plus.png" onClick={e => userPatcher.addUser(labelStore, playerStore)}/>
+            :""}
         </div>
-        {playerStore.list.length <= 9?
-                <img style={{width: "30px", paddingLeft:"30%"}} src="/static/plus.png" onClick={e => userPatcher.addUser(labelStore, playerStore)}/>
-        :""}
     </PlayerPadStyle>);
 });
 
@@ -64,8 +60,8 @@ const PlayerPadStyle = styled.div`
     .conts {
         display: flex;
         flex-direction: ${props => props.isRow?"row":"column"};
-        width: ${props => props.isRow?"100vw":"60px"};
-        height: ${props => props.isRow?"60px":"70vh"};
+        ${props => props.isRow?"":"width: 60px;"}
+        ${props => props.isRow?"height: 60px;":""}
     }
 `;
 
@@ -81,4 +77,9 @@ const PlayerSelectLabelStyle = styled.div`
     img {
         width: 80%;
     }
+`;
+
+const PlusStyle = styled.img`
+    ${props => props.isRow?"height: 30px;":"width: 30px;"}
+    ${props => props.isRow?"padding-top: 15px;":"padding-left: 15px;"};
 `;
