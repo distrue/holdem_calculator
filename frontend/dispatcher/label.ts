@@ -28,10 +28,12 @@ export const addRange = (pct, pattern, blockName, blockStore, labelStore, cacheS
     cacheStore.blockEnv[cacheName] = Object.assign(cacheStore.blockEnv[cacheName], blockStore.label[blockName]);
 
     let initCombo = patternCount(blockName, pattern[0], pattern[1]) * pct / 100;
-    blockStore.label[blockName].push({ label: labelStore.now, pct: pct, color: labelStore.color[labelStore.now], pattern: pattern, combo: initCombo });
-    blockStore.totalCombo += initCombo;
-    labelStore.cardRange[labelStore.now].push({ blockName: blockName, pct: pct, pattern: pattern });
-    blockStore.left[blockName] -= initCombo;
+    if(blockStore.left[blockName] - initCombo >= 0){
+        blockStore.label[blockName].push({ label: labelStore.now, pct: pct, color: labelStore.color[labelStore.now], pattern: pattern, combo: initCombo });
+        blockStore.totalCombo += initCombo;
+        labelStore.cardRange[labelStore.now].push({ blockName: blockName, pct: pct, pattern: pattern });
+        blockStore.left[blockName] -= initCombo;
+    }
     shareChange(shareStore, playerStore, labelStore, blockStore);
     change(false);
 }
