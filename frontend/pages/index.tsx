@@ -1,17 +1,23 @@
 import * as React from 'react';
 import {useEffect, useContext} from 'react';
 import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad, CacheChecker} from '../components';
-import {player, label, cache} from '../store';
+import {refresh} from '../dispatcher/refresh'
+import {player, label, cache, block, share} from '../store';
 
 export default () => {
     const playerStore = useContext(player);
     const labelStore = useContext(label);
     const cacheStore = useContext(cache);
+    const blockStore = useContext(block);
+    const shareStore = useContext(share);
+    
     useEffect(() => {
+        refresh(1, labelStore, playerStore, blockStore, shareStore);
         playerStore.now = 1;
         labelStore.now = 1;
         cacheStore.range = {'o':{ blockName: 'AKo', pct: 100, pattern: [[0, 1, 2, 3], [0, 1, 2, 3]] }, 's':{ blockName: 'AKs', pct: 100, pattern: [[0, 1, 2, 3]] }, 'p':{ blockName: 'AA', pct: 100, pattern: [[0, 1, 2, 3]] }};
     });
+
     return(<>
     <div style={{position: "absolute", left:"5vw", top: "3vh", fontSize:"4vh", fontWeight:"bold"}}>Range Calculator</div>
     <div style={{position:"absolute", top:"10%", left:"5%", display:"flex", flexDirection:"row", width:"80vw", flexWrap: "wrap"}}>

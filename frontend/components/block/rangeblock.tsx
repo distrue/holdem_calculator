@@ -160,6 +160,7 @@ const RangeBlock = observer((props: Props) => {
     if(blockStore.left[blockName] === 0 && blockStore.label[blockName].length === 0) {
         opacity = 0.5;
     }
+        // console.log("blockStore.left[blockName]: " + blockStore.left[blockName]);
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >

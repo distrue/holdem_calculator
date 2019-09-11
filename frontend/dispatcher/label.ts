@@ -151,19 +151,9 @@ export const calLabelCombo = (labelNum, labelStore, blockStore) => {
 }
 
 export const calLabelPercentage = (playerNum, labelStore) => {
-    
     let playerTotalLabelCombo = 0;
     let N = playerNum * 12;
 
-    for(let i = N; i < N + 12; i++){
-        if(labelStore.labelSelected[i] == true){
-            playerTotalLabelCombo += labelStore.labelCombo[i];
-        }
-    }
-    
-    for(let i = N; i < N + 12; i++){
-        if(labelStore.labelSelected[i] == true){
-            labelStore.labelComboRatio[i] = labelStore.labelCombo[i] / playerTotalLabelCombo;
-        }
-    }
+    for(let i = N; i < N + 12; i++) playerTotalLabelCombo += labelStore.labelCombo[i];
+    for(let i = N; i < N + 12; i++) labelStore.labelComboRatio[i] = labelStore.labelCombo[i] / playerTotalLabelCombo;
 }

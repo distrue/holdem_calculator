@@ -35,11 +35,11 @@ const PlayerPad = observer((props) => {
             userPatcher.addUser(labelStore, playerStore);
             userPatcher.addUser(labelStore, playerStore);
         }
-        console.log("DOM", document.documentElement.clientWidth, document.documentElement.clientHeight);
+        // console.log("DOM", document.documentElement.clientWidth, document.documentElement.clientHeight);
         if(isRow[0] === false && document.documentElement.clientWidth < document.documentElement.clientHeight) {
             isRow[1](true);
         }
-        console.log(isRow[0]);
+        // console.log(isRow[0]);
     });
     return(
     <PlayerPadStyle isRow={isRow[0]}>
