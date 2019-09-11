@@ -10,16 +10,16 @@ const LabelPad = observer(() => {
     const playerStore = useContext(player);
     
     let tmpLabel = [];
-    let j = 0;
     let N = playerStore.now * 12;
-    for(let i = N - 11; i <= N; i++) tmpLabel[j++] = i;
-    
+    for(let i = 0; i < 12; i++) tmpLabel[i] = i;
+
+    let nowPlayer = playerStore.now;
     return(<LabelPadStyle>
-        {tmpLabel.map((item,idx) => {
+        {tmpLabel.map((item, idx) => {
             return(
             <LabelStyle color={ColorBox[idx]}
             onClick={() => { if(playerStore.now !== "") labelStore.now = labelStore.playerLabel[playerStore.now][item]; }}>
-                {(labelStore.labelComboRatio[item] * 100).toFixed(1)}%
+                {(labelStore.labelComboRatio[item + 1 + (nowPlayer-1) * 12] * 100).toFixed(1)}%
             </LabelStyle>);
         })}
     </LabelPadStyle>);
