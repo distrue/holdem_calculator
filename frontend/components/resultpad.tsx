@@ -196,13 +196,17 @@ const ResultPad = observer((props) => {
             {playerStore.list.map(Nplayer => 
                 <PlayerSelectLabel Board={Board} playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
-            <button style={{width: "50px", height:"20px", zIndex:"3"}} onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</button>
         </div>
+        <ResultGoStyle onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</ResultGoStyle >
     </div>);
 });
 
 export default ResultPad;
 
+const ResultGoStyle = styled.div`
+    width: 50px; height: 30px;
+    padding: 10px; z-index: 5;
+`;
 const ResultStyle = styled.div`
     padding: 10px 0px 0px 10px;
 `;
