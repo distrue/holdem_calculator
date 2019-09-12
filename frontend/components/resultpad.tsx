@@ -37,6 +37,7 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
     let SendData = {};
     // input play time
     SendData["playTime"]= String(3);
+    console.log("Hello");
     
     // 1. Check share cards
     let shareCount = 0;
@@ -195,7 +196,7 @@ const ResultPad = observer((props) => {
             {playerStore.list.map(Nplayer => 
                 <PlayerSelectLabel Board={Board} playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
-            <button onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</button>
+            <button style={{width: "50px", height:"20px", zIndex:"3"}} onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</button>
         </div>
     </div>);
 });
