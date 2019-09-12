@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useContext, useState} from 'react';
 import {observer} from 'mobx-react-lite';
-import {player, share, result, label, block} from '../store';
+import {player, share, result, label, block, cache} from '../store';
 import Axios from 'axios';
 import querystring from 'querystring';
 import * as Refresh from '../dispatcher/refresh';
@@ -68,7 +68,6 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
             Nlabel = playerStore.ownLabel[Nplayer][_Nlabel];
             for(let _Nblock in labelStore.cardRange[Nlabel]) {
                 Nblock = labelStore.cardRange[Nlabel][_Nblock];
-                console.log(JSONtoString(Nblock), Nlabel);
                 if(Nblock.blockName[2] === 'o') {
                     for(let _pf in Nblock.pattern[0]) {
                         pf = Nblock.pattern[0][_pf];
@@ -82,7 +81,6 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
                 }
                 if(Nblock.blockName[2] === undefined) {
                     for(let _pf in Nblock.pattern[0]) {
-                        console.log("call");
                         pf = Nblock.pattern[0][_pf];
                         Nf = pf * 13 + Number(looker[Nblock.blockName[0]]);
                         for(let _ps in Nblock.pattern[0]) {
@@ -136,6 +134,14 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
         Axios.get(`http://www.rangeq.com/api/normal/equity?GameId=${res.data.key}`, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then(res => {
             resultStore.submitted = "received";
+            console.log(res.data.playerResult[0].soloWin, res.data.playerResult[0].drawWin, res.data.winNum);
+            let Record = [];
+            for(let idx in res.data.playerResult) {
+                let tmp = (Number(res.data.playerResult[idx].soloWin) + Number(res.data.playerResult[idx].drawWin)) / Number(res.data.winNum);
+                tmp *= 10000; tmp = Math.round(tmp); tmp /= 100;
+                Record.push(tmp);
+            }
+            Board[1](Record);
             console.log(JSONtoString(res.data));
         })
         .catch(err => {
@@ -145,12 +151,13 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
     .catch(err => console.log(err));
 }
 const PlayerSelectLabel = observer(({Board, playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
+    const cacheStore = useContext(cache);
     return(
     <div style={{display:"flex", flexDirection:"row"}}>
         <div style={{margin: "10px"}}>{Nplayer}:</div>
         <PlayerSelectLabelStyle 
             style={{color:playerStore.now===Nplayer?"green":"black"}}
-            onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore);}}
+            onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore, cacheStore);}}
         >
             <div className="playerLabel">
                 <div className="Chosen">

@@ -39,7 +39,7 @@ export const addRange = (pct, pattern, blockName, blockStore, labelStore, cacheS
 }
 
 import { checkEnv } from './cache';
-import { registerInterceptor } from "mobx/lib/internal";
+
 export const addLabelRange = (e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, rangeView, onDrag) => {
     if (labelStore.now === undefined) {
         return;
@@ -79,8 +79,6 @@ export const manValid = (e, val, blockStore, blockName, labelStore, target) => {
 }
 
 export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, labelName) => {
-    // console.log(blockName, labelName);
-    // console.log(JSONtoString(labelStore.cardRange));
     let cut = labelStore.cardRange[labelName].findIndex(i => i.blockName === blockName);
     let Lcut = blockStore.label[blockName].findIndex(i => i.label === labelName);
     let now = pct;
@@ -97,7 +95,6 @@ export const updateLabelPct = (pct:number, labelStore, blockStore, blockName, la
     blockStore.left[blockName] += deltaCombo;
     labelStore.cardRange[labelName][cut].pct = now;
     blockStore.label[blockName][Lcut].pct = now;
-    // console.log(JSONtoString(labelStore.cardRange));
 }
 
 export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, visibleSet, Out) => {
@@ -116,7 +113,6 @@ export const deleteLabelRange = (labelStore, blockStore, labelName, blockName, v
 
 export const deleteLabel = (labelStore, blockStore, labelName, player) => {
     let nowBlock, x;
-    console.log(labelName, labelStore.cardRange[labelName]);
     for (let _nowBlock in labelStore.cardRange[labelName]) {
         nowBlock = labelStore.cardRange[labelName][_nowBlock];
         x = blockStore.label[nowBlock.blockName].findIndex(item => item.label === labelName);
@@ -130,11 +126,9 @@ export const deleteLabel = (labelStore, blockStore, labelName, player) => {
 }
 
 export const calLabelCombo = (labelNum, labelStore, blockStore) => {
-    // labelNum = 1 ~ 12 / 13 ~ 24 / 25 ~ 36 / 37 ~ 48
     let labelCombo = 0;
 
-    labelNum--; // 0 ~ 11 / 12 ~ 23 / 24 ~ 35 / 36 ~ 47
-    // labelNum / 12 + 1 -> playerNum, labelNum % 12 -> label
+    labelNum-=1;
 
     let labelVal = labelStore.playerLabel[parseInt(String(labelNum / 12)) + 1][labelNum % 12];
     for (let item in labelStore.cardRange[labelVal]) {

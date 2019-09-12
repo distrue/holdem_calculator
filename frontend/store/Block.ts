@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-import {action, observable, computed } from 'mobx';
+import { action, observable } from 'mobx';
 import * as blockPatcher from '../dispatcher/block';
 
 type labelContent = {
@@ -20,8 +20,15 @@ export class Block {
         this.label = {};
         this.left = {};
         this.totalCombo = 0;
+        this.loading(props.newPlayer, props.labelStore);
+    }
+    @observable label:blockLabel;
+    @observable left:blockLeft;
+    @observable totalCombo:number;
 
-        if(props.labelStore !== undefined && props.labelStore.playerLabel[props.newPlayer] !== undefined) {
+
+    @action loading(newPlayer, labelStore) {
+        if(labelStore !== undefined && labelStore.playerLabel[newPlayer] !== undefined) {
             // clear Left blocks
             const NumRange = [...Array(13).keys()];
             let blockName, combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
@@ -46,12 +53,10 @@ export class Block {
             }
             let nCombo;
             // NewState update
-            for(let nLabel in props.labelStore.playerLabel[props.newPlayer]) {
-                // console.log(props.newPlayer);
-                let labelVal = props.labelStore.playerLabel[props.newPlayer][nLabel];
-                // console.log(props.labelStore.cardRange[nLabel].toString());
-                for(let item in props.labelStore.cardRange[labelVal]) {
-                    let cal = props.labelStore.cardRange[labelVal][item];
+            for(let nLabel in labelStore.playerLabel[newPlayer]) {
+                let labelVal = labelStore.playerLabel[newPlayer][nLabel];
+                for(let item in labelStore.cardRange[labelVal]) {
+                    let cal = labelStore.cardRange[labelVal][item];
                     if(this.label[cal.blockName] === undefined) {
                         this.label[cal.blockName] = [];
                     }
@@ -65,7 +70,7 @@ export class Block {
                         nCombo = blockPatcher.patternCount(cal.blockName, cal.pattern[0], cal.pattern[1]);
                     }
                     nCombo *= cal.pct / 100;
-                    this.label[cal.blockName].push({label: labelVal, pct: cal.pct, color: props.labelStore.color[labelVal], pattern: cal.pattern, combo: nCombo});
+                    this.label[cal.blockName].push({label: labelVal, pct: cal.pct, color: labelStore.color[labelVal], pattern: cal.pattern, combo: nCombo});
                     this.totalCombo += nCombo;
                     this.left[cal.blockName] -= nCombo;
                 }
@@ -74,10 +79,7 @@ export class Block {
         else {
             console.log("No Player data");
         }
-    }
-    @observable label:blockLabel;
-    @observable left:blockLeft;
-    @observable totalCombo:number;
+    };
 };
 
 export default createContext(new Block({}));

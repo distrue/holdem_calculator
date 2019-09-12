@@ -1,17 +1,18 @@
 import * as React from 'react';
 import {useContext, useEffect, useState} from 'react';
 import {observer} from 'mobx-react-lite';
-import {player, label, block, share} from '../store';
+import {player, label, block, share, cache} from '../store';
 import * as userPatcher from '../dispatcher/user';
 import * as Refresh from '../dispatcher/refresh';
 import styled from 'styled-components';
 
 
 const PlayerSelectLabel = observer(({playerStore, labelStore, blockStore, shareStore, Nplayer}) => {
+    const cacheStore = useContext(cache);
     return(
     <PlayerSelectLabelStyle
         style={{color:playerStore.now===Nplayer?"green":"black"}}
-        onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore);}}>
+        onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore, cacheStore);}}>
         {playerStore.now.toString() === Nplayer?
         <><img src="/static/user_selected.png"/>
         <div className="num" style={{color: "black", fontWeight:"bold"}}>{Nplayer}</div>
