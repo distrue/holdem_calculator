@@ -204,8 +204,8 @@ const ResultPad = observer((props) => {
 export default ResultPad;
 
 const ResultGoStyle = styled.div`
-    width: 50px; height: 30px;
-    padding: 10px; z-index: 5;
+    width: 100px; height: 25px;
+    padding: 10px; z-index: 5; border: 1px solid black; cursor: pointer;
 `;
 const ResultStyle = styled.div`
     padding: 10px 0px 0px 10px;
