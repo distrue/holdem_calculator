@@ -39,7 +39,7 @@ const PlayerPad = observer((props) => {
     });
     return(
     <PlayerPadStyle>
-        <div style={{display:"block", width:"5vw", marginBottom:"2vh", fontSize:"3vh", fontWeight: "bold"}}>
+        <div style={{display:"block", width:"5vw", marginBottom:"2vh", fontSize:"25px", fontWeight: "bold"}}>
             Player
         </div>
         <div className="conts">
@@ -69,13 +69,13 @@ const PlayerSelectLabelStyle = styled.div`
     cursor: pointer;
     overflow: visible;
     position: relative;
-    width: 10vh; height: 8vh;
+    width: 80px; 
     .num {
         position: absolute; top: 40%; left: 40%; color: white;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%); font-size: 16px;
     }
     img {
-        width: 80%;
+        width: 64px;
     }
 `;
 

@@ -40,20 +40,21 @@ const PctBar = observer(({target, blockName, labelStore, blockStore, bindMenuIte
 });
 const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx, blockName}) => {
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};            
+    const patternColor = {'S':"black", 'C':"green", 'H':"red", 'D':"blue"};
 
     if(blockName[2] === undefined) {
         return(<div {...bindMenuItems}>
         pattern(p)<br/>
         {blockName[0]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = patternColor[item]; }
+        let col = patternColor[item]; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
-                    color: col}}
+                    color: col,  height:"18px", width:"20px"}}
             onClick={e => {
                 BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
             }}>
-                {item}
+                {" "}
         </button>);
         })}
         </div>);
@@ -62,20 +63,20 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
             pattern(o)<br/>
             {blockName[0]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }        
-                return(<button style={{backgroundColor: bckcol, color: col}}
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = patternColor[item]; }
+                let col = patternColor[item]; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }        
+                return(<button style={{backgroundColor: bckcol, color: col,  height:"18px", width:"20px"}}
                     onClick={e => {
                         BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
-                    }}>{item}</button>);
+                    }}>{" "}</button>);
             })}<br/>
             {blockName[1]}:{Object.keys(pattern).map(item => {
-                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { bckcol = "black"; }
-                let col = "black"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { col = "white"; }        
-                return(<button style={{backgroundColor: bckcol, color: col}}
+                let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { bckcol = patternColor[item]; }
+                let col = patternColor[item]; if(blockStore.label[blockName][idx].pattern[1].indexOf(pattern[item])>=0) { col = "white"; }        
+                return(<button style={{backgroundColor: bckcol, color: col,  height:"18px", width:"20px"}}
                     onClick={e => {
                         BlockPatcher.patternChange(1, blockStore, labelStore, idx, target, item, blockName)
-                    }}>{item}</button>);
+                    }}>{" "}</button>);
             })}<br/>
         </div>);
     }
@@ -83,15 +84,15 @@ const PatternBar = observer(({bindMenuItems, target, blockStore, labelStore, idx
         return(<div>
         pattern(s)<br/>
         {blockName[0]}{blockName[1]}:{Object.keys(pattern).map(item => {
-        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = "black"; }
-        let col = "black"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
+        let bckcol = "white"; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { bckcol = patternColor[item]; }
+        let col = patternColor[item]; if(blockStore.label[blockName][idx].pattern[0].indexOf(pattern[item])>=0) { col = "white"; }
         return(<button 
             style={{backgroundColor: bckcol,
-                    color: col}}
+                    color: col, height:"18px", width:"20px"}}
             onClick={e => {
                 BlockPatcher.patternChange(0, blockStore, labelStore, idx, target, item, blockName)
             }}>
-                {item}
+                {}
         </button>);
         })}
         </div>);
@@ -164,7 +165,7 @@ const RangeBlock = observer((props: Props) => {
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} style={{cursor: "pointer", border: "1px solid #cccccc",  position:"relative", opacity: opacity}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} style={{cursor: "pointer", border: "1px solid #eeeeee",  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 

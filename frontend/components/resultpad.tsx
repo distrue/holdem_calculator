@@ -193,7 +193,7 @@ const ResultPad = observer((props) => {
 
     return(
     <div style={{flexDirection: "column", width:"420px", display: "flex"}}>
-        <div style={{display:"block", width:"5vw", fontSize:"3vh", fontWeight: "bold"}}>
+        <div style={{display:"block", width:"5vw", fontSize:"20px", fontWeight: "bold"}}>
             Result
         </div>
         <div style={{padding:"10px"}}>

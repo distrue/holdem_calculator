@@ -3,6 +3,7 @@ import {useEffect, useContext} from 'react';
 import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad, CacheChecker} from '../components';
 import {refresh} from '../dispatcher/refresh'
 import {player, label, cache, block, share} from '../store';
+import Head from 'next/head';
 
 export default () => {
     const playerStore = useContext(player);
@@ -18,7 +19,10 @@ export default () => {
     });
 
     return(<>
-    <div style={{position: "absolute", left:"5vw", top: "3vh", fontSize:"4vh", fontWeight:"bold"}}>Range Calculator</div>
+    <Head>    
+        <meta name="viewport" content="width=device-width, initial-scale=0.3 ,minimum-scale=0.3" />
+    </Head>
+    <div style={{position: "absolute", left:"5vw", top: "3vh", fontSize:"35px", fontWeight:"bold"}}>Range Calculator</div>
     <div style={{position:"absolute", top:"10%", left:"5%", display:"flex", flexDirection:"row"}}>
         <PlayerPad/>
         <div style={{display:"block", paddingLeft:"2vw", width:"500px", flexDirection: "row"}}>

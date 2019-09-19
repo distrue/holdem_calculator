@@ -40,6 +40,6 @@ const FixedPadStyle = styled.div`
         }
     }
     .title {
-        font-size: 3vh; font-weight: bold; margin-bottom: 1vh;
+        font-size: 20px; font-weight: bold; margin-bottom: 1vh;
     }
 `;
