@@ -1,6 +1,6 @@
 import * as blockPatcher from "../dispatcher/block";
 
-export const ColorBox = ["#CD5C5C", "#2F4F4F", "#E0FFFF", "#D02090", "#FFD700", "#7B68EE",
+export const ColorBox = ["#CD5C5C", "#2F4F4F", "#8B7D6B", "#D02090", "#FFD700", "#7B68EE",
     "#1E90FF", "#87CEFA", "#CD853F", "#40E0D0", "#3CB371", "#FF7F50"];
 
 
@@ -25,6 +25,7 @@ import { shareChange } from './share';
 export const addRange = (pct, pattern, blockName, blockStore, labelStore, cacheStore, shareStore, playerStore, change) => {
     let cacheName = blockName[2] === undefined ? "p" : blockName[2];
     cacheStore.range[cacheName] = { blockName: blockName, pct: pct, pattern: pattern };
+    cacheStore.blockEnv[cacheName] = [];
     cacheStore.blockEnv[cacheName] = Object.assign(cacheStore.blockEnv[cacheName], blockStore.label[blockName]);
 
     let initCombo = patternCount(blockName, pattern[0], pattern[1]) * pct / 100;

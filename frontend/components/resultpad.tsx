@@ -38,6 +38,7 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
     // input play time
     SendData["playTime"]= String(3);
     console.log("Hello");
+    resultStore.sendStatus = "validate input";
     
     // 1. Check share cards
     let shareCount = 0;
@@ -123,6 +124,7 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
     // 4. wait for post response -> put Pending event on it
     
     resultStore.submitted = "calculating";
+    resultStore.sendStatus = "calculating...";
     Axios.post("http://www.rangeq.com/api/normal/equity", {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -144,9 +146,11 @@ const makeRequest = (playerStore, shareStore, labelStore, resultStore, Board) =>
             }
             Board[1](Record);
             console.log(JSONtoString(res.data));
+            resultStore.sendStatus = "";
         })
         .catch(err => {
             console.log("get Method", err);
+            resultStore.sendStatus = "error occured";
         })
     })
     .catch(err => console.log(err));
@@ -155,7 +159,7 @@ const PlayerSelectLabel = observer(({Board, playerStore, labelStore, blockStore,
     const cacheStore = useContext(cache);
     return(
     <div style={{display:"flex", flexDirection:"row"}}>
-        <div style={{margin: "10px"}}>{Nplayer}:</div>
+        <div style={{margin: "10px", fontSize:"18px"}}>{Nplayer}</div>
         <PlayerSelectLabelStyle 
             style={{color:playerStore.now===Nplayer?"green":"black"}}
             onClick={e => {Refresh.refresh(Nplayer, labelStore, playerStore, blockStore, shareStore, cacheStore);}}
@@ -176,11 +180,11 @@ const PlayerSelectLabel = observer(({Board, playerStore, labelStore, blockStore,
                 </div>
             </div>
         </PlayerSelectLabelStyle>
-        <ResultStyle target={Nplayer}>{Board[0][Nplayer-1]}</ResultStyle>
+        <ResultStyle target={Nplayer}>{Board[0][Nplayer-1]}%</ResultStyle>
     </div>);
 });
 const ResultPad = observer((props) => {
-    const Board = useState([0, 1, 0, 2, 0, 0, 0, 0, 0, 0]);
+    const Board = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     const playerStore = useContext(player);
     const labelStore = useContext(label);
     const blockStore = useContext(block);
@@ -192,20 +196,22 @@ const ResultPad = observer((props) => {
         <div style={{display:"block", width:"5vw", fontSize:"3vh", fontWeight: "bold"}}>
             Result
         </div>
-        <div style={{overflow:"scroll", padding:"10px"}}>
+        <div style={{padding:"10px"}}>
             {playerStore.list.map(Nplayer => 
                 <PlayerSelectLabel Board={Board} playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
         </div>
-        <ResultGoStyle onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</ResultGoStyle >
+        <ResultGoStyle onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</ResultGoStyle>
+        {resultStore.sendStatus}
     </div>);
 });
 
 export default ResultPad;
 
 const ResultGoStyle = styled.div`
-    width: 100px; height: 25px;
-    padding: 10px; z-index: 5; border: 1px solid black; cursor: pointer;
+    width: 100px; height: 20px;
+    padding: 7px; z-index: 5; border: 1px solid black; cursor: pointer;
+    text-align: center; border-radius: 10px; font-weight: bold;
 `;
 const ResultStyle = styled.div`
     padding: 10px 0px 0px 10px;

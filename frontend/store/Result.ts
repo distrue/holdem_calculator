@@ -18,9 +18,11 @@ export class Result {
     constructor(props) {
         this.submitted = undefined;
         this.playerRange = {};
+        this.sendStatus = "";
     }
     @observable submitted: string;
     @observable playerRange: playerRange;
+    @observable sendStatus: string;
 };
 
 export default createContext(new Result({}));

@@ -19,7 +19,7 @@ export default () => {
 
     return(<>
     <div style={{position: "absolute", left:"5vw", top: "3vh", fontSize:"4vh", fontWeight:"bold"}}>Range Calculator</div>
-    <div style={{position:"absolute", top:"10%", left:"5%", display:"flex", flexDirection:"row", width:"80vw", flexWrap: "wrap"}}>
+    <div style={{position:"absolute", top:"10%", left:"5%", display:"flex", flexDirection:"row"}}>
         <PlayerPad/>
         <div style={{display:"block", paddingLeft:"2vw", width:"500px", flexDirection: "row"}}>
             <RangePad style={{display:"block", width:"550px", paddingBottom:"20px"}}/>

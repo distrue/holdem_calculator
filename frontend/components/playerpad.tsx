@@ -38,7 +38,7 @@ const PlayerPad = observer((props) => {
         }
     });
     return(
-    <PlayerPadStyle isRow={isRow[0]}>
+    <PlayerPadStyle>
         <div style={{display:"block", width:"5vw", marginBottom:"2vh", fontSize:"3vh", fontWeight: "bold"}}>
             Player
         </div>
@@ -47,7 +47,7 @@ const PlayerPad = observer((props) => {
                 <PlayerSelectLabel playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
             {playerStore.list.length <= 9?
-                <PlusStyle isRow={isRow[0]} src="/static/plus.png" onClick={e => userPatcher.addUser(labelStore, playerStore)}/>
+                <PlusStyle src="/static/plus.png" onClick={e => userPatcher.addUser(labelStore, playerStore)}/>
             :""}
         </div>
     </PlayerPadStyle>);
@@ -56,13 +56,13 @@ const PlayerPad = observer((props) => {
 export default PlayerPad;
 
 const PlayerPadStyle = styled.div`
-    display: "flex"; flex-direction:"column";
+    display: flex; flex-direction: column;
     .conts {
         display: flex;
-        flex-direction: ${props => props.isRow?"row":"column"};
-        ${props => props.isRow?"":"width: 60px;"}
-        ${props => props.isRow?"height: 60px;":""}
+        flex-direction: column;
+        width: 60px;
     }
+    width: 100px;
 `;
 
 const PlayerSelectLabelStyle = styled.div`
@@ -80,6 +80,5 @@ const PlayerSelectLabelStyle = styled.div`
 `;
 
 const PlusStyle = styled.img`
-    ${props => props.isRow?"height: 30px;":"width: 30px;"}
-    ${props => props.isRow?"padding-top: 15px;":"padding-left: 15px;"};
+    width: 30px; padding-left: 15px;
 `;

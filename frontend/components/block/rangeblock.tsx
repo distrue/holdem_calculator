@@ -139,19 +139,19 @@ const RangeBlock = observer((props: Props) => {
 
     const [bindMenu, bindMenuItems, useContextTrigger, visibleSet] = useContextMenu();
     const [bindTrigger] = useContextTrigger({});    
-    let blockName, border, opacity=1, dead, maB;
+    let blockName, opacity=1, dead, maB;
     const combiBase = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
     
     if(props.com[0] < props.com[1]) {
-        border = "1px solid green"; blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "s";
+        blockName = combiBase[props.com[0]] + combiBase[props.com[1]] + "s";
         dead = 4; maB = 4;
     }
     else if(props.com[0] == props.com[1]) {
-        border="1px solid blue"; blockName = combiBase[props.com[0]] + combiBase[props.com[1]];
+        blockName = combiBase[props.com[0]] + combiBase[props.com[1]];
         dead = 6; maB = 6;
     }
     else {
-        border="1px solid purple"; blockName = combiBase[props.com[1]] + combiBase[props.com[0]] + "o";
+        blockName = combiBase[props.com[1]] + combiBase[props.com[0]] + "o";
         dead = 12; maB = 12;
     }
     if(blockStore.label[blockName] === undefined) {
@@ -164,7 +164,7 @@ const RangeBlock = observer((props: Props) => {
     dead -= blockStore.left[blockName];
 
     return(<div key={props.keyV} >
-        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} style={{cursor: "pointer",border: border,  position:"relative", opacity: opacity}}>
+        <StyledBlock draggable={true} {...bindTrigger} className="Block" onClick={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, false)} onMouseOver={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} onDragStart={e => LabelPatcher.addLabelRange(e, labelStore, blockName, blockStore, cacheStore, shareStore, playerStore, props.rangeView, true)} style={{cursor: "pointer", border: "1px solid #cccccc",  position:"relative", opacity: opacity}}>
             <div className="blockName">{blockName}</div>
             <div className="backColor">
                 {blockStore.label[blockName].map(item => 

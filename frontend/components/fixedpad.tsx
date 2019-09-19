@@ -28,14 +28,15 @@ export default FixedPad;
 const FixedPadStyle = styled.div`
     display:flex; flex-direction: row; position: relative; width: 40vmax;
     .select {
-        display: block; width: 15vmax; height: 10vh; padding-bottom: 2vh; cursor: pointer; z-index: 3;
+        padding: 5px;
+        display: block; width: 150px; height: 10vh; cursor: pointer; z-index: 3;
         cursor: pointer;
     }
     .status {
-        display: flex; width: 10vmax; flex-direction: column;
+        display: flex; width: 120px; flex-direction: column;
         margin-left: 4vw;
         .show {
-            padding-left: 20px;
+            padding: 3px 0px 3px 20px; 
         }
     }
     .title {

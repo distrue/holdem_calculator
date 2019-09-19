@@ -34,4 +34,5 @@ const SelectcardBlockStyle = styled.input`
     height: 20px;
     border: 1px solid black;
     z-index: 6;
+    padding: 3px;
 `;
