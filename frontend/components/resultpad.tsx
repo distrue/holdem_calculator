@@ -7,6 +7,7 @@ import querystring from 'querystring';
 import * as Refresh from '../dispatcher/refresh';
 import jsonExistChecker from '../tools/jsonExistChecker';
 import styled from 'styled-components';
+import {CacheChecker} from '../components';
 
 function JSONtoString(object) {
     var results = [];
@@ -201,7 +202,10 @@ const ResultPad = observer((props) => {
                 <PlayerSelectLabel Board={Board} playerStore={playerStore} labelStore={labelStore} blockStore={blockStore} shareStore={shareStore} Nplayer={Nplayer}/>
             )}
         </div>
+        <div style={{display:"flex", flexDirection:"row"}}>
         <ResultGoStyle onClick={() => makeRequest(playerStore, shareStore, labelStore, resultStore, Board)}>Show Result</ResultGoStyle>
+        <CacheChecker/>
+        </div>
         {resultStore.sendStatus}
     </div>);
 });

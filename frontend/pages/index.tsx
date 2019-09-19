@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useEffect, useContext} from 'react';
-import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad, CacheChecker} from '../components';
+import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad} from '../components';
 import {refresh} from '../dispatcher/refresh'
 import {player, label, cache, block, share} from '../store';
 import Head from 'next/head';
@@ -33,7 +33,6 @@ export default () => {
             <FixedPad/>
             <ResultPad/>
         </div>
-        <CacheChecker/>
     </div>
     </>);
 };

@@ -14,8 +14,11 @@ const cacheChecker = observer(() => {
 export default cacheChecker;
 
 const CheckerStyle = styled.div`
-    position: fixed; bottom: 0%; left: 0%;
-    display: block; width: 5%; height: 3%;
-    padding: 2% 1% 1% 1%;
+    position: relative; 
+    margin-left: 20px;
+    display: block; width: 100px; height: 20px;
+    border-radius: 20px;
+    padding: 10px;
     background-color: #a0a0a0; cursor: pointer;
+    z-index: 3;
 `;
