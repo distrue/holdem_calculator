@@ -225,7 +225,6 @@ const PlayerSelectLabelStyle = styled.div`
     cursor: pointer;
     display: flex;
     flex-direction: row;
-    border: 1px solid black;
     margin-bottom: 10px;
     margin-top: 10px;
     z-index: 3;

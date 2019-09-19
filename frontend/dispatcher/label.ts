@@ -1,7 +1,7 @@
 import * as blockPatcher from "../dispatcher/block";
 
-export const ColorBox = ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF", "#FFBe4F",
-    "#6BD2DB", "#0EA7B5", "#0C457D", "#E8702A", "#966842", "#F44747"];
+export const ColorBox = ["#008000", "#90B838", "#BCD683", "#bb1122", "#ff0000", "#f9af2b",
+    "#0074bf", "#0000ff", "#283b67", "#4d5857", "#95969a", "#f6c25d"];
 
 
 export const addLabel = (player, labelStore) => {

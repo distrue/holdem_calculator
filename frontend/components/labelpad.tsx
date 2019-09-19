@@ -33,6 +33,6 @@ const LabelPadStyle = styled.div`
 `;
 const LabelStyle = styled.div`
     cursor: pointer;
-    width: 80px; text-align: center; padding: 10px 0px 10px 0px; border: 1px solid black;
+    width: 80px; text-align: center; padding: 10px 0px 10px 0px; 
     background-color: ${props => props.color ? props.color : "white"}; 
 `;

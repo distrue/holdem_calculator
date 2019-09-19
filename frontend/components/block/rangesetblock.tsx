@@ -26,6 +26,7 @@ const pctCheck = (to, constraint, target, pct) => {
 const rangeSetBlock = observer(({view, change}) => {
     const manPct = useState(100);
     const pattern = {'S': 0, 'C': 1, 'H': 2, 'D': 3};
+    const patternColor = {'S':"black", 'C':"green", 'H':"red", 'D':"blue"};
     const pct_range = [25, 50, 75, 100];
     const blockStore = useContext(block);
     const labelStore = useContext(label);
@@ -73,9 +74,9 @@ const rangeSetBlock = observer(({view, change}) => {
                     pattern(p)<br/>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
-                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black"}} 
+                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 0, item)}>
-                            {item}
+                            {}
                         </button>);
                     })}
                     </div>
@@ -85,18 +86,18 @@ const rangeSetBlock = observer(({view, change}) => {
                     pattern(o)<br/>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
-                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black"}} 
+                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 0, item)}>
-                            {item}
+                            {}
                         </button>);
                     })}
                     </div>
                     <div>
                     {view.blockName[1]}:{Object.keys(pattern).map(item => {
                         return(<button 
-                        style={{backgroundColor: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "white": "black"}} 
+                        style={{backgroundColor: sendStore.pattern[1].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 1, item)}>
-                            {item}
+                            {}
                         </button>);
                     })}
                     </div>
@@ -106,9 +107,9 @@ const rangeSetBlock = observer(({view, change}) => {
                     pattern(s)<br/>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
-                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "black": "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black"}} 
+                        style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 0, item)}>
-                            {item}
+                            {}
                         </button>);
                     })}
                     </div>
