@@ -71,24 +71,22 @@ const rangeSetBlock = observer(({view, change}) => {
             <div>
                 {view.blockName[2] === undefined?
                     <div>
-                    pattern(p)<br/>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
                         style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 0, item)}>
-                            {}
+                            {item}
                         </button>);
                     })}
                     </div>
                 :""}
                 {view.blockName[2] === 'o'?<>
                     <div>
-                    pattern(o)<br/>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
                         style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 0, item)}>
-                            {}
+                            {item}
                         </button>);
                     })}
                     </div>
@@ -97,19 +95,18 @@ const rangeSetBlock = observer(({view, change}) => {
                         return(<button 
                         style={{backgroundColor: sendStore.pattern[1].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[1].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 1, item)}>
-                            {}
+                            {item}
                         </button>);
                     })}
                     </div>
                 </>:""}
                 {view.blockName[2] === 's'?
                     <div>
-                    pattern(s)<br/>
                     {view.blockName[0]}:{Object.keys(pattern).map(item => {
                         return(<button 
                         style={{backgroundColor: sendStore.pattern[0].indexOf(pattern[item]) >= 0? patternColor[item]: "white", color: sendStore.pattern[0].indexOf(pattern[item]) >= 0? "white": "black",   height:"18px", width:"20px"}} 
                         onClick={() => flop(sendStore, 0, item)}>
-                            {}
+                            {item}
                         </button>);
                     })}
                     </div>

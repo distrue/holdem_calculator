@@ -1,21 +1,36 @@
 import * as React from 'react';
-import {useEffect, useContext} from 'react';
+import {useEffect, useContext, useState} from 'react';
 import {RangePad, PlayerPad, FixedPad, ResultPad, LabelPad} from '../components';
 import {refresh} from '../dispatcher/refresh'
 import {player, label, cache, block, share} from '../store';
 import Head from 'next/head';
 
+
+declare global {
+    interface Window { dataLayer: any; }
+}
 export default () => {
     const playerStore = useContext(player);
     const labelStore = useContext(label);
     const cacheStore = useContext(cache);
     const blockStore = useContext(block);
     const shareStore = useContext(share);
+    const Coming = useState("yet");
     
+    function gtag(arg1:any, arg2:any){
+        window.dataLayer.push(arg1, arg2);
+    }
+
     useEffect(() => {        
         refresh(1, labelStore, playerStore, blockStore, shareStore, cacheStore);
         playerStore.now = 1;
         labelStore.now = 1;
+        if(Coming[0] === "yet") {
+            window.dataLayer = window.dataLayer || [];
+            gtag('js', new Date());
+
+            gtag('config', 'UA-148366931-1');
+        }
     });
 
     return(<>
@@ -33,6 +48,7 @@ export default () => {
             <FixedPad/>
             <ResultPad/>
         </div>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148366931-1"></script>
     </div>
     </>);
 };
